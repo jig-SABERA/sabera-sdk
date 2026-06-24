@@ -1,0 +1,15 @@
+pluginManagement {
+    includeBuild("../node_modules/@react-native/gradle-plugin")
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "org.jetbrains.kotlin.android") {
+                useVersion("2.3.10")
+            }
+        }
+    }
+}
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+rootProject.name = 'react_native'
+include ':app'
+includeBuild('../node_modules/@react-native/gradle-plugin')

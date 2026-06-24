@@ -12,13 +12,26 @@ React Native から NativeModule 経由で Glasses SDK を利用するサンプ�
 
 ## セットアップ
 
-```bash
-cd samples/react-native
-npm install
-```
-
-## ビルド・実行
+RN Gradle プラグインが SDK の Kotlin 2.3.10 と互換性がないため、
+RN CLI でプロジェクトを初期化してからソースを上書きする。
 
 ```bash
+# 1. 別ディレクトリで RN プロジェクト初期化
+npx @react-native-community/cli init GlassesSdkReactNativeSample --version 0.76.6
+
+# 2. ソースファイルをコピー
+cp -r samples/react-native/src/ GlassesSdkReactNativeSample/src/
+cp samples/react-native/App.tsx GlassesSdkReactNativeSample/
+cp -r samples/react-native/android/app/src/main/kotlin/ \
+  GlassesSdkReactNativeSample/android/app/src/main/kotlin/
+
+# 3. android/app/build.gradle に SDK 依存を追加
+#    implementation("jp.jig.glasses.sdk:glasses-core-android:0.0.1-SNAPSHOT")
+#    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+
+# 4. AndroidManifest.xml を samples/react-native/ の内容で上書き
+
+# 5. ビルド・実行
+cd GlassesSdkReactNativeSample
 npm run android
 ```

@@ -8,8 +8,10 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
+import com.facebook.react.bridge.JavaScriptExecutorFactory
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
+import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import com.facebook.react.shell.MainReactPackage
 import com.facebook.soloader.SoLoader
 
@@ -26,6 +28,10 @@ class MainApplication : Application(), ReactApplication {
             override fun getUseDeveloperSupport(): Boolean = true
             override val isNewArchEnabled: Boolean = false
             override val isHermesEnabled: Boolean = true
+
+            override fun getJavaScriptExecutorFactory(): JavaScriptExecutorFactory? {
+                return com.facebook.hermes.reactexecutor.HermesExecutorFactory()
+            }
         }
 
     override val reactHost: ReactHost
@@ -34,6 +40,8 @@ class MainApplication : Application(), ReactApplication {
     override fun onCreate() {
         super.onCreate()
         SoLoader.init(this, false)
+        // Pre-load libreactnative.so which contains the hermes executor symbols
+        SoLoader.loadLibrary("reactnative")
 
         GlassesSDK.setLogger { tag, msg -> Log.d(tag, msg) }
         GlassesSDK.setProd(true)

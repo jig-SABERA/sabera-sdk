@@ -30,10 +30,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import android.util.Log
 import app.jigglass.glass.GlassClient
 import app.jigglass.glass.GlassManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+
+private const val TAG = "CommandScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,10 +62,13 @@ fun CommandScreen(manager: GlassManager, client: GlassClient) {
         onDispose { job.cancel() }
     }
 
-    fun safeRun(block: () -> Unit) {
+    fun safeRun(label: String, block: () -> Unit) {
+        Log.d(TAG, "safeRun: $label")
         try {
             block()
+            Log.d(TAG, "safeRun: $label OK")
         } catch (e: Throwable) {
+            Log.e(TAG, "safeRun: $label FAILED", e)
             error = e.message
         }
     }
@@ -81,10 +87,10 @@ fun CommandScreen(manager: GlassManager, client: GlassClient) {
         ) {
             // Page navigation
             SectionTitle("ページ遷移")
-            CommandButton("Home に戻す") { safeRun { commandManager.enterHomePage() } }
-            CommandButton("Teleprompter を開く") { safeRun { commandManager.enterTeleprompterPage() } }
-            CommandButton("AI ページを開く") { safeRun { commandManager.enterAIPage(false) } }
-            CommandButton("翻訳ページを開く") { safeRun { commandManager.enterTranslatePage() } }
+            CommandButton("Home に戻す") { safeRun("enterHomePage") { commandManager.enterHomePage() } }
+            CommandButton("Teleprompter を開く") { safeRun("enterTeleprompterPage") { commandManager.enterTeleprompterPage() } }
+            CommandButton("AI ページを開く") { safeRun("enterAIPage") { commandManager.enterAIPage(false) } }
+            CommandButton("翻訳ページを開く") { safeRun("enterTranslatePage") { commandManager.enterTranslatePage() } }
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
 
@@ -94,19 +100,19 @@ fun CommandScreen(manager: GlassManager, client: GlassClient) {
                 label = "Teleprompter テキスト",
                 value = teleprompterText,
                 onValueChange = { teleprompterText = it },
-                onSend = { safeRun { commandManager.sendTeleprompterContent(teleprompterText) } },
+                onSend = { safeRun("sendTeleprompterContent: $teleprompterText") { commandManager.sendTeleprompterContent(teleprompterText) } },
             )
             SendableTextField(
                 label = "AI テキスト",
                 value = aiText,
                 onValueChange = { aiText = it },
-                onSend = { safeRun { commandManager.sendAIContent(aiText) } },
+                onSend = { safeRun("sendAIContent: $aiText") { commandManager.sendAIContent(aiText) } },
             )
             SendableTextField(
                 label = "翻訳テキスト",
                 value = translateText,
                 onValueChange = { translateText = it },
-                onSend = { safeRun { commandManager.sendTranslateContent(translateText) } },
+                onSend = { safeRun("sendTranslateContent: $translateText") { commandManager.sendTranslateContent(translateText) } },
             )
 
             // Language pair
@@ -128,7 +134,7 @@ fun CommandScreen(manager: GlassManager, client: GlassClient) {
             }
             Spacer(Modifier.height(8.dp))
             Button(
-                onClick = { safeRun { commandManager.sendTranslateLanguage(sourceLang, targetLang) } },
+                onClick = { safeRun("sendTranslateLanguage: $sourceLang->$targetLang") { commandManager.sendTranslateLanguage(sourceLang, targetLang) } },
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("翻訳言語を送信")

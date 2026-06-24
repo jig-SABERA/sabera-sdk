@@ -1,29 +1,25 @@
-# Glasses SDK Flutter Sample
+# Glasses SDK Samples
 
-Flutter から Glasses SDK を呼び出すサンプルアプリ。
-MethodChannel / EventChannel で KMP SDK の主要機能を Dart から操作する。
+Glasses SDK の使い方を示すサンプルアプリ集。
 
-> 現在 Android のみ対応。iOS は後日追加予定。
+## サンプル一覧
+
+| サンプル | プラットフォーム | 説明 |
+|---------|--------------|------|
+| [Flutter](samples/flutter/) | Android | MethodChannel / EventChannel 経由で KMP SDK を Dart から操作 |
+| [KMP](samples/kmp/) | Android / iOS | Kotlin Multiplatform から直接 SDK を利用 |
+
+## ドキュメント
+
+- [Getting Started](docs/getting-started.md) — SDK のセットアップと基本的な使い方
 
 ## 前提条件
 
-- Flutter SDK 3.29+
-- Android 実機 (BLE 必須、エミュレータ不可)
 - jig-glass リポジトリで SDK を mavenLocal に publish 済み
-
-## セットアップ
-
-### 1. SDK を mavenLocal に publish
 
 ```bash
 cd app
 ./gradlew :glasses-sdk:glasses-core:publishToMavenLocal \
           :glasses-sdk:ble-core:publishToMavenLocal \
           :glasses-sdk:glasses-protocol:publishToMavenLocal
-```
-
-### 2. ビルド・実行
-
-```bash
-flutter run
 ```

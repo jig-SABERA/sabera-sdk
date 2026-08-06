@@ -26,7 +26,7 @@ cp -r samples/react-native/android/app/src/main/kotlin/ \
   SaberaAppSdkReactNativeSample/android/app/src/main/kotlin/
 
 # 3. android/app/build.gradle に SDK 依存を追加
-#    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.0.1")
+#    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.0.4")
 #    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 
 # 4. AndroidManifest.xml を samples/react-native/ の内容で上書き

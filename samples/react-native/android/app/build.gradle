@@ -17,7 +17,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "jp.jig.glasses.sample.reactnative"
+        applicationId "jp.jig.sabera.app.sample.reactnative"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -40,7 +40,7 @@ dependencies {
     implementation("com.facebook.react:react-android:${rootProject.ext.reactNativeVersion}")
     implementation("com.facebook.react:hermes-android:${rootProject.ext.reactNativeVersion}")
 
-    // Glasses SDK
-    implementation("jp.jig.glasses.sdk:glasses-core:0.0.1")
+    // Sabera App SDK
+    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 }

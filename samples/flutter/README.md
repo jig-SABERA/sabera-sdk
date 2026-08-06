@@ -1,6 +1,6 @@
-# Glasses SDK Flutter Sample
+# Sabera App SDK Flutter Sample
 
-Flutter から Glasses SDK を呼び出すサンプルアプリ。
+Flutter から Sabera App SDK を呼び出すサンプルアプリ。
 MethodChannel / EventChannel で KMP SDK の主要機能を Dart から操作する。
 
 > 現在 Android のみ対応。iOS は後日追加予定。

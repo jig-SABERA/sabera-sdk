@@ -1,6 +1,6 @@
 # Getting Started
 
-Glasses SDK を使ってスマートグラスと通信するアプリを作る手順。
+Sabera App SDK を使ってスマートグラスと通信するアプリを作る手順。
 
 Flutter / KMP / React Native のどれで書いても、**ネイティブ層で呼ぶ SDK の API と順序は同一**。
 このページはその共通部分を扱う。各サンプルの差は橋渡し層（MethodChannel、NativeModule）の形だけで、

@@ -128,7 +128,7 @@ dependencies {
         implementation jscFlavor
     }
 
-    // Glasses SDK
-    implementation("jp.jig.glasses.sdk:glasses-core:0.0.1")
+    // Sabera App SDK
+    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 }

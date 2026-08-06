@@ -1,6 +1,6 @@
-# Glasses SDK Samples
+# Sabera App SDK Samples
 
-Glasses SDK の使い方を示すサンプルアプリ集。
+Sabera App SDK の使い方を示すサンプルアプリ集。
 
 ## サンプル一覧
 

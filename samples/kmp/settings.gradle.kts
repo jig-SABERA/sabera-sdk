@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "glasses-sdk-kmp-sample"
+rootProject.name = "sabera-app-sdk-kmp-sample"
 include(":app")

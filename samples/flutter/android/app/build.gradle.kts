@@ -23,7 +23,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "jp.jig.glasses.sample.flutter.glasses_sdk_flutter_sample"
+        applicationId = "jp.jig.sabera.app.sample.flutter"
         minSdk = 31
         targetSdk = 36
         versionCode = flutter.versionCode
@@ -42,6 +42,6 @@ flutter {
 }
 
 dependencies {
-    implementation("jp.jig.glasses.sdk:glasses-core:0.0.1")
+    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 }

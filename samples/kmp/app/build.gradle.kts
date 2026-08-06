@@ -9,7 +9,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "jp.jig.glasses.sample.kmp"
+        applicationId = "jp.jig.sabera.app.sample.kmp"
         minSdk = 31
         targetSdk = 36
         versionCode = 1
@@ -37,8 +37,8 @@ android {
 }
 
 dependencies {
-    // Glasses SDK
-    implementation("jp.jig.glasses.sdk:glasses-core:0.0.1")
+    // Sabera App SDK
+    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 
     // Compose

@@ -16,11 +16,12 @@ Glasses SDK の使い方を示すサンプルアプリ集。
 
 ## 前提条件
 
-- jig-glass リポジトリで SDK を mavenLocal に publish 済み
+SDK は GitHub Packages (`jig-jp/jig-glass`) から取得する。private パッケージのため、
+`read:packages` スコープを持つ PAT を `~/.gradle/gradle.properties` に設定しておく。
 
-```bash
-cd app
-./gradlew :glasses-sdk:glasses-core:publishToMavenLocal \
-          :glasses-sdk:ble-core:publishToMavenLocal \
-          :glasses-sdk:glasses-protocol:publishToMavenLocal
+```properties
+gpr.user=<GitHubのユーザー名>
+gpr.token=<read:packages を持つ PAT>
 ```
+
+詳細は [Getting Started](docs/getting-started.md) を参照。

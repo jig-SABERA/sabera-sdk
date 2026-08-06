@@ -8,7 +8,7 @@ React Native から NativeModule 経由で Glasses SDK を利用するサンプ�
 
 - Node.js 18+
 - Android 実機 (BLE 必須、エミュレータ不可)
-- jig-glass リポジトリで SDK を mavenLocal に publish 済み（[ルート README](../../README.md) 参照）
+- GitHub Packages から SDK を取得するための認証設定（[ルート README](../../README.md) 参照）
 
 ## セットアップ
 
@@ -26,7 +26,7 @@ cp -r samples/react-native/android/app/src/main/kotlin/ \
   GlassesSdkReactNativeSample/android/app/src/main/kotlin/
 
 # 3. android/app/build.gradle に SDK 依存を追加
-#    implementation("jp.jig.glasses.sdk:glasses-core-android:0.0.1-SNAPSHOT")
+#    implementation("jp.jig.glasses.sdk:glasses-core-android:0.0.1")
 #    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 
 # 4. AndroidManifest.xml を samples/react-native/ の内容で上書き

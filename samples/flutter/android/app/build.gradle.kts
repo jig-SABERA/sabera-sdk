@@ -42,6 +42,6 @@ flutter {
 }
 
 dependencies {
-    implementation("jp.jig.glasses.sdk:glasses-core-android:0.0.1-SNAPSHOT")
+    implementation("jp.jig.glasses.sdk:glasses-core-android:0.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 }

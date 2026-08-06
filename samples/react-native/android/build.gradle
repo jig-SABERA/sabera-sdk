@@ -22,6 +22,12 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        mavenLocal()
+        maven {
+            url = uri("https://maven.pkg.github.com/jig-jp/jig-glass")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 }

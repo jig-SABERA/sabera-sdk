@@ -2,16 +2,19 @@
 
 Glasses SDK を使ってスマートグラスと通信するアプリを作る手順。
 
-## SDK の publish
+## SDK の取得設定
 
-サンプルアプリをビルドする前に、jig-glass リポジトリで SDK を mavenLocal に publish する。
+SDK は GitHub Packages (`jig-jp/jig-glass`) で配布している。private パッケージなので、取得には
+`read:packages` スコープを持つ Personal Access Token が必要。
 
-```bash
-cd app
-./gradlew :glasses-sdk:glasses-core:publishToMavenLocal \
-          :glasses-sdk:ble-core:publishToMavenLocal \
-          :glasses-sdk:glasses-protocol:publishToMavenLocal
+`~/.gradle/gradle.properties` に認証情報を書く。
+
+```properties
+gpr.user=<GitHubのユーザー名>
+gpr.token=<read:packages を持つ PAT>
 ```
+
+環境変数 `GITHUB_ACTOR` / `GITHUB_TOKEN` でも代用できる。
 
 ## 基本フロー
 

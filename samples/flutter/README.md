@@ -9,7 +9,7 @@ MethodChannel / EventChannel で KMP SDK の主要機能を Dart から操作す
 
 - Flutter SDK 3.29+
 - Android 実機 (BLE 必須、エミュレータ不可)
-- jig-glass リポジトリで SDK を mavenLocal に publish 済み（[ルート README](../../README.md) 参照）
+- GitHub Packages から SDK を取得するための認証設定（[ルート README](../../README.md) 参照）
 
 ## ビルド・実行
 

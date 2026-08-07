@@ -2,7 +2,7 @@
 
 Sabera App SDK を使ってスマートグラスと通信するアプリを作る手順。
 
-Flutter / KMP / React Native のどれで書いても、**ネイティブ層で呼ぶ SDK の API と順序は同一**。
+Flutter でも KMP でも、**ネイティブ層で呼ぶ SDK の API と順序は同一**。
 このページはその共通部分を扱う。各サンプルの差は橋渡し層（MethodChannel、NativeModule）の形だけで、
 それは[プラットフォーム別の橋渡し](#プラットフォーム別の橋渡し)にまとめた。
 
@@ -187,20 +187,18 @@ manager.disconnect(client)
 
 ## プラットフォーム別の橋渡し
 
-ネイティブ側で呼ぶ SDK API は3サンプルとも同じ。違うのは、それをアプリの言語へどう渡すかだけ。
+ネイティブ側で呼ぶ SDK API はどちらのサンプルでも同じ。違うのは、それをアプリの言語へどう渡すかだけ。
 
 | | コマンド呼び出し | イベント通知 |
 |---|---|---|
 | KMP | 橋渡しなし。SDK の型を直接扱う | Flow をそのまま `collect` |
 | Flutter | `MethodChannel` | `EventChannel` 2本（`connectionState` / `gestureEvents`） |
-| React Native | `NativeModule` | `RCTDeviceEventEmitter`（`onConnectionStateChange` / `onGestureEvent`） |
 
-Flutter と React Native では `GestureType` が文字列（`"SINGLE_TAP"` / `"DOUBLE_TAP"` / `"HOLD"`）
-として渡り、Dart / TypeScript 側で独自の型に変換している。接続状態も同様に
+Flutter では `GestureType` が文字列（`"SINGLE_TAP"` / `"DOUBLE_TAP"` / `"HOLD"`）
+として渡り、Dart 側で独自の型に変換している。接続状態も同様に
 `{connected, deviceId, deviceName}` の形に落として渡している。
 
 実装は各サンプルを参照。
 
 - [Flutter](../samples/flutter/)
 - [KMP](../samples/kmp/)
-- [React Native](../samples/react-native/)

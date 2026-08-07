@@ -13,7 +13,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = uri("https://maven.pkg.github.com/jig-jp/jig-glass")
+            url = uri("https://maven.pkg.github.com/jig-jp/sabera-sdk")
             credentials {
                 username = providers.gradleProperty("gpr.user").orNull ?: System.getenv("GITHUB_ACTOR")
                 password = providers.gradleProperty("gpr.token").orNull ?: System.getenv("GITHUB_TOKEN")

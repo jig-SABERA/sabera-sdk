@@ -8,7 +8,7 @@ Flutter でも KMP でも、**ネイティブ層で呼ぶ SDK の API と順序�
 
 ## SDK の取得設定
 
-SDK は GitHub Packages (`jig-jp/jig-glass`) で配布している。private パッケージなので、取得には
+SDK は GitHub Packages (`jig-jp/sabera-sdk`) で配布している。private パッケージなので、取得には
 `read:packages` スコープを持つ Personal Access Token が必要。
 
 `~/.gradle/gradle.properties` に認証情報を書く。

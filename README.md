@@ -24,3 +24,16 @@ gpr.token=<read:packages を持つ PAT>
 ```
 
 詳細は [Getting Started](docs/getting-started.md) を参照。
+
+## ライセンス
+
+このリポジトリのサンプルコードは [Apache License 2.0](LICENSE) で提供する。自由に改変して
+自分のアプリに取り込んでよい。
+
+ただし **SDK 本体（`jp.jig.sabera.app.sdk:*`）はこのライセンスの対象外**。SDK は GitHub Packages
+から配布するバイナリで、利用には別途 SDK 利用規約が適用される。
+
+| 対象 | ライセンス |
+|---|---|
+| このリポジトリのサンプル・ラッパーコード | Apache License 2.0 |
+| Sabera App SDK 本体（AAR / XCFramework） | SDK 利用規約 |

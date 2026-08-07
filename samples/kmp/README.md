@@ -17,3 +17,8 @@ Flutter の MethodChannel ブリッジなしで、SDK API を直接呼び出す�
 cd samples/kmp
 ./gradlew :app:installDebug
 ```
+
+## ライセンス
+
+このサンプルコードは [Apache License 2.0](../../LICENSE)。
+SDK 本体は対象外で、別途 SDK 利用規約が適用される（[ルート README](../../README.md) 参照）。

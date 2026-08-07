@@ -1,0 +1,8 @@
+Sabera App SDK Samples
+Copyright 2026 株式会社jig.jp
+
+このリポジトリのサンプルコードは Apache License 2.0 で提供されます。
+
+サンプルが依存する Sabera App SDK 本体（jp.jig.sabera.app.sdk:*、AAR / XCFramework）は
+このリポジトリには含まれず、Apache License 2.0 の対象外です。
+SDK 本体の利用には別途 SDK 利用規約が適用されます。

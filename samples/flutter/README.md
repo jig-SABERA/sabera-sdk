@@ -17,3 +17,8 @@ MethodChannel / EventChannel で KMP SDK の主要機能を Dart から操作す
 cd samples/flutter
 flutter run
 ```
+
+## ライセンス
+
+このサンプルコードは [Apache License 2.0](../../LICENSE)。
+SDK 本体は対象外で、別途 SDK 利用規約が適用される（[ルート README](../../README.md) 参照）。

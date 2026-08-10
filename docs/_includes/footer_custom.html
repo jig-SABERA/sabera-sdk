@@ -1,0 +1,37 @@
+{%- comment -%}
+  前後のページへのリンク。順序はサイドバーと同じ（nav_flat.html）。
+{%- endcomment -%}
+{%- capture nav_flat -%}{%- include_cached nav_flat.html -%}{%- endcapture -%}
+{%- assign entries = nav_flat | split: ";;;" -%}
+{%- assign index = -1 -%}
+{%- for entry in entries -%}
+  {%- assign fields = entry | split: "|||" -%}
+  {%- if fields[0] == page.url -%}{%- assign index = forloop.index0 -%}{%- endif -%}
+{%- endfor -%}
+{%- if index >= 0 -%}
+  {%- if index > 0 -%}
+    {%- assign before = index | minus: 1 -%}
+    {%- assign prev = entries[before] | split: "|||" -%}
+  {%- endif -%}
+  {%- assign last = entries.size | minus: 1 -%}
+  {%- if index < last -%}
+    {%- assign after = index | plus: 1 -%}
+    {%- assign next = entries[after] | split: "|||" -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if prev or next -%}
+<nav class="page-nav" aria-label="前後のページ">
+  {%- if prev %}
+  <a class="page-nav-prev" href="{{ prev[0] | relative_url }}">
+    <span class="page-nav-label">&larr; 前</span>
+    <span class="page-nav-title">{% if prev[2] %}{{ prev[2] }} / {% endif %}{{ prev[1] }}</span>
+  </a>
+  {%- endif %}
+  {%- if next %}
+  <a class="page-nav-next" href="{{ next[0] | relative_url }}">
+    <span class="page-nav-label">次 &rarr;</span>
+    <span class="page-nav-title">{% if next[2] %}{{ next[2] }} / {% endif %}{{ next[1] }}</span>
+  </a>
+  {%- endif %}
+</nav>
+{%- endif -%}

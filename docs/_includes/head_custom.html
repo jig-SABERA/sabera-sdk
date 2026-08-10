@@ -1,0 +1,15 @@
+{%- comment -%}
+  just-the-docs の color_scheme はビルド時に1つしか選べないため、ダーク用の CSS を
+  別に出力し、この link の media を切り替えることで配色を変える。
+  media を触っていない間は OS の設定に追従する。切り替えは header_custom.html のボタン。
+  head_custom は head の末尾に入るので、既定のスキームより後に読まれる。
+{%- endcomment -%}
+<link id="sabera-dark-scheme" rel="stylesheet" href="{{ '/assets/css/sabera-dark.css' | relative_url }}" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<script>
+  // 描画が始まる前に反映しないと、保存した配色に切り替わる瞬間がちらつく
+  (function () {
+    var media = { light: 'not all', dark: 'all' }[localStorage.getItem('sabera-color-scheme')];
+    if (media) document.getElementById('sabera-dark-scheme').media = media;
+  })();
+</script>

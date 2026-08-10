@@ -1,0 +1,95 @@
+name: Docs
+
+# paths で絞ると SDK のバージョンを上げる PR などで回らず、落ちるのが main に入ってから
+# になる。ジョブは数分で終わるので、すべての PR と main への push で回す。
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: docs-${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  snippets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      # SDK は同じリポジトリの GitHub Packages にあるので GITHUB_TOKEN で取れる
+      - name: コード例をコンパイルする
+        working-directory: samples/kmp
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew --no-daemon :snippets:compileDebugKotlin :snippets:ktlintCheck
+
+      - name: docs のコード例が最新か確かめる
+        run: python3 scripts/sync-snippets.py --check
+
+  # PR ではビルドが壊れていないことだけを見る。デプロイは main の deploy が担う。
+  build:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          working-directory: docs
+          bundler-cache: true
+
+      - name: サイトがビルドできることを確かめる
+        working-directory: docs
+        run: bundle exec jekyll build --trace
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: snippets
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # 走っているデプロイは止めない。途中で切ると公開されている内容が中途半端になる
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          working-directory: docs
+          bundler-cache: true
+
+      # リポジトリ名から baseurl を決める。引っ越しても追従する
+      - id: pages
+        uses: actions/configure-pages@v6
+
+      - name: サイトをビルドする
+        working-directory: docs
+        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs/_site
+
+      - id: deployment
+        uses: actions/deploy-pages@v5

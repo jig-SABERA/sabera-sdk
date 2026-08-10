@@ -1,3 +1,8 @@
+---
+title: Getting Started
+nav_order: 2
+---
+
 # Getting Started
 
 Sabera App SDK を使ってスマートグラスと通信するアプリを作る手順。

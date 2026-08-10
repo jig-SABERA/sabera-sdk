@@ -1,0 +1,24 @@
+// SABERA のカラートークン（ライト）
+// 出典: Figma Color_App — Light.tokens.json / Color_SABERA_Brand.json
+// jig-glass/app の LightColorScheme.kt・BrandColors.kt と同じ値をそのまま使う
+$sabera-green: #326643; // primary
+$sabera-white: #fafafa; // surface
+
+$color-scheme: sabera;
+
+$body-background-color: $sabera-white;
+$body-heading-color: #1e1e1e; // onSurface
+$body-text-color: #1e1e1e; // onSurface
+
+$link-color: $sabera-green; // primary
+$btn-primary-color: $sabera-green; // primary
+$nav-child-link-color: $link-color;
+
+$sidebar-color: #f2f2f2; // surfaceContainer
+$border-color: #cccccc; // outlineVariant
+$base-button-color: #ececed; // surfaceContainerHigh
+$code-background-color: #f2f2f2; // surfaceContainer
+$table-background-color: #ffffff; // surfaceContainerLowest
+$search-background-color: #ffffff; // surfaceContainerLowest
+$search-result-preview-color: #4b4b4b; // onSurfaceVariant
+$feedback-color: #ececed; // surfaceContainerHigh

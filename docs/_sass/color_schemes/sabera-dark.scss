@@ -1,0 +1,25 @@
+// SABERA のカラートークン（ダーク）
+// 出典: Figma Color_App — Dark.tokens.json
+// jig-glass/app の DarkColorScheme.kt と同じ値をそのまま使う
+$color-scheme: sabera-dark;
+
+$body-background-color: #131314; // surface
+$body-heading-color: #e2e2e3; // onSurface
+$body-text-color: #e2e2e3; // onSurface
+
+$link-color: #a4d396; // primary
+$btn-primary-color: #709c64; // primaryContainer
+$nav-child-link-color: $link-color;
+
+$sidebar-color: #1b1b1c; // surfaceContainerLow
+$border-color: #464747; // outlineVariant
+$base-button-color: #2a2a2a; // surfaceContainerHigh
+$code-background-color: #0e0e0e; // surfaceContainerLowest
+$code-linenumber-color: #c6c7c7; // onSurfaceVariant
+$table-background-color: #1f1f20; // surfaceContainer
+$search-background-color: #1f1f20; // surfaceContainer
+$search-result-preview-color: #c6c7c7; // onSurfaceVariant
+$feedback-color: #2a2a2a; // surfaceContainerHigh
+
+// light.scss が読み込む OneLightJekyll を打ち消す
+@import "./vendor/OneDarkJekyll/syntax";

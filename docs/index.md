@@ -1,0 +1,18 @@
+---
+title: ホーム
+nav_order: 1
+---
+
+# Sabera App SDK
+
+スマートグラスと通信するアプリを作るための SDK。Android / iOS で同じ API を使う。
+
+- [Getting Started](getting-started.html) — セットアップと基本的な使い方
+- [API リファレンス](api/) — 公開 API の一覧
+
+## サンプル
+
+| サンプル | プラットフォーム | 説明 |
+|---|---|---|
+| [Flutter](https://github.com/jig-jp/sabera-sdk/tree/main/samples/flutter) | Android | MethodChannel / EventChannel 経由で Dart から操作 |
+| [KMP](https://github.com/jig-jp/sabera-sdk/tree/main/samples/kmp) | Android / iOS | Kotlin Multiplatform から直接利用 |

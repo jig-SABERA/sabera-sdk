@@ -41,3 +41,7 @@ app.*.map.json
 # KMP
 **/.gradle/
 **/local.properties
+
+# Jekyll (docs)
+docs/.sass-cache/
+docs/_site/

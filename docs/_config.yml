@@ -1,0 +1,31 @@
+title: Sabera App SDK
+description: Sabera App SDK のドキュメント
+theme: just-the-docs
+
+# baseurl は空にしておき、GitHub Pages では configure-pages が渡す値でビルドする。
+# ローカルはルート配信で見られる。
+url: ""
+baseurl: ""
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-include-cache
+
+# テーマの _config.yml は Jekyll に読まれないため、layout はここで既定値を与える
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+color_scheme: sabera
+search_enabled: true
+heading_anchors: true
+
+aux_links:
+  GitHub: https://github.com/jig-jp/sabera-sdk
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor

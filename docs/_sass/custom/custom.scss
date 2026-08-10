@@ -1,0 +1,88 @@
+// ページ遷移のたびに全画面が描き直され、その間に挟まるブラウザの白背景が点滅に見えていた。
+// 背景色を html に持たせると、次のページが描かれるまでこの色が残る。
+html {
+  background-color: $body-background-color;
+}
+
+// 前後のページへのリンク（_includes/footer_custom.html）
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: $sp-4;
+  margin-top: $sp-4;
+
+  a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    max-width: 48%;
+    background-image: none;
+  }
+}
+
+.page-nav-next {
+  margin-left: auto;
+  text-align: right;
+}
+
+.page-nav-label {
+  color: $body-text-color;
+  font-size: 0.7rem;
+}
+
+// 配色の切り替えボタン（_includes/header_custom.html）
+.scheme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+  padding: 0 $sp-4;
+  border: 0;
+  background: none;
+  color: $body-text-color;
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    color: $link-color;
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+// 対応ブラウザでは、遷移を差分の入れ替えとして扱う（未対応なら無視される）
+@view-transition {
+  navigation: auto;
+}
+
+// サイドバーとヘッダは遷移の前後で変わらないので、入れ替えの対象から外して固定する。
+// view-transition-name は要素ごとに一意でなければならないため、別名を与える
+.side-bar {
+  view-transition-name: side-bar;
+}
+
+.main-header {
+  view-transition-name: main-header;
+}
+
+::view-transition-group(side-bar),
+::view-transition-group(main-header) {
+  animation: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 120ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

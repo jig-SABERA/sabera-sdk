@@ -1,0 +1,18 @@
+{%- comment -%}
+  サイドバーの並び（parent / grandparent と nav_order）をフラットに並べ直した一覧を
+  「url|||title|||parent」の組を ";;;" で連ねた文字列として返す。
+  全ページで同じ結果になるので、呼び出し側は include_cached で1回だけ評価させる。
+  このサイトの階層は3段までなので、再帰の代わりにループを3重にしている。
+{%- endcomment -%}
+{%- assign tops = site.html_pages | where_exp: "p", "p.parent == nil" | sort: "nav_order" -%}
+{%- for top in tops -%}
+{{- top.url }}|||{{ top.title }}|||;;;
+{%- assign children = site.html_pages | where: "parent", top.title | where_exp: "p", "p.grandparent == nil" | sort: "nav_order" -%}
+{%- for child in children -%}
+{{- child.url }}|||{{ child.title }}|||{{ top.title }};;;
+{%- assign grandchildren = site.html_pages | where: "grandparent", top.title | where: "parent", child.title | sort: "nav_order" -%}
+{%- for grandchild in grandchildren -%}
+{{- grandchild.url }}|||{{ grandchild.title }}|||{{ child.title }};;;
+{%- endfor -%}
+{%- endfor -%}
+{%- endfor -%}

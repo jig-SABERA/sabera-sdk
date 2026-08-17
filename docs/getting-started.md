@@ -181,37 +181,3 @@ manager.disconnect(client)
 `GlassClient` に `disconnect()` は無い。型の上で `GlassClientInternal`
 に隔離してあり、 必ず `GlassManager` を経由する。UI
 層が接続状態を持たないようにするための制約。
-
-## ハマりどころ
-
-- **SPI を Activity で差し込んでいる** — `Application.onCreate()`
-  で差し込む。Activity 生成前に SDK が動くと反映されない
-- **`showAutomaticSelectionDialog()` に Application Context を渡している** —
-  Activity が必要
-- **`SdkActivityHost.showBleDeviceSelectionDialog` を差し込み忘れている** —
-  Android でダイアログが 出ない最頻の原因
-- **エミュレータ / シミュレータで試している** — BLE
-  の物理層が必要なため動かない。スキャン中のまま 止まる
-- **Android で BLE 権限を実行時要求していない** — API 31 以降は `BLUETOOTH_SCAN`
-  と `BLUETOOTH_CONNECT` が必要
-- **iOS で `Info.plist` に `NSBluetoothAlwaysUsageDescription` が無い** —
-  CoreBluetooth が OS に蹴られ、`GlassClient` が永遠に得られない
-
-## プラットフォーム別の橋渡し
-
-ネイティブ側で呼ぶ SDK API
-はどちらのサンプルでも同じ。違うのは、それをアプリの言語へどう渡すかだけ。
-
-|         | コマンド呼び出し               | イベント通知                                              |
-| ------- | ------------------------------ | --------------------------------------------------------- |
-| KMP     | 橋渡しなし。SDK の型を直接扱う | Flow をそのまま `collect`                                 |
-| Flutter | `MethodChannel`                | `EventChannel` 2本（`connectionState` / `gestureEvents`） |
-
-Flutter では `GestureType` が文字列（`"SINGLE_TAP"` / `"DOUBLE_TAP"` /
-`"HOLD"`） として渡り、Dart 側で独自の型に変換している。接続状態も同様に
-`{connected, deviceId, deviceName}` の形に落として渡している。
-
-実装は各サンプルを参照。
-
-- [Flutter](https://github.com/jig-jp/sabera-sdk/tree/main/samples/flutter)
-- [KMP](https://github.com/jig-jp/sabera-sdk/tree/main/samples/kmp)

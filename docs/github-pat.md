@@ -31,7 +31,7 @@ GitHub にログインした状態で
 ## 2. SSO を認可する（表示されている場合のみ）
 
 トークン一覧に **Configure SSO** ボタンが出ている場合、Organization が SAML SSO を
-使っている。発行しただけではパッケージを取得できないので、ボタンを押して `jig-jp` を
+使っている。発行しただけではパッケージを取得できないので、ボタンを押して `jig-SABERA` を
 **Authorize** する。これを忘れると `401 Unauthorized` になる。
 
 ## 3. Gradle に設定する

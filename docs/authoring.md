@@ -69,7 +69,7 @@ python3 scripts/gen-api-docs.py
 ```console
 # 0.0.10 の AAR を GitHub Packages から取る
 curl -sL -u "<user>:<PAT>" -o core.aar \
-  https://maven.pkg.github.com/jig-jp/sabera-sdk/jp/jig/sabera/app/sdk/sabera-app-core-android/0.0.10/sabera-app-core-android-0.0.10.aar
+  https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-core-android/0.0.10/sabera-app-core-android-0.0.10.aar
 unzip -o core.aar -d aar && unzip -o aar/classes.jar -d cls
 javap -public cls/app/jigglass/glass/CommandManager.class
 ```

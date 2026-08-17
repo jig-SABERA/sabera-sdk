@@ -32,8 +32,8 @@ jobs:
       - name: コード例をコンパイルする
         working-directory: samples/kmp
         env:
-          GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.SDK_PACKAGES_TOKEN }}
+          ORG_GRADLE_PROJECT_GitHubPackagesUsername: ${{ github.actor }}
+          ORG_GRADLE_PROJECT_GitHubPackagesPassword: ${{ secrets.SDK_PACKAGES_TOKEN }}
         run: ./gradlew --no-daemon :snippets:compileDebugKotlin :snippets:ktlintCheck
 
       - name: docs のコード例が最新か確かめる

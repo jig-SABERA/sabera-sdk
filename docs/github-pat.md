@@ -40,15 +40,15 @@ GitHub にログインした状態で
 リポジトリにコミットしてしまう事故を防ぐため。
 
 ```properties
-gpr.user=<GitHubのユーザー名>
-gpr.token=<発行した PAT>
+GitHubPackagesUsername=<GitHubのユーザー名>
+GitHubPackagesPassword=<発行した PAT>
 ```
 
 環境変数でも代用できる。CI ではこちらを使う。
 
 ```bash
-export GITHUB_ACTOR=<GitHubのユーザー名>
-export GITHUB_TOKEN=<発行した PAT>
+export ORG_GRADLE_PROJECT_GitHubPackagesUsername=<GitHubのユーザー名>
+export ORG_GRADLE_PROJECT_GitHubPackagesPassword=<発行した PAT>
 ```
 
 ## 4. 確認する
@@ -61,7 +61,7 @@ export GITHUB_TOKEN=<発行した PAT>
 - **403 Forbidden** — スコープに `read:packages` が入っていない
 - **依存が見つからない** — `gradle.properties` の場所が違う。
   `~/.gradle/gradle.properties` に置く
-- **認証情報が空のまま** — `gpr.user` は GitHub のユーザー名。メールアドレスではない
+- **認証情報が空のまま** — `GitHubPackagesUsername` は GitHub のユーザー名。メールアドレスではない
 
 ## Fine-grained token について
 

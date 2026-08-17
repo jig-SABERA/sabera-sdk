@@ -21,8 +21,8 @@ SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) から取得する。
 `read:packages` スコープを持つ PAT を `~/.gradle/gradle.properties` に設定しておく。
 
 ```properties
-gpr.user=<GitHubのユーザー名>
-gpr.token=<read:packages を持つ PAT>
+GitHubPackagesUsername=<GitHubのユーザー名>
+GitHubPackagesPassword=<read:packages を持つ PAT>
 ```
 
 詳細は [Getting Started](docs/getting-started.md) を参照。

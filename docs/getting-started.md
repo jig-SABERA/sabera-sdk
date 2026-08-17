@@ -205,5 +205,5 @@ Flutter では `GestureType` が文字列（`"SINGLE_TAP"` / `"DOUBLE_TAP"` / `"
 
 実装は各サンプルを参照。
 
-- [Flutter](../samples/flutter/)
-- [KMP](../samples/kmp/)
+- [Flutter](https://github.com/jig-jp/sabera-sdk/tree/main/samples/flutter)
+- [KMP](https://github.com/jig-jp/sabera-sdk/tree/main/samples/kmp)

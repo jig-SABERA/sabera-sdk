@@ -34,6 +34,25 @@ nav_order: 5
 - `<!-- WIP -->` — 概要・引数の説明・使用例
 - `<!-- snippet: ... -->` — コード例の貼り先（後述）
 
+## API へのリンク
+
+公開 API の名前をバッククォートで囲むだけでよい。ビルド時に該当ページへのリンクへ
+変わるので、`[...](...)` は書かない。
+
+```markdown
+`connectToLastDevice()` は前回接続したデバイスに接続する。
+`GlassManager` から `connectedDevice` を購読する。
+```
+
+`foo` / `foo()` / `Type.foo(bar: Baz)` のいずれの書き方でも引ける。ただし `connected`
+のように複数の型が持つ名前は、どちらを指すか決められないため `GlassClient.connected`
+と型名から書く。
+
+コードブロックの中と、既にリンクになっている箇所は変換しない。
+
+仕組みは `_plugins/api_autolink.rb`。対応表の `_data/api_links.yml` は
+`scripts/gen-api-docs.py` が `SPEC` から作るので、手で編集しない。
+
 ## メソッドを増やす
 
 SDK に公開メソッドが増えたら `scripts/gen-api-docs.py` の `SPEC` に足して実行する。

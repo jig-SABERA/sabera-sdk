@@ -322,7 +322,7 @@ def api_index():
     lines = [
         "---",
         f"title: {API_TITLE}",
-        "nav_order: 3",
+        "nav_order: 4",
         "has_children: true",
         "---",
         "",
@@ -336,6 +336,32 @@ def api_index():
     lines += [f"| [{g['title']}]({g['dir']}/) | {g['summary']} |" for g in SPEC]
     lines += [""]
     return "\n".join(lines)
+
+
+def link_index():
+    """`_plugins/api_autolink.rb` が読む、名前 → ページの対応表。
+
+    同じ名前が複数の型にある場合（`connected` など）はどちらを指すか決められないため、
+    裸の名前では引けなくし、`GlassClient.connected` の形だけを残す。
+    """
+    entries = {}
+    ambiguous = set()
+    for group in SPEC:
+        for meth in group["methods"]:
+            url = f"/api/{group['dir']}/{slug(meth['name'])}.html"
+            qualified = heading(group["title"], meth["name"])
+            bare = meth["name"].split(".")[-1]
+            for key in {qualified, meth["name"], bare}:
+                if key in entries and entries[key] != url:
+                    ambiguous.add(key)
+                entries[key] = url
+    for group in SPEC:
+        entries[group["title"]] = f"/api/{group['dir']}/"
+
+    lines = ["# scripts/gen-api-docs.py が生成する。直接編集しない。"]
+    for key in sorted(entries.keys() - ambiguous):
+        lines += [f'"{key}": "{entries[key]}"']
+    return "\n".join(lines) + "\n"
 
 
 def write(path, body, force, stats):
@@ -359,6 +385,11 @@ def main():
         write(base / "index.md", type_index(group), args.force, stats)
         for i, meth in enumerate(group["methods"], start=1):
             write(base / f"{slug(meth['name'])}.md", method_page(group, meth, i), args.force, stats)
+
+    # 対応表は SPEC から機械的に決まるので、常に作り直す
+    index_path = DOCS / "_data" / "api_links.yml"
+    index_path.parent.mkdir(parents=True, exist_ok=True)
+    index_path.write_text(link_index(), encoding="utf-8")
 
     print(f"written={stats['written']} skipped={stats['skipped']}")
 

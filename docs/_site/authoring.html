@@ -15,7 +15,7 @@
   
 
     
-    .site-nav > ul.nav-list:first-child > li:not(:nth-child(4)) > a,
+    .site-nav > ul.nav-list:first-child > li:not(:nth-child(5)) > a,
     .site-nav > ul.nav-list:first-child > li > ul > li a {
       background-image: none;
     }
@@ -25,12 +25,12 @@
       background-image: none;
     }
 
-    .site-nav > ul.nav-list:first-child > li:nth-child(4) > a {
+    .site-nav > ul.nav-list:first-child > li:nth-child(5) > a {
       font-weight: 600;
       text-decoration: none;
-    }.site-nav > ul.nav-list:first-child > li:nth-child(4) > button svg {
+    }.site-nav > ul.nav-list:first-child > li:nth-child(5) > button svg {
       transform: rotate(-90deg);
-    }.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(4) > ul.nav-list {
+    }.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(5) > ul.nav-list {
       display: block;
     }
   </style>
@@ -161,7 +161,7 @@
   <nav aria-label="Main" id="site-nav" class="site-nav">
   
   
-    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">ホーム</a></li><li class="nav-list-item"><a href="/getting-started.html" class="nav-list-link">Getting Started</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in API リファレンス category" aria-pressed="false">
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">ホーム</a></li><li class="nav-list-item"><a href="/getting-started.html" class="nav-list-link">Getting Started</a></li><li class="nav-list-item"><a href="/github-pat.html" class="nav-list-link">GitHub PAT の作り方</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in API リファレンス category" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
       </button><a href="/api/" class="nav-list-link">API リファレンス</a><ul class="nav-list"><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in GlassesSDK category" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
@@ -359,6 +359,30 @@
   <li><code class="language-plaintext highlighter-rouge">&lt;!-- WIP --&gt;</code> — 概要・引数の説明・使用例</li>
   <li><code class="language-plaintext highlighter-rouge">&lt;!-- snippet: ... --&gt;</code> — コード例の貼り先（後述）</li>
 </ul>
+<h2 id="api-へのリンク">
+  
+  
+    <a href="#api-へのリンク" class="anchor-heading" aria-labelledby="api-へのリンク"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> API へのリンク
+  
+  
+</h2>
+    
+
+<p>公開 API の名前をバッククォートで囲むだけでよい。ビルド時に該当ページへのリンクへ
+変わるので、<code class="language-plaintext highlighter-rouge">[...](...)</code> は書かない。</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sb">`connectToLastDevice()`</span> は前回接続したデバイスに接続する。
+<span class="sb">`GlassManager`</span> から <span class="sb">`connectedDevice`</span> を購読する。
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">foo</code> / <code class="language-plaintext highlighter-rouge">foo()</code> / <code class="language-plaintext highlighter-rouge">Type.foo(bar: Baz)</code> のいずれの書き方でも引ける。ただし <code class="language-plaintext highlighter-rouge">connected</code>
+のように複数の型が持つ名前は、どちらを指すか決められないため <a href="/api/glass-client/connected.html"><code class="language-plaintext highlighter-rouge">GlassClient.connected</code></a>
+と型名から書く。</p>
+
+<p>コードブロックの中と、既にリンクになっている箇所は変換しない。</p>
+
+<p>仕組みは <code class="language-plaintext highlighter-rouge">_plugins/api_autolink.rb</code>。対応表の <code class="language-plaintext highlighter-rouge">_data/api_links.yml</code> は
+<code class="language-plaintext highlighter-rouge">scripts/gen-api-docs.py</code> が <code class="language-plaintext highlighter-rouge">SPEC</code> から作るので、手で編集しない。</p>
 <h2 id="メソッドを増やす">
   
   

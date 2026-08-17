@@ -161,7 +161,7 @@
   <nav aria-label="Main" id="site-nav" class="site-nav">
   
   
-    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">ホーム</a></li><li class="nav-list-item"><a href="/getting-started.html" class="nav-list-link">Getting Started</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in API リファレンス category" aria-pressed="false">
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">ホーム</a></li><li class="nav-list-item"><a href="/getting-started.html" class="nav-list-link">Getting Started</a></li><li class="nav-list-item"><a href="/github-pat.html" class="nav-list-link">GitHub PAT の作り方</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in API リファレンス category" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
       </button><a href="/api/" class="nav-list-link">API リファレンス</a><ul class="nav-list"><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in GlassesSDK category" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
@@ -279,11 +279,8 @@
 </h1>
     
 
-<p>Sabera App SDK を使ってスマートグラスと通信するアプリを作る手順。</p>
-
-<p>Flutter でも KMP でも、<strong>ネイティブ層で呼ぶ SDK の API と順序は同一</strong>。
-このページはその共通部分を扱う。各サンプルの差は橋渡し層（MethodChannel）の形だけで、
-それは<a href="#プラットフォーム別の橋渡し">プラットフォーム別の橋渡し</a>にまとめた。</p>
+<p>SABERA App SDK を使ってSABERAグラスと通信するアプリを作る手順。 SABERA
+SDKはネイティブAPIとして提供している。</p>
 <h2 id="sdk-の取得設定">
   
   
@@ -293,8 +290,9 @@
 </h2>
     
 
-<p>SDK は GitHub Packages (<code class="language-plaintext highlighter-rouge">jig-jp/sabera-sdk</code>) で配布している。private パッケージなので、取得には
-<code class="language-plaintext highlighter-rouge">read:packages</code> スコープを持つ Personal Access Token が必要。</p>
+<p>SDK は GitHub Packages (<code class="language-plaintext highlighter-rouge">jig-jp/sabera-sdk</code>) で配布している。private
+パッケージなので、取得には <code class="language-plaintext highlighter-rouge">read:packages</code> スコープを持つ Personal Access Token
+が必要。発行手順は <a href="github-pat.html">GitHub PAT の作り方</a> を参照。</p>
 
 <p><code class="language-plaintext highlighter-rouge">~/.gradle/gradle.properties</code> に認証情報を書く。</p>
 
@@ -337,7 +335,8 @@ manager.disconnect(client)
 </h2>
     
 
-<p><code class="language-plaintext highlighter-rouge">Application.onCreate()</code> で行う。SDK はプロセスシングルトンで、<strong>後から差し替えても既に発火した
+<p><code class="language-plaintext highlighter-rouge">Application.onCreate()</code> で行う。SDK
+はプロセスシングルトンで、<strong>後から差し替えても既に発火した
 呼び出しには反映されない</strong>ため、他のどの SDK API より先に実行する必要がある。</p>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">SampleApplication</span> <span class="p">:</span> <span class="nc">Application</span><span class="p">()</span> <span class="p">{</span>
@@ -350,7 +349,8 @@ manager.disconnect(client)
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="language-plaintext highlighter-rouge">setDevicePersistence</code> を省くとデフォルトのインメモリ実装になり、プロセスをまたぐと接続先を忘れる。
+<p><a href="/api/glasses-sdk/set-device-persistence.html"><code class="language-plaintext highlighter-rouge">setDevicePersistence</code></a>
+を省くとデフォルトのインメモリ実装になり、プロセスをまたぐと接続先を忘れる。
 前回接続したデバイスへの自動再接続を使うなら必須。</p>
 <h2 id="2-activity-側のフックandroid-のみ">
   
@@ -361,8 +361,9 @@ manager.disconnect(client)
 </h2>
     
 
-<p>Companion Device Manager のダイアログは Activity を必要とするため、<code class="language-plaintext highlighter-rouge">SdkActivityHost</code> に
-表示処理を差し込む。iOS では不要（CoreBluetooth は Activity を要求しない）。</p>
+<p>Companion Device Manager のダイアログは Activity
+を必要とするため、<a href="/api/sdk-activity-host/"><code class="language-plaintext highlighter-rouge">SdkActivityHost</code></a> に 表示処理を差し込む。iOS
+では不要（CoreBluetooth は Activity を要求しない）。</p>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="nc">Bundle</span><span class="p">?)</span> <span class="p">{</span>
     <span class="k">super</span><span class="p">.</span><span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
@@ -378,7 +379,8 @@ manager.disconnect(client)
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="language-plaintext highlighter-rouge">connectToLastDevice()</code> は前回接続したデバイスがあれば自動で接続を試みる。これを呼んでおくと
+<p><a href="/api/ble/connect-to-last-device.html"><code class="language-plaintext highlighter-rouge">connectToLastDevice()</code></a>
+は前回接続したデバイスがあれば自動で接続を試みる。これを呼んでおくと
 2回目以降の起動でユーザーにダイアログを見せずに済む。</p>
 <h2 id="3-接続状態を購読する">
   
@@ -389,8 +391,8 @@ manager.disconnect(client)
 </h2>
     
 
-<p><code class="language-plaintext highlighter-rouge">GlassManager</code> を取得したら、まず <code class="language-plaintext highlighter-rouge">connectedDevice</code> の購読を始める。接続の成立も切断も
-この Flow ひとつで観測する。</p>
+<p><a href="/api/glass-manager/"><code class="language-plaintext highlighter-rouge">GlassManager</code></a> を取得したら、まず <a href="/api/glass-manager/connected-device.html"><code class="language-plaintext highlighter-rouge">connectedDevice</code></a>
+の購読を始める。接続の成立も切断も この Flow ひとつで観測する。</p>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">manager</span> <span class="p">=</span> <span class="nf">getGlassManager</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
 
@@ -405,8 +407,9 @@ manager.disconnect(client)
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="language-plaintext highlighter-rouge">connectedDevice</code> は <code class="language-plaintext highlighter-rouge">StateFlow&lt;GlassClient?&gt;</code>。<code class="language-plaintext highlighter-rouge">GlassClient</code> にも <code class="language-plaintext highlighter-rouge">connected: StateFlow&lt;Boolean&gt;</code>
-があるが、接続の有無を知るだけなら <code class="language-plaintext highlighter-rouge">connectedDevice</code> が <code class="language-plaintext highlighter-rouge">null</code> かどうかで足りる。</p>
+<p><a href="/api/glass-manager/connected-device.html"><code class="language-plaintext highlighter-rouge">connectedDevice</code></a> は <code class="language-plaintext highlighter-rouge">StateFlow&lt;GlassClient?&gt;</code>。<a href="/api/glass-client/"><code class="language-plaintext highlighter-rouge">GlassClient</code></a> にも
+<code class="language-plaintext highlighter-rouge">connected: StateFlow&lt;Boolean&gt;</code> があるが、接続の有無を知るだけなら
+<a href="/api/glass-manager/connected-device.html"><code class="language-plaintext highlighter-rouge">connectedDevice</code></a> が <code class="language-plaintext highlighter-rouge">null</code> かどうかで足りる。</p>
 <h2 id="4-デバイスを選んで接続する">
   
   
@@ -419,8 +422,9 @@ manager.disconnect(client)
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">client</span><span class="p">:</span> <span class="nc">GlassClient</span><span class="p">?</span> <span class="p">=</span> <span class="n">manager</span><span class="p">.</span><span class="nf">showAutomaticSelectionDialog</span><span class="p">(</span><span class="n">activity</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>OS のデバイス選択 UI が出て、選ばれたデバイスの <code class="language-plaintext highlighter-rouge">GlassClient</code> が返る。
-<strong>この呼び出しは接続まで済ませる。</strong> 返り値を受け取ったあとに別途 <code class="language-plaintext highlighter-rouge">connect()</code> を呼ぶ必要はない。</p>
+<p>OS のデバイス選択 UI が出て、選ばれたデバイスの <a href="/api/glass-client/"><code class="language-plaintext highlighter-rouge">GlassClient</code></a> が返る。
+<strong>この呼び出しは接続まで済ませる。</strong> 返り値を受け取ったあとに別途 <a href="/api/glass-manager/connect.html"><code class="language-plaintext highlighter-rouge">connect()</code></a>
+を呼ぶ必要はない。</p>
 
 <p>第1引数は Activity。Application Context を渡すとダイアログが出ないので注意。</p>
 <h2 id="5-コマンドを送る">
@@ -457,19 +461,19 @@ manager.disconnect(client)
   </thead>
   <tbody>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">enterHomePage()</code></td>
+      <td><a href="/api/command-manager/enter-home-page.html"><code class="language-plaintext highlighter-rouge">enterHomePage()</code></a></td>
       <td>ホーム</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">enterTeleprompterPage()</code></td>
+      <td><a href="/api/command-manager/enter-teleprompter-page.html"><code class="language-plaintext highlighter-rouge">enterTeleprompterPage()</code></a></td>
       <td>テレプロンプター</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">enterAIPage(isAiPower: Boolean = false)</code></td>
+      <td><a href="/api/command-manager/enter-ai-page.html"><code class="language-plaintext highlighter-rouge">enterAIPage(isAiPower: Boolean = false)</code></a></td>
       <td>AI</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">enterTranslatePage()</code></td>
+      <td><a href="/api/command-manager/enter-translate-page.html"><code class="language-plaintext highlighter-rouge">enterTranslatePage()</code></a></td>
       <td>翻訳</td>
     </tr>
   </tbody>
@@ -492,19 +496,19 @@ manager.disconnect(client)
   </thead>
   <tbody>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">sendTeleprompterContent(content: String)</code></td>
+      <td><a href="/api/command-manager/send-teleprompter-content.html"><code class="language-plaintext highlighter-rouge">sendTeleprompterContent(content: String)</code></a></td>
       <td>テレプロンプターに表示する文字列</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">sendAIContent(content: String)</code></td>
+      <td><a href="/api/command-manager/send-ai-content.html"><code class="language-plaintext highlighter-rouge">sendAIContent(content: String)</code></a></td>
       <td>AI ページに表示する文字列</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">sendTranslateContent(content: String)</code></td>
+      <td><a href="/api/command-manager/send-translate-content.html"><code class="language-plaintext highlighter-rouge">sendTranslateContent(content: String)</code></a></td>
       <td>翻訳ページに表示する文字列</td>
     </tr>
     <tr>
-      <td><code class="language-plaintext highlighter-rouge">sendTranslateLanguage(source: String, target: String)</code></td>
+      <td><a href="/api/command-manager/send-translate-language.html"><code class="language-plaintext highlighter-rouge">sendTranslateLanguage(source: String, target: String)</code></a></td>
       <td>翻訳の言語ペア（例: <code class="language-plaintext highlighter-rouge">"en", "ja"</code>）</td>
     </tr>
   </tbody>
@@ -531,7 +535,8 @@ manager.disconnect(client)
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="language-plaintext highlighter-rouge">gestureEvents</code> は <code class="language-plaintext highlighter-rouge">SharedFlow&lt;GestureType&gt;</code>。購読を始める前に発生したジェスチャーは受け取れない。</p>
+<p><a href="/api/command-manager/gesture-events.html"><code class="language-plaintext highlighter-rouge">gestureEvents</code></a> は
+<code class="language-plaintext highlighter-rouge">SharedFlow&lt;GestureType&gt;</code>。購読を始める前に発生したジェスチャーは受け取れない。</p>
 <h2 id="7-切断する">
   
   
@@ -544,73 +549,9 @@ manager.disconnect(client)
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">manager</span><span class="p">.</span><span class="nf">disconnect</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><code class="language-plaintext highlighter-rouge">GlassClient</code> に <code class="language-plaintext highlighter-rouge">disconnect()</code> は無い。型の上で <code class="language-plaintext highlighter-rouge">GlassClientInternal</code> に隔離してあり、
-必ず <code class="language-plaintext highlighter-rouge">GlassManager</code> を経由する。UI 層が接続状態を持たないようにするための制約。</p>
-<h2 id="ハマりどころ">
-  
-  
-    <a href="#ハマりどころ" class="anchor-heading" aria-labelledby="ハマりどころ"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> ハマりどころ
-  
-  
-</h2>
-    
-
-<ul>
-  <li><strong>SPI を Activity で差し込んでいる</strong> — <code class="language-plaintext highlighter-rouge">Application.onCreate()</code> で差し込む。Activity 生成前に
-SDK が動くと反映されない</li>
-  <li><strong><code class="language-plaintext highlighter-rouge">showAutomaticSelectionDialog()</code> に Application Context を渡している</strong> — Activity が必要</li>
-  <li><strong><code class="language-plaintext highlighter-rouge">SdkActivityHost.showBleDeviceSelectionDialog</code> を差し込み忘れている</strong> — Android でダイアログが
-出ない最頻の原因</li>
-  <li><strong>エミュレータ / シミュレータで試している</strong> — BLE の物理層が必要なため動かない。スキャン中のまま
-止まる</li>
-  <li><strong>Android で BLE 権限を実行時要求していない</strong> — API 31 以降は <code class="language-plaintext highlighter-rouge">BLUETOOTH_SCAN</code> と
-<code class="language-plaintext highlighter-rouge">BLUETOOTH_CONNECT</code> が必要</li>
-  <li><strong>iOS で <code class="language-plaintext highlighter-rouge">Info.plist</code> に <code class="language-plaintext highlighter-rouge">NSBluetoothAlwaysUsageDescription</code> が無い</strong> — CoreBluetooth が
-OS に蹴られ、<code class="language-plaintext highlighter-rouge">GlassClient</code> が永遠に得られない</li>
-</ul>
-<h2 id="プラットフォーム別の橋渡し">
-  
-  
-    <a href="#プラットフォーム別の橋渡し" class="anchor-heading" aria-labelledby="プラットフォーム別の橋渡し"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> プラットフォーム別の橋渡し
-  
-  
-</h2>
-    
-
-<p>ネイティブ側で呼ぶ SDK API はどちらのサンプルでも同じ。違うのは、それをアプリの言語へどう渡すかだけ。</p>
-
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th> </th>
-      <th>コマンド呼び出し</th>
-      <th>イベント通知</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>KMP</td>
-      <td>橋渡しなし。SDK の型を直接扱う</td>
-      <td>Flow をそのまま <code class="language-plaintext highlighter-rouge">collect</code></td>
-    </tr>
-    <tr>
-      <td>Flutter</td>
-      <td><code class="language-plaintext highlighter-rouge">MethodChannel</code></td>
-      <td><code class="language-plaintext highlighter-rouge">EventChannel</code> 2本（<code class="language-plaintext highlighter-rouge">connectionState</code> / <code class="language-plaintext highlighter-rouge">gestureEvents</code>）</td>
-    </tr>
-  </tbody>
-</table></div>
-
-<p>Flutter では <code class="language-plaintext highlighter-rouge">GestureType</code> が文字列（<code class="language-plaintext highlighter-rouge">"SINGLE_TAP"</code> / <code class="language-plaintext highlighter-rouge">"DOUBLE_TAP"</code> / <code class="language-plaintext highlighter-rouge">"HOLD"</code>）
-として渡り、Dart 側で独自の型に変換している。接続状態も同様に
-<code class="language-plaintext highlighter-rouge">{connected, deviceId, deviceName}</code> の形に落として渡している。</p>
-
-<p>実装は各サンプルを参照。</p>
-
-<ul>
-  <li><a href="https://github.com/jig-jp/sabera-sdk/tree/main/samples/flutter">Flutter</a></li>
-  <li><a href="https://github.com/jig-jp/sabera-sdk/tree/main/samples/kmp">KMP</a></li>
-</ul>
+<p><a href="/api/glass-client/"><code class="language-plaintext highlighter-rouge">GlassClient</code></a> に <a href="/api/glass-manager/disconnect.html"><code class="language-plaintext highlighter-rouge">disconnect()</code></a> は無い。型の上で <code class="language-plaintext highlighter-rouge">GlassClientInternal</code>
+に隔離してあり、 必ず <a href="/api/glass-manager/"><code class="language-plaintext highlighter-rouge">GlassManager</code></a> を経由する。UI
+層が接続状態を持たないようにするための制約。</p>
 
           
 
@@ -629,9 +570,9 @@ OS に蹴られ、<code class="language-plaintext highlighter-rouge">GlassClient
     <span class="page-nav-label">&larr; 前</span>
     <span class="page-nav-title">ホーム</span>
   </a>
-  <a class="page-nav-next" href="/api/">
+  <a class="page-nav-next" href="/github-pat.html">
     <span class="page-nav-label">次 &rarr;</span>
-    <span class="page-nav-title">API リファレンス</span>
+    <span class="page-nav-title">GitHub PAT の作り方</span>
   </a>
 </nav>
 

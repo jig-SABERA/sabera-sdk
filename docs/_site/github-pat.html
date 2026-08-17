@@ -14,11 +14,9 @@
   <style id="jtd-nav-activation">
   
 
-    .site-nav > ul.nav-list:first-child > li > a,
-    .site-nav > ul.nav-list:first-child > li > ul > li > a,
     
-    .site-nav > ul.nav-list:first-child > li > ul > li > ul > li:not(:nth-child(15)) > a,
-    .site-nav > ul.nav-list:first-child > li > ul > li > ul > li > ul > li a {
+    .site-nav > ul.nav-list:first-child > li:not(:nth-child(3)) > a,
+    .site-nav > ul.nav-list:first-child > li > ul > li a {
       background-image: none;
     }
 
@@ -27,16 +25,12 @@
       background-image: none;
     }
 
-    .site-nav > ul.nav-list:first-child > li:nth-child(4) > ul > li:nth-child(2) > ul > li:nth-child(15) > a {
+    .site-nav > ul.nav-list:first-child > li:nth-child(3) > a {
       font-weight: 600;
       text-decoration: none;
-    }.site-nav > ul.nav-list:first-child > li:nth-child(4) > button svg,
-    .site-nav > ul.nav-list:first-child > li:nth-child(4) > ul > li:nth-child(2) > button svg,
-    .site-nav > ul.nav-list:first-child > li:nth-child(4) > ul > li:nth-child(2) > ul > li:nth-child(15) > button svg {
+    }.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg {
       transform: rotate(-90deg);
-    }.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(4) > ul.nav-list,
-    .site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(4) > ul.nav-list > li.nav-list-item:nth-child(2) > ul.nav-list,
-    .site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(4) > ul.nav-list > li.nav-list-item:nth-child(2) > ul.nav-list > li.nav-list-item:nth-child(15) > ul.nav-list {
+    }.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list {
       display: block;
     }
   </style>
@@ -56,20 +50,20 @@
 
 
   <!-- Begin Jekyll SEO tag v2.9.0 -->
-<title>showRenameAccessorySheetIOS | Sabera App SDK</title>
+<title>GitHub PAT の作り方 | Sabera App SDK</title>
 <meta name="generator" content="Jekyll v4.4.1" />
-<meta property="og:title" content="showRenameAccessorySheetIOS" />
+<meta property="og:title" content="GitHub PAT の作り方" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Sabera App SDK のドキュメント" />
 <meta name="twitter:description" property="og:description" content="Sabera App SDK のドキュメント" />
-<link rel="canonical" href="/api/glass-manager/show-rename-accessory-sheet-ios.html" />
-<meta property="og:url" content="/api/glass-manager/show-rename-accessory-sheet-ios.html" />
+<link rel="canonical" href="/github-pat.html" />
+<meta property="og:url" content="/github-pat.html" />
 <meta property="og:site_name" content="Sabera App SDK" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="showRenameAccessorySheetIOS" />
+<meta name="twitter:title" content="GitHub PAT の作り方" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Sabera App SDK のドキュメント","headline":"showRenameAccessorySheetIOS","url":"/api/glass-manager/show-rename-accessory-sheet-ios.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Sabera App SDK のドキュメント","headline":"GitHub PAT の作り方","url":"/github-pat.html"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -272,65 +266,145 @@
 </div>
 
     <div class="main-content-wrap">
-      <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-  <ol class="breadcrumb-nav-list">
-    <li class="breadcrumb-nav-list-item"><a href="/api/">API リファレンス</a></li>
-    <li class="breadcrumb-nav-list-item"><a href="/api/glass-manager/">GlassManager</a></li>
-    <li class="breadcrumb-nav-list-item"><span>showRenameAccessorySheetIOS</span></li>
-  </ol>
-</nav>
-
-
+      
       <div id="main-content" class="main-content">
         <main>
           
-            <h1 id="glassmanagershowrenameaccessorysheetios">
+            <h1 id="github-pat-の作り方">
   
   
-    <a href="#glassmanagershowrenameaccessorysheetios" class="anchor-heading" aria-labelledby="glassmanagershowrenameaccessorysheetios"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> GlassManager.showRenameAccessorySheetIOS
+    <a href="#github-pat-の作り方" class="anchor-heading" aria-labelledby="github-pat-の作り方"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> GitHub PAT の作り方
   
   
 </h1>
     
 
-<blockquote class="warning">
-  <p>このページは執筆中です。</p>
-</blockquote>
+<p>SDK は private な GitHub Packages で配布しているため、取得には Personal Access Token
+(PAT) が必要になる。ここではその発行手順をまとめる。</p>
+<h2 id="1-トークンを発行する">
+  
+  
+    <a href="#1-トークンを発行する" class="anchor-heading" aria-labelledby="1-トークンを発行する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. トークンを発行する
+  
+  
+</h2>
+    
 
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">suspend</span> <span class="k">fun</span> <span class="nf">showRenameAccessorySheetIOS</span><span class="p">():</span> <span class="nc">Boolean</span>
+<p>GitHub にログインした状態で
+<a href="https://github.com/settings/tokens">Settings &gt; Developer settings &gt; Personal access tokens &gt; Tokens (classic)</a>
+を開き、<strong>Generate new token (classic)</strong> を選ぶ。</p>
+
+<p>入力する項目は次の3つ。</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>項目</th>
+      <th>値</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Note</td>
+      <td>用途がわかる名前（例: <code class="language-plaintext highlighter-rouge">sabera-sdk packages</code>）</td>
+    </tr>
+    <tr>
+      <td>Expiration</td>
+      <td>任意。期限切れ後は再発行が必要</td>
+    </tr>
+    <tr>
+      <td>Scopes</td>
+      <td><strong><code class="language-plaintext highlighter-rouge">read:packages</code> のみ</strong>にチェック</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><code class="language-plaintext highlighter-rouge">repo</code> などほかのスコープは SDK の取得には不要。付けるとトークンが漏れたときの影響が
+大きくなるので、<code class="language-plaintext highlighter-rouge">read:packages</code> だけにする。</p>
+
+<p><strong>Generate token</strong> を押すと画面にトークンが表示される。この画面を離れると二度と
+表示されないので、その場でコピーしておく。</p>
+<h2 id="2-sso-を認可する表示されている場合のみ">
+  
+  
+    <a href="#2-sso-を認可する表示されている場合のみ" class="anchor-heading" aria-labelledby="2-sso-を認可する表示されている場合のみ"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. SSO を認可する（表示されている場合のみ）
+  
+  
+</h2>
+    
+
+<p>トークン一覧に <strong>Configure SSO</strong> ボタンが出ている場合、Organization が SAML SSO を
+使っている。発行しただけではパッケージを取得できないので、ボタンを押して <code class="language-plaintext highlighter-rouge">jig-jp</code> を
+<strong>Authorize</strong> する。これを忘れると <code class="language-plaintext highlighter-rouge">401 Unauthorized</code> になる。</p>
+<h2 id="3-gradle-に設定する">
+  
+  
+    <a href="#3-gradle-に設定する" class="anchor-heading" aria-labelledby="3-gradle-に設定する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. Gradle に設定する
+  
+  
+</h2>
+    
+
+<p><code class="language-plaintext highlighter-rouge">~/.gradle/gradle.properties</code> に書く。プロジェクト直下ではなくホーム配下に置くのは、
+リポジトリにコミットしてしまう事故を防ぐため。</p>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">gpr.user</span><span class="p">=</span><span class="s">&lt;GitHubのユーザー名&gt;</span>
+<span class="py">gpr.token</span><span class="p">=</span><span class="s">&lt;発行した PAT&gt;</span>
 </code></pre></div></div>
-<h2 id="概要">
+
+<p>環境変数でも代用できる。CI ではこちらを使う。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">GITHUB_ACTOR</span><span class="o">=</span>&lt;GitHubのユーザー名&gt;
+<span class="nb">export </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span>&lt;発行した PAT&gt;
+</code></pre></div></div>
+<h2 id="4-確認する">
   
   
-    <a href="#概要" class="anchor-heading" aria-labelledby="概要"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 概要
+    <a href="#4-確認する" class="anchor-heading" aria-labelledby="4-確認する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. 確認する
   
   
 </h2>
     
 
-<!-- WIP -->
-<h2 id="戻り値">
+<p>サンプルの Android プロジェクトをビルドし、SDK の依存が解決できれば設定は完了。</p>
+<h2 id="うまくいかないとき">
   
   
-    <a href="#戻り値" class="anchor-heading" aria-labelledby="戻り値"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 戻り値
-  
-  
-</h2>
-    
-
-<p><code class="language-plaintext highlighter-rouge">Boolean</code></p>
-<h2 id="使用例">
-  
-  
-    <a href="#使用例" class="anchor-heading" aria-labelledby="使用例"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 使用例
+    <a href="#うまくいかないとき" class="anchor-heading" aria-labelledby="うまくいかないとき"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> うまくいかないとき
   
   
 </h2>
     
 
-<!-- snippet: GlassManager.showRenameAccessorySheetIOS -->
-<!-- WIP -->
-<!-- /snippet -->
+<ul>
+  <li><strong>401 Unauthorized</strong> — SSO の認可漏れ、またはトークンの期限切れ。手順 2 を確認する</li>
+  <li><strong>403 Forbidden</strong> — スコープに <code class="language-plaintext highlighter-rouge">read:packages</code> が入っていない</li>
+  <li><strong>依存が見つからない</strong> — <code class="language-plaintext highlighter-rouge">gradle.properties</code> の場所が違う。
+<code class="language-plaintext highlighter-rouge">~/.gradle/gradle.properties</code> に置く</li>
+  <li><strong>認証情報が空のまま</strong> — <code class="language-plaintext highlighter-rouge">gpr.user</code> は GitHub のユーザー名。メールアドレスではない</li>
+</ul>
+<h2 id="fine-grained-token-について">
+  
+  
+    <a href="#fine-grained-token-について" class="anchor-heading" aria-labelledby="fine-grained-token-について"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Fine-grained token について
+  
+  
+</h2>
+    
+
+<p>新しい Fine-grained personal access token でもパッケージの読み取りはできるが、
+Organization 側で許可設定が必要になる。特に理由がなければ classic を使う。</p>
+<h2 id="取り扱い">
+  
+  
+    <a href="#取り扱い" class="anchor-heading" aria-labelledby="取り扱い"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 取り扱い
+  
+  
+</h2>
+    
+
+<p>PAT はパスワードと同じ扱いにする。リポジトリにコミットしない、Slack や
+Issue に貼らない。漏れた場合はトークン一覧から <strong>Delete</strong> して再発行する。</p>
 
           
 
@@ -345,13 +419,13 @@
     
 
     <nav class="page-nav" aria-label="前後のページ">
-  <a class="page-nav-prev" href="/api/glass-manager/show-disconnect-sheet-ios.html">
+  <a class="page-nav-prev" href="/getting-started.html">
     <span class="page-nav-label">&larr; 前</span>
-    <span class="page-nav-title">GlassManager / showDisconnectSheetIOS</span>
+    <span class="page-nav-title">Getting Started</span>
   </a>
-  <a class="page-nav-next" href="/api/glass-client/">
+  <a class="page-nav-next" href="/api/">
     <span class="page-nav-label">次 &rarr;</span>
-    <span class="page-nav-title">API リファレンス / GlassClient</span>
+    <span class="page-nav-title">API リファレンス</span>
   </a>
 </nav>
 

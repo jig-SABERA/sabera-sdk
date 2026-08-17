@@ -15,7 +15,7 @@
   
 
     
-    .site-nav > ul.nav-list:first-child > li:not(:nth-child(3)) > a,
+    .site-nav > ul.nav-list:first-child > li:not(:nth-child(4)) > a,
     .site-nav > ul.nav-list:first-child > li > ul > li a {
       background-image: none;
     }
@@ -25,12 +25,12 @@
       background-image: none;
     }
 
-    .site-nav > ul.nav-list:first-child > li:nth-child(3) > a {
+    .site-nav > ul.nav-list:first-child > li:nth-child(4) > a {
       font-weight: 600;
       text-decoration: none;
-    }.site-nav > ul.nav-list:first-child > li:nth-child(3) > button svg {
+    }.site-nav > ul.nav-list:first-child > li:nth-child(4) > button svg {
       transform: rotate(-90deg);
-    }.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(3) > ul.nav-list {
+    }.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(4) > ul.nav-list {
       display: block;
     }
   </style>
@@ -161,7 +161,7 @@
   <nav aria-label="Main" id="site-nav" class="site-nav">
   
   
-    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">ホーム</a></li><li class="nav-list-item"><a href="/getting-started.html" class="nav-list-link">Getting Started</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in API リファレンス category" aria-pressed="false">
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">ホーム</a></li><li class="nav-list-item"><a href="/getting-started.html" class="nav-list-link">Getting Started</a></li><li class="nav-list-item"><a href="/github-pat.html" class="nav-list-link">GitHub PAT の作り方</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in API リファレンス category" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
       </button><a href="/api/" class="nav-list-link">API リファレンス</a><ul class="nav-list"><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in GlassesSDK category" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
@@ -295,15 +295,15 @@
     </tr>
     <tr>
       <td><a href="glass-manager/">GlassManager</a></td>
-      <td>デバイスの探索・接続・切断を担う。<code class="language-plaintext highlighter-rouge">getGlassManager(context)</code> で取得する。</td>
+      <td>デバイスの探索・接続・切断を担う。<a href="/api/glass-manager/get-glass-manager.html"><code class="language-plaintext highlighter-rouge">getGlassManager(context)</code></a> で取得する。</td>
     </tr>
     <tr>
       <td><a href="glass-client/">GlassClient</a></td>
-      <td>接続済みの1台を表す。<code class="language-plaintext highlighter-rouge">GlassManager.connectedDevice</code> から得る。</td>
+      <td>接続済みの1台を表す。<a href="/api/glass-manager/connected-device.html"><code class="language-plaintext highlighter-rouge">GlassManager.connectedDevice</code></a> から得る。</td>
     </tr>
     <tr>
       <td><a href="command-manager/">CommandManager</a></td>
-      <td>グラス側の画面遷移・コンテンツ送信・イベント購読。<code class="language-plaintext highlighter-rouge">GlassClient.createCommandManager()</code> で作る。</td>
+      <td>グラス側の画面遷移・コンテンツ送信・イベント購読。<a href="/api/glass-client/create-command-manager.html"><code class="language-plaintext highlighter-rouge">GlassClient.createCommandManager()</code></a> で作る。</td>
     </tr>
     <tr>
       <td><a href="sdk-activity-host/">SdkActivityHost</a></td>
@@ -366,9 +366,9 @@
     
 
     <nav class="page-nav" aria-label="前後のページ">
-  <a class="page-nav-prev" href="/getting-started.html">
+  <a class="page-nav-prev" href="/github-pat.html">
     <span class="page-nav-label">&larr; 前</span>
-    <span class="page-nav-title">Getting Started</span>
+    <span class="page-nav-title">GitHub PAT の作り方</span>
   </a>
   <a class="page-nav-next" href="/api/glasses-sdk/">
     <span class="page-nav-label">次 &rarr;</span>

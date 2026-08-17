@@ -44,4 +44,4 @@ app.*.map.json
 
 # Jekyll (docs)
 docs/.sass-cache/
-docs/_site/
+.env

@@ -7658,6 +7658,10 @@ html {
   height: 1rem;
 }
 
+.search-result-highlight {
+  color: #2c84fa;
+}
+
 @view-transition {
   navigation: auto;
 }
@@ -7666,6 +7670,8 @@ html {
 }
 
 .main-header {
+  position: relative;
+  z-index: 2;
   view-transition-name: main-header;
 }
 

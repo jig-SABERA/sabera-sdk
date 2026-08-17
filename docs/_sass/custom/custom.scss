@@ -54,6 +54,11 @@ html {
   }
 }
 
+// テーマは太字にするだけで、コード例が並ぶ検索結果ではどこが一致したのか見分けづらい
+.search-result-highlight {
+  color: $link-color;
+}
+
 // 対応ブラウザでは、遷移を差分の入れ替えとして扱う（未対応なら無視される）
 @view-transition {
   navigation: auto;
@@ -65,7 +70,12 @@ html {
   view-transition-name: side-bar;
 }
 
+// view-transition-name を付けた要素はスタッキングコンテキストを作る。テーマは
+// .search の z-index で検索結果を本文の上に出しているが、それがヘッダの中に
+// 閉じ込められて本文に潜っていた。ヘッダごと本文より上に持ち上げる
 .main-header {
+  position: relative;
+  z-index: 2;
   view-transition-name: main-header;
 }
 

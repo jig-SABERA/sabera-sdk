@@ -27,12 +27,13 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      # SDK は同じリポジトリの GitHub Packages にあるので GITHUB_TOKEN で取れる
+      # SDK は jig-SABERA/sabera-sdk-packages にある。GITHUB_TOKEN は自リポジトリの
+      # パッケージしか読めないため、read:packages を持つ PAT を Secrets から渡す
       - name: コード例をコンパイルする
         working-directory: samples/kmp
         env:
           GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SDK_PACKAGES_TOKEN }}
         run: ./gradlew --no-daemon :snippets:compileDebugKotlin :snippets:ktlintCheck
 
       - name: docs のコード例が最新か確かめる

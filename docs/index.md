@@ -8,6 +8,7 @@ nav_order: 1
 スマートグラスと通信するアプリを作るための SDK。Android / iOS で同じ API を使う。
 
 - [Getting Started](getting-started.html) — セットアップと基本的な使い方
+- [GitHub PAT の作り方](github-pat.html) — SDK 取得に必要なトークンの発行手順
 - [API リファレンス](api/) — 公開 API の一覧
 
 ## サンプル

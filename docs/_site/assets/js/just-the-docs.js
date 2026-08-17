@@ -124,6 +124,15 @@ function searchLoaded(index, docs) {
   var mainHeader = document.getElementById('main-header');
   var currentInput;
   var currentSearchIndex = 0;
+  // add event listener on ctrl + <focus_shortcut_key> for showing the search input
+  jtd.addEvent(document, 'keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+
+      mainHeader.classList.add('nav-open');
+      searchInput.focus();
+    }
+  });
 
   function showSearch() {
     document.documentElement.classList.add('search-active');

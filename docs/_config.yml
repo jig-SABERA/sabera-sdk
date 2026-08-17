@@ -22,6 +22,10 @@ color_scheme: sabera
 search_enabled: true
 heading_anchors: true
 
+search:
+  # Cmd+K / Ctrl+K で検索窓にフォーカスする
+  focus_shortcut_key: 'k'
+
 aux_links:
   GitHub: https://github.com/jig-jp/sabera-sdk
 

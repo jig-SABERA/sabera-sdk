@@ -1,0 +1,573 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+    
+    .site-nav > ul.nav-list:first-child > li:not(:nth-child(4)) > a,
+    .site-nav > ul.nav-list:first-child > li > ul > li a {
+      background-image: none;
+    }
+
+    .site-nav > ul.nav-list:not(:first-child) a,
+    .site-nav li.external a {
+      background-image: none;
+    }
+
+    .site-nav > ul.nav-list:first-child > li:nth-child(4) > a {
+      font-weight: 600;
+      text-decoration: none;
+    }.site-nav > ul.nav-list:first-child > li:nth-child(4) > button svg {
+      transform: rotate(-90deg);
+    }.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(4) > ul.nav-list {
+      display: block;
+    }
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>ドキュメントの作り方 | Sabera App SDK</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="ドキュメントの作り方" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Sabera App SDK のドキュメント" />
+<meta name="twitter:description" property="og:description" content="Sabera App SDK のドキュメント" />
+<link rel="canonical" href="/authoring.html" />
+<meta property="og:url" content="/authoring.html" />
+<meta property="og:site_name" content="Sabera App SDK" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="ドキュメントの作り方" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Sabera App SDK のドキュメント","headline":"ドキュメントの作り方","url":"/authoring.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <link id="sabera-dark-scheme" rel="stylesheet" href="/assets/css/sabera-dark.css" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<script>
+  // 描画が始まる前に反映しないと、保存した配色に切り替わる瞬間がちらつく
+  (function () {
+    var media = { light: 'not all', dark: 'all' }[localStorage.getItem('sabera-color-scheme')];
+    if (media) document.getElementById('sabera-dark-scheme').media = media;
+  })();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/" class="site-title lh-tight">
+  Sabera App SDK
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">ホーム</a></li><li class="nav-list-item"><a href="/getting-started.html" class="nav-list-link">Getting Started</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in API リファレンス category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/" class="nav-list-link">API リファレンス</a><ul class="nav-list"><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in GlassesSDK category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/glasses-sdk/" class="nav-list-link">GlassesSDK</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/glasses-sdk/set-logger.html" class="nav-list-link">setLogger</a></li><li class="nav-list-item"><a href="/api/glasses-sdk/set-prod.html" class="nav-list-link">setProd</a></li><li class="nav-list-item"><a href="/api/glasses-sdk/set-device-persistence.html" class="nav-list-link">setDevicePersistence</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in GlassManager category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/glass-manager/" class="nav-list-link">GlassManager</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/glass-manager/get-glass-manager.html" class="nav-list-link">getGlassManager</a></li><li class="nav-list-item"><a href="/api/glass-manager/connected-device.html" class="nav-list-link">connectedDevice</a></li><li class="nav-list-item"><a href="/api/glass-manager/last-connected-device.html" class="nav-list-link">lastConnectedDevice</a></li><li class="nav-list-item"><a href="/api/glass-manager/has-last-connected-device.html" class="nav-list-link">hasLastConnectedDevice</a></li><li class="nav-list-item"><a href="/api/glass-manager/selection-dialog-presented.html" class="nav-list-link">selectionDialogPresented</a></li><li class="nav-list-item"><a href="/api/glass-manager/external-display-name-changed.html" class="nav-list-link">externalDisplayNameChanged</a></li><li class="nav-list-item"><a href="/api/glass-manager/show-automatic-selection-dialog.html" class="nav-list-link">showAutomaticSelectionDialog</a></li><li class="nav-list-item"><a href="/api/glass-manager/connect.html" class="nav-list-link">connect</a></li><li class="nav-list-item"><a href="/api/glass-manager/disconnect.html" class="nav-list-link">disconnect</a></li><li class="nav-list-item"><a href="/api/glass-manager/disconnect-and-clear-bond.html" class="nav-list-link">disconnectAndClearBond</a></li><li class="nav-list-item"><a href="/api/glass-manager/create-client-from-device-id.html" class="nav-list-link">createClientFromDeviceID</a></li><li class="nav-list-item"><a href="/api/glass-manager/on-device-disappear.html" class="nav-list-link">onDeviceDisappear</a></li><li class="nav-list-item"><a href="/api/glass-manager/register-device-from-intent.html" class="nav-list-link">registerDeviceFromIntent</a></li><li class="nav-list-item"><a href="/api/glass-manager/show-disconnect-sheet-ios.html" class="nav-list-link">showDisconnectSheetIOS</a></li><li class="nav-list-item"><a href="/api/glass-manager/show-rename-accessory-sheet-ios.html" class="nav-list-link">showRenameAccessorySheetIOS</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in GlassClient category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/glass-client/" class="nav-list-link">GlassClient</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/glass-client/connected.html" class="nav-list-link">connected</a></li><li class="nav-list-item"><a href="/api/glass-client/device-name.html" class="nav-list-link">deviceName</a></li><li class="nav-list-item"><a href="/api/glass-client/device-identifier.html" class="nav-list-link">deviceIdentifier</a></li><li class="nav-list-item"><a href="/api/glass-client/is-connection-valid.html" class="nav-list-link">isConnectionValid</a></li><li class="nav-list-item"><a href="/api/glass-client/create-command-manager.html" class="nav-list-link">createCommandManager</a></li><li class="nav-list-item"><a href="/api/glass-client/mic-channel.html" class="nav-list-link">micChannel</a></li><li class="nav-list-item"><a href="/api/glass-client/send-command.html" class="nav-list-link">sendCommand</a></li><li class="nav-list-item"><a href="/api/glass-client/send-command-list.html" class="nav-list-link">sendCommandList</a></li><li class="nav-list-item"><a href="/api/glass-client/send-text.html" class="nav-list-link">sendText</a></li><li class="nav-list-item"><a href="/api/glass-client/cancel-pending-packets.html" class="nav-list-link">cancelPendingPackets</a></li><li class="nav-list-item"><a href="/api/glass-client/reboot.html" class="nav-list-link">reboot</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in CommandManager category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/command-manager/" class="nav-list-link">CommandManager</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/command-manager/connected.html" class="nav-list-link">connected</a></li><li class="nav-list-item"><a href="/api/command-manager/gesture-events.html" class="nav-list-link">gestureEvents</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-home-page.html" class="nav-list-link">enterHomePage</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-teleprompter-page.html" class="nav-list-link">enterTeleprompterPage</a></li><li class="nav-list-item"><a href="/api/command-manager/send-teleprompter-content.html" class="nav-list-link">sendTeleprompterContent</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-ai-page.html" class="nav-list-link">enterAIPage</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-content.html" class="nav-list-link">sendAIContent</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-translate-page.html" class="nav-list-link">enterTranslatePage</a></li><li class="nav-list-item"><a href="/api/command-manager/send-translate-content.html" class="nav-list-link">sendTranslateContent</a></li><li class="nav-list-item"><a href="/api/command-manager/send-translate-language.html" class="nav-list-link">sendTranslateLanguage</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-meeting-page.html" class="nav-list-link">enterMeetingPage</a></li><li class="nav-list-item"><a href="/api/command-manager/send-meeting.html" class="nav-list-link">sendMeeting</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-ai-chat-page.html" class="nav-list-link">enterAiChatPage</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-chat-sender.html" class="nav-list-link">sendAiChatSender</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-chat-text.html" class="nav-list-link">sendAiChatText</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-chat-status.html" class="nav-list-link">sendAiChatStatus</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-chat-sender-text.html" class="nav-list-link">sendAiChatSenderText</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-chat-sender-status.html" class="nav-list-link">sendAiChatSenderStatus</a></li><li class="nav-list-item"><a href="/api/command-manager/open-glass-mic.html" class="nav-list-link">openGlassMic</a></li><li class="nav-list-item"><a href="/api/command-manager/close-glass-mic.html" class="nav-list-link">closeGlassMic</a></li><li class="nav-list-item"><a href="/api/command-manager/send-message.html" class="nav-list-link">sendMessage</a></li><li class="nav-list-item"><a href="/api/command-manager/sync-notification-count.html" class="nav-list-link">syncNotificationCount</a></li><li class="nav-list-item"><a href="/api/command-manager/send-debug-phone-name.html" class="nav-list-link">sendDebugPhoneName</a></li><li class="nav-list-item"><a href="/api/command-manager/add-glass-power-event-listener.html" class="nav-list-link">addGlassPowerEventListener</a></li><li class="nav-list-item"><a href="/api/command-manager/remove-glass-power-event-listener.html" class="nav-list-link">removeGlassPowerEventListener</a></li><li class="nav-list-item"><a href="/api/command-manager/add-remote-controller-event-listener.html" class="nav-list-link">addRemoteControllerEventListener</a></li><li class="nav-list-item"><a href="/api/command-manager/remove-remote-controller-event-listener.html" class="nav-list-link">removeRemoteControllerEventListener</a></li><li class="nav-list-item"><a href="/api/command-manager/parse-response.html" class="nav-list-link">parseResponse</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in SdkActivityHost category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/sdk-activity-host/" class="nav-list-link">SdkActivityHost</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/sdk-activity-host/show-ble-device-selection-dialog.html" class="nav-list-link">showBleDeviceSelectionDialog</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in SdkDevicePersistence category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/sdk-device-persistence/" class="nav-list-link">SdkDevicePersistence</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/sdk-device-persistence/last-device-id.html" class="nav-list-link">lastDeviceId</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in BLE (Android) category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/ble/" class="nav-list-link">BLE (Android)</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/ble/connect-to-last-device.html" class="nav-list-link">BleCompanionDeviceService.connectToLastDevice</a></li><li class="nav-list-item"><a href="/api/ble/show-dialog.html" class="nav-list-link">BleDeviceSelector.showDialog</a></li><li class="nav-list-item"><a href="/api/ble/on-activity-result.html" class="nav-list-link">BleDeviceSelector.onActivityResult</a></li></ul></li></ul></li><li class="nav-list-item"><a href="/authoring.html" class="nav-list-link">ドキュメントの作り方</a></li></ul>
+  
+</nav>
+
+
+
+
+  
+  
+    <footer class="site-footer">
+      This site uses <a href="https://github.com/just-the-docs/just-the-docs">Just the Docs</a>, a documentation theme for Jekyll.
+    </footer>
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search Sabera App SDK" aria-label="Search Sabera App SDK" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  <button type="button" id="sabera-scheme-toggle" class="scheme-toggle"></button>
+<script>
+  (function () {
+    var link = document.getElementById('sabera-dark-scheme');
+    var button = document.getElementById('sabera-scheme-toggle');
+    var LABEL = { light: 'ライト', dark: 'ダーク' };
+    var ICON = {
+      light:
+        '<svg viewBox="0 0 16 16" aria-hidden="true">' +
+        '<circle cx="8" cy="8" r="3.2" fill="currentColor"/>' +
+        '<path d="M8 0.5v2M8 13.5v2M0.5 8h2M13.5 8h2M2.7 2.7l1.4 1.4M11.9 11.9l1.4 1.4M13.3 2.7l-1.4 1.4M4.1 11.9l-1.4 1.4"' +
+        ' fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
+      dark:
+        '<svg viewBox="0 0 16 16" aria-hidden="true">' +
+        '<path d="M14 10.2A6.4 6.4 0 0 1 5.8 2a6.5 6.5 0 1 0 8.2 8.2z" fill="currentColor"/></svg>',
+    };
+
+    function current() {
+      if (link.media === 'all') return 'dark';
+      if (link.media === 'not all') return 'light';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function render() {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      button.innerHTML = ICON[next] + '<span>' + LABEL[next] + '</span>';
+      button.setAttribute('aria-label', LABEL[next] + 'に切り替える');
+    }
+
+    button.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      link.media = next === 'dark' ? 'all' : 'not all';
+      localStorage.setItem('sabera-color-scheme', next);
+      render();
+    });
+
+    render();
+  })();
+</script>
+
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/jig-jp/sabera-sdk" class="site-button"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <h1 id="ドキュメントの作り方">
+  
+  
+    <a href="#ドキュメントの作り方" class="anchor-heading" aria-labelledby="ドキュメントの作り方"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> ドキュメントの作り方
+  
+  
+</h1>
+    
+
+<p>このサイトの構成と、ページを増やすときの手順。</p>
+<h2 id="置き場所">
+  
+  
+    <a href="#置き場所" class="anchor-heading" aria-labelledby="置き場所"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 置き場所
+  
+  
+</h2>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>パス</th>
+      <th>中身</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">docs/_config.yml</code></td>
+      <td>Jekyll の設定</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">docs/Gemfile</code></td>
+      <td>Jekyll とテーマ（just-the-docs）の固定</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">docs/index.md</code> / <code class="language-plaintext highlighter-rouge">getting-started.md</code></td>
+      <td>トップと入門</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">docs/api/**</code></td>
+      <td>メソッドごとのページ。<code class="language-plaintext highlighter-rouge">scripts/gen-api-docs.py</code> が雛形を作る</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">docs/_sass/color_schemes/</code></td>
+      <td>配色。<code class="language-plaintext highlighter-rouge">sabera.scss</code> がライト、<code class="language-plaintext highlighter-rouge">sabera-dark.scss</code> がダーク</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">docs/_sass/custom/custom.scss</code></td>
+      <td>前後リンクと配色切り替えボタンの見た目</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">docs/_includes/</code></td>
+      <td>head / ヘッダ / フッタへの差し込み</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">scripts/gen-api-docs.py</code></td>
+      <td>API ページの雛形を書き出す</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">scripts/sync-snippets.py</code></td>
+      <td>コード例を Kotlin から <code class="language-plaintext highlighter-rouge">docs/api/**</code> へ写す</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">samples/kmp/snippets/</code></td>
+      <td>コード例の出処。コンパイルと ktlint を通る</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>公開は GitHub Pages。<code class="language-plaintext highlighter-rouge">main</code> への push で Actions がビルドしてデプロイする（<a href="#デプロイ">デプロイ</a>）。</p>
+<h2 id="本文を書く">
+  
+  
+    <a href="#本文を書く" class="anchor-heading" aria-labelledby="本文を書く"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 本文を書く
+  
+  
+</h2>
+    
+
+<p><code class="language-plaintext highlighter-rouge">docs/api/**</code> の Markdown を直接編集する。<code class="language-plaintext highlighter-rouge">&lt;!-- WIP --&gt;</code> を消して書けばよい。</p>
+
+<p>雛形には次の3つのプレースホルダがある。</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">{: .warning } &gt; このページは執筆中です。</code> — 書き終えたら消す</li>
+  <li><code class="language-plaintext highlighter-rouge">&lt;!-- WIP --&gt;</code> — 概要・引数の説明・使用例</li>
+  <li><code class="language-plaintext highlighter-rouge">&lt;!-- snippet: ... --&gt;</code> — コード例の貼り先（後述）</li>
+</ul>
+<h2 id="メソッドを増やす">
+  
+  
+    <a href="#メソッドを増やす" class="anchor-heading" aria-labelledby="メソッドを増やす"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> メソッドを増やす
+  
+  
+</h2>
+    
+
+<p>SDK に公開メソッドが増えたら <code class="language-plaintext highlighter-rouge">scripts/gen-api-docs.py</code> の <code class="language-plaintext highlighter-rouge">SPEC</code> に足して実行する。</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">python3 scripts/gen-api-docs.py
+</span></code></pre></div></div>
+
+<p>既存ファイルは上書きしないので、書いた本文は残る。雛形そのものを変えたときだけ <code class="language-plaintext highlighter-rouge">--force</code>
+を使うが、本文を書いた後に使うと消える。</p>
+
+<p>シグネチャは AAR を読んで確定させる。</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">#</span><span class="w"> </span>0.0.10 の AAR を GitHub Packages から取る
+<span class="gp">curl -sL -u "&lt;user&gt;</span>:&lt;PAT&gt;<span class="s2">" -o core.aar </span><span class="se">\</span><span class="s2">
+</span><span class="go">  https://maven.pkg.github.com/jig-jp/sabera-sdk/jp/jig/sabera/app/sdk/sabera-app-core-android/0.0.10/sabera-app-core-android-0.0.10.aar
+unzip -o core.aar -d aar &amp;&amp; unzip -o aar/classes.jar -d cls
+javap -public cls/app/jigglass/glass/CommandManager.class
+</span></code></pre></div></div>
+<h2 id="コード例">
+  
+  
+    <a href="#コード例" class="anchor-heading" aria-labelledby="コード例"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> コード例
+  
+  
+</h2>
+    
+
+<p>コード例は Markdown に直接書かない。出処は <code class="language-plaintext highlighter-rouge">samples/kmp/snippets</code> の Kotlin ソースで、
+そこは <strong>コンパイルと ktlint が通る</strong>。SDK の API が変われば CI が落ちる。</p>
+
+<p>Kotlin 側にマーカーを置く。</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">teleprompter</span><span class="p">(</span><span class="n">commandManager</span><span class="p">:</span> <span class="nc">CommandManager</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// #snippet CommandManager.sendTeleprompterContent</span>
+    <span class="n">commandManager</span><span class="p">.</span><span class="nf">enterTeleprompterPage</span><span class="p">()</span>
+    <span class="n">commandManager</span><span class="p">.</span><span class="nf">sendTeleprompterContent</span><span class="p">(</span><span class="s">"読み上げる原稿"</span><span class="p">)</span>
+    <span class="c1">// #endsnippet</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Markdown 側の貼り先は雛形が用意している。</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- snippet: CommandManager.sendTeleprompterContent --&gt;</span>
+<span class="c">&lt;!-- /snippet --&gt;</span>
+</code></pre></div></div>
+
+<p>写す。</p>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">python3 scripts/sync-snippets.py
+</span></code></pre></div></div>
+
+<p>マーカー間が ` ```kotlin ` ブロックに置き換わる。id が一致するスニペットが無いページは
+そのまま残る。1つのスニペットを複数ページに貼りたいときは、貼り先の id を揃える。</p>
+
+<p>Jekyll の <code class="language-plaintext highlighter-rouge">include</code> を使わずページに直接書き込んでいるのは、GitHub 上で <code class="language-plaintext highlighter-rouge">.md</code> を読んだときにも
+コード例が見えるようにするため。</p>
+<h2 id="引数名の検証">
+  
+  
+    <a href="#引数名の検証" class="anchor-heading" aria-labelledby="引数名の検証"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 引数名の検証
+  
+  
+</h2>
+    
+
+<p><code class="language-plaintext highlighter-rouge">javap</code> はバイトコードから引数名を出せない。そこで
+<code class="language-plaintext highlighter-rouge">samples/kmp/snippets/.../ArgumentNames.kt</code> で全メソッドを<strong>名前付き引数</strong>で1回だけ呼んでいる。</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">commandManager</span><span class="p">.</span><span class="nf">sendMessage</span><span class="p">(</span><span class="n">name</span> <span class="p">=</span> <span class="s">"app"</span><span class="p">,</span> <span class="n">title</span> <span class="p">=</span> <span class="s">"title"</span><span class="p">,</span> <span class="n">time</span> <span class="p">=</span> <span class="mi">0L</span><span class="p">,</span> <span class="n">text</span> <span class="p">=</span> <span class="s">"text"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>ドキュメントの引数名が実際の宣言とずれるとコンパイルが落ちる。このファイルはドキュメントには
+写らない（<code class="language-plaintext highlighter-rouge">#snippet</code> マーカーを置いていない）。</p>
+<h2 id="ローカルで見る">
+  
+  
+    <a href="#ローカルで見る" class="anchor-heading" aria-labelledby="ローカルで見る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> ローカルで見る
+  
+  
+</h2>
+    
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">cd docs
+bundle install
+bundle exec jekyll serve
+</span></code></pre></div></div>
+
+<p><a href="http://127.0.0.1:4000/">http://127.0.0.1:4000/</a> が開く。ファイルを保存すると自動で再ビルドされるが、<code class="language-plaintext highlighter-rouge">_config.yml</code> を
+変えたときは再起動が必要。</p>
+
+<p>SCSS の deprecation 警告（<code class="language-plaintext highlighter-rouge">@import</code> と <code class="language-plaintext highlighter-rouge">darken()</code>）が大量に出る。テーマ側の書き方が dart-sass の
+新しい記法に追いついていないためで、ビルドは通る。</p>
+<h2 id="デプロイ">
+  
+  
+    <a href="#デプロイ" class="anchor-heading" aria-labelledby="デプロイ"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> デプロイ
+  
+  
+</h2>
+    
+
+<p><code class="language-plaintext highlighter-rouge">main</code> への push で Actions（<code class="language-plaintext highlighter-rouge">.github/workflows/docs.yml</code> の <code class="language-plaintext highlighter-rouge">deploy</code>）がビルドして
+GitHub Pages へ出す。ブランチを公開ソースにする方式は使っていないので、<code class="language-plaintext highlighter-rouge">_site</code> をコミットする
+必要はない。</p>
+
+<p><code class="language-plaintext highlighter-rouge">baseurl</code> は <code class="language-plaintext highlighter-rouge">actions/configure-pages</code> が返す値をビルド時に渡している。リポジトリを引っ越しても
+名前から決まるため、設定を直す必要はない。</p>
+
+<p>デプロイの様子は Actions の <code class="language-plaintext highlighter-rouge">deploy</code> ジョブと、リポジトリの Environments（<code class="language-plaintext highlighter-rouge">github-pages</code>）で見られる。</p>
+<h3 id="初回だけ必要な設定">
+  
+  
+    <a href="#初回だけ必要な設定" class="anchor-heading" aria-labelledby="初回だけ必要な設定"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 初回だけ必要な設定
+  
+  
+</h3>
+    
+
+<p>Settings → Pages の <strong>Source</strong> を <code class="language-plaintext highlighter-rouge">GitHub Actions</code> にする。<code class="language-plaintext highlighter-rouge">Deploy from a branch</code> のままだと
+このワークフローの成果物は公開されない。</p>
+
+<p>private リポジトリで Pages を公開するには GitHub Team 以上のプランが必要。</p>
+<h2 id="コード例を自分で確かめる">
+  
+  
+    <a href="#コード例を自分で確かめる" class="anchor-heading" aria-labelledby="コード例を自分で確かめる"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> コード例を自分で確かめる
+  
+  
+</h2>
+    
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">cd samples/kmp
+</span><span class="gp">GITHUB_ACTOR=&lt;user&gt;</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span>&lt;PAT&gt; <span class="se">\</span>
+<span class="go">  ./gradlew :snippets:compileDebugKotlin :snippets:ktlintCheck
+cd - &amp;&amp; python3 scripts/sync-snippets.py --check
+</span></code></pre></div></div>
+
+<p>CI（<code class="language-plaintext highlighter-rouge">.github/workflows/docs.yml</code>）が同じ3つを回す。<code class="language-plaintext highlighter-rouge">--check</code> は写した結果と <code class="language-plaintext highlighter-rouge">docs/</code> が
+食い違っていれば失敗する。つまり Kotlin を直して <code class="language-plaintext highlighter-rouge">sync-snippets.py</code> を忘れると落ちる。</p>
+<h2 id="配色">
+  
+  
+    <a href="#配色" class="anchor-heading" aria-labelledby="配色"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 配色
+  
+  
+</h2>
+    
+
+<p><code class="language-plaintext highlighter-rouge">docs/_sass/color_schemes/</code> の2ファイルに、アプリと同じトークンの値を直接書いている。出処は
+Figma の <code class="language-plaintext highlighter-rouge">Color_App</code>（Light / Dark）と <code class="language-plaintext highlighter-rouge">Color_SABERA_Brand</code>。<code class="language-plaintext highlighter-rouge">mix()</code> や <code class="language-plaintext highlighter-rouge">lighten()</code> は使わず、
+どのトークン由来かを行コメントに残す。</p>
+
+<p>ダークは既定で OS 設定に追従し、ヘッダのボタンで明示指定できる（選択は <code class="language-plaintext highlighter-rouge">localStorage</code>）。
+just-the-docs は <code class="language-plaintext highlighter-rouge">color_scheme</code> をビルド時に1つしか選べないため、ダーク用の CSS を別に出力して
+<code class="language-plaintext highlighter-rouge">media="(prefers-color-scheme: dark)"</code> で切り替えている。</p>
+<h2 id="前後リンク">
+  
+  
+    <a href="#前後リンク" class="anchor-heading" aria-labelledby="前後リンク"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 前後リンク
+  
+  
+</h2>
+    
+
+<p>ページ末尾の Prev / Next は <code class="language-plaintext highlighter-rouge">docs/_includes/footer_custom.html</code>。並び順は
+<code class="language-plaintext highlighter-rouge">docs/_includes/nav_flat.html</code> がサイドバーと同じ規則（<code class="language-plaintext highlighter-rouge">parent</code> / <code class="language-plaintext highlighter-rouge">grandparent</code> と <code class="language-plaintext highlighter-rouge">nav_order</code>）で
+組み立てる。Liquid に再帰がないため階層は3段までを前提にしている。</p>
+
+          
+
+          
+            
+          
+        </main>
+        
+
+  <hr>
+  <footer>
+    
+
+    <nav class="page-nav" aria-label="前後のページ">
+  <a class="page-nav-prev" href="/api/ble/on-activity-result.html">
+    <span class="page-nav-label">&larr; 前</span>
+    <span class="page-nav-title">BLE (Android) / BleDeviceSelector.onActivityResult</span>
+  </a>
+</nav>
+
+    
+  </footer>
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+</body>
+</html>
+

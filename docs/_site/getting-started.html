@@ -1,0 +1,655 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="/assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  <style id="jtd-nav-activation">
+  
+
+    
+    .site-nav > ul.nav-list:first-child > li:not(:nth-child(2)) > a,
+    .site-nav > ul.nav-list:first-child > li > ul > li a {
+      background-image: none;
+    }
+
+    .site-nav > ul.nav-list:not(:first-child) a,
+    .site-nav li.external a {
+      background-image: none;
+    }
+
+    .site-nav > ul.nav-list:first-child > li:nth-child(2) > a {
+      font-weight: 600;
+      text-decoration: none;
+    }.site-nav > ul.nav-list:first-child > li:nth-child(2) > button svg {
+      transform: rotate(-90deg);
+    }.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(2) > ul.nav-list {
+      display: block;
+    }
+  </style>
+
+  
+
+  
+    <script src="/assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="/assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Getting Started | Sabera App SDK</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Getting Started" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Sabera App SDK のドキュメント" />
+<meta name="twitter:description" property="og:description" content="Sabera App SDK のドキュメント" />
+<link rel="canonical" href="/getting-started.html" />
+<meta property="og:url" content="/getting-started.html" />
+<meta property="og:site_name" content="Sabera App SDK" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Getting Started" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Sabera App SDK のドキュメント","headline":"Getting Started","url":"/getting-started.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <link id="sabera-dark-scheme" rel="stylesheet" href="/assets/css/sabera-dark.css" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<script>
+  // 描画が始まる前に反映しないと、保存した配色に切り替わる瞬間がちらつく
+  (function () {
+    var media = { light: 'not all', dark: 'all' }[localStorage.getItem('sabera-color-scheme')];
+    if (media) document.getElementById('sabera-dark-scheme').media = media;
+  })();
+</script>
+
+
+</head>
+
+<body>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    <div class="side-bar">
+  <div class="site-header" role="banner">
+    <a href="/" class="site-title lh-tight">
+  Sabera App SDK
+
+</a>
+    <button id="menu-button" class="site-button btn-reset" aria-label="Toggle menu" aria-pressed="false">
+      <svg viewBox="0 0 24 24" class="icon" aria-hidden="true"><use xlink:href="#svg-menu"></use></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Main" id="site-nav" class="site-nav">
+  
+  
+    <ul class="nav-list"><li class="nav-list-item"><a href="/" class="nav-list-link">ホーム</a></li><li class="nav-list-item"><a href="/getting-started.html" class="nav-list-link">Getting Started</a></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in API リファレンス category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/" class="nav-list-link">API リファレンス</a><ul class="nav-list"><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in GlassesSDK category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/glasses-sdk/" class="nav-list-link">GlassesSDK</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/glasses-sdk/set-logger.html" class="nav-list-link">setLogger</a></li><li class="nav-list-item"><a href="/api/glasses-sdk/set-prod.html" class="nav-list-link">setProd</a></li><li class="nav-list-item"><a href="/api/glasses-sdk/set-device-persistence.html" class="nav-list-link">setDevicePersistence</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in GlassManager category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/glass-manager/" class="nav-list-link">GlassManager</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/glass-manager/get-glass-manager.html" class="nav-list-link">getGlassManager</a></li><li class="nav-list-item"><a href="/api/glass-manager/connected-device.html" class="nav-list-link">connectedDevice</a></li><li class="nav-list-item"><a href="/api/glass-manager/last-connected-device.html" class="nav-list-link">lastConnectedDevice</a></li><li class="nav-list-item"><a href="/api/glass-manager/has-last-connected-device.html" class="nav-list-link">hasLastConnectedDevice</a></li><li class="nav-list-item"><a href="/api/glass-manager/selection-dialog-presented.html" class="nav-list-link">selectionDialogPresented</a></li><li class="nav-list-item"><a href="/api/glass-manager/external-display-name-changed.html" class="nav-list-link">externalDisplayNameChanged</a></li><li class="nav-list-item"><a href="/api/glass-manager/show-automatic-selection-dialog.html" class="nav-list-link">showAutomaticSelectionDialog</a></li><li class="nav-list-item"><a href="/api/glass-manager/connect.html" class="nav-list-link">connect</a></li><li class="nav-list-item"><a href="/api/glass-manager/disconnect.html" class="nav-list-link">disconnect</a></li><li class="nav-list-item"><a href="/api/glass-manager/disconnect-and-clear-bond.html" class="nav-list-link">disconnectAndClearBond</a></li><li class="nav-list-item"><a href="/api/glass-manager/create-client-from-device-id.html" class="nav-list-link">createClientFromDeviceID</a></li><li class="nav-list-item"><a href="/api/glass-manager/on-device-disappear.html" class="nav-list-link">onDeviceDisappear</a></li><li class="nav-list-item"><a href="/api/glass-manager/register-device-from-intent.html" class="nav-list-link">registerDeviceFromIntent</a></li><li class="nav-list-item"><a href="/api/glass-manager/show-disconnect-sheet-ios.html" class="nav-list-link">showDisconnectSheetIOS</a></li><li class="nav-list-item"><a href="/api/glass-manager/show-rename-accessory-sheet-ios.html" class="nav-list-link">showRenameAccessorySheetIOS</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in GlassClient category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/glass-client/" class="nav-list-link">GlassClient</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/glass-client/connected.html" class="nav-list-link">connected</a></li><li class="nav-list-item"><a href="/api/glass-client/device-name.html" class="nav-list-link">deviceName</a></li><li class="nav-list-item"><a href="/api/glass-client/device-identifier.html" class="nav-list-link">deviceIdentifier</a></li><li class="nav-list-item"><a href="/api/glass-client/is-connection-valid.html" class="nav-list-link">isConnectionValid</a></li><li class="nav-list-item"><a href="/api/glass-client/create-command-manager.html" class="nav-list-link">createCommandManager</a></li><li class="nav-list-item"><a href="/api/glass-client/mic-channel.html" class="nav-list-link">micChannel</a></li><li class="nav-list-item"><a href="/api/glass-client/send-command.html" class="nav-list-link">sendCommand</a></li><li class="nav-list-item"><a href="/api/glass-client/send-command-list.html" class="nav-list-link">sendCommandList</a></li><li class="nav-list-item"><a href="/api/glass-client/send-text.html" class="nav-list-link">sendText</a></li><li class="nav-list-item"><a href="/api/glass-client/cancel-pending-packets.html" class="nav-list-link">cancelPendingPackets</a></li><li class="nav-list-item"><a href="/api/glass-client/reboot.html" class="nav-list-link">reboot</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in CommandManager category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/command-manager/" class="nav-list-link">CommandManager</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/command-manager/connected.html" class="nav-list-link">connected</a></li><li class="nav-list-item"><a href="/api/command-manager/gesture-events.html" class="nav-list-link">gestureEvents</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-home-page.html" class="nav-list-link">enterHomePage</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-teleprompter-page.html" class="nav-list-link">enterTeleprompterPage</a></li><li class="nav-list-item"><a href="/api/command-manager/send-teleprompter-content.html" class="nav-list-link">sendTeleprompterContent</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-ai-page.html" class="nav-list-link">enterAIPage</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-content.html" class="nav-list-link">sendAIContent</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-translate-page.html" class="nav-list-link">enterTranslatePage</a></li><li class="nav-list-item"><a href="/api/command-manager/send-translate-content.html" class="nav-list-link">sendTranslateContent</a></li><li class="nav-list-item"><a href="/api/command-manager/send-translate-language.html" class="nav-list-link">sendTranslateLanguage</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-meeting-page.html" class="nav-list-link">enterMeetingPage</a></li><li class="nav-list-item"><a href="/api/command-manager/send-meeting.html" class="nav-list-link">sendMeeting</a></li><li class="nav-list-item"><a href="/api/command-manager/enter-ai-chat-page.html" class="nav-list-link">enterAiChatPage</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-chat-sender.html" class="nav-list-link">sendAiChatSender</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-chat-text.html" class="nav-list-link">sendAiChatText</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-chat-status.html" class="nav-list-link">sendAiChatStatus</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-chat-sender-text.html" class="nav-list-link">sendAiChatSenderText</a></li><li class="nav-list-item"><a href="/api/command-manager/send-ai-chat-sender-status.html" class="nav-list-link">sendAiChatSenderStatus</a></li><li class="nav-list-item"><a href="/api/command-manager/open-glass-mic.html" class="nav-list-link">openGlassMic</a></li><li class="nav-list-item"><a href="/api/command-manager/close-glass-mic.html" class="nav-list-link">closeGlassMic</a></li><li class="nav-list-item"><a href="/api/command-manager/send-message.html" class="nav-list-link">sendMessage</a></li><li class="nav-list-item"><a href="/api/command-manager/sync-notification-count.html" class="nav-list-link">syncNotificationCount</a></li><li class="nav-list-item"><a href="/api/command-manager/send-debug-phone-name.html" class="nav-list-link">sendDebugPhoneName</a></li><li class="nav-list-item"><a href="/api/command-manager/add-glass-power-event-listener.html" class="nav-list-link">addGlassPowerEventListener</a></li><li class="nav-list-item"><a href="/api/command-manager/remove-glass-power-event-listener.html" class="nav-list-link">removeGlassPowerEventListener</a></li><li class="nav-list-item"><a href="/api/command-manager/add-remote-controller-event-listener.html" class="nav-list-link">addRemoteControllerEventListener</a></li><li class="nav-list-item"><a href="/api/command-manager/remove-remote-controller-event-listener.html" class="nav-list-link">removeRemoteControllerEventListener</a></li><li class="nav-list-item"><a href="/api/command-manager/parse-response.html" class="nav-list-link">parseResponse</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in SdkActivityHost category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/sdk-activity-host/" class="nav-list-link">SdkActivityHost</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/sdk-activity-host/show-ble-device-selection-dialog.html" class="nav-list-link">showBleDeviceSelectionDialog</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in SdkDevicePersistence category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/sdk-device-persistence/" class="nav-list-link">SdkDevicePersistence</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/sdk-device-persistence/last-device-id.html" class="nav-list-link">lastDeviceId</a></li></ul></li><li class="nav-list-item"><button class="nav-list-expander btn-reset" aria-label="toggle items in BLE (Android) category" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use xlink:href="#svg-arrow-right"></use></svg>
+      </button><a href="/api/ble/" class="nav-list-link">BLE (Android)</a><ul class="nav-list"><li class="nav-list-item"><a href="/api/ble/connect-to-last-device.html" class="nav-list-link">BleCompanionDeviceService.connectToLastDevice</a></li><li class="nav-list-item"><a href="/api/ble/show-dialog.html" class="nav-list-link">BleDeviceSelector.showDialog</a></li><li class="nav-list-item"><a href="/api/ble/on-activity-result.html" class="nav-list-link">BleDeviceSelector.onActivityResult</a></li></ul></li></ul></li><li class="nav-list-item"><a href="/authoring.html" class="nav-list-link">ドキュメントの作り方</a></li></ul>
+  
+</nav>
+
+
+
+
+  
+  
+    <footer class="site-footer">
+      This site uses <a href="https://github.com/just-the-docs/just-the-docs">Just the Docs</a>, a documentation theme for Jekyll.
+    </footer>
+  
+</div>
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header">
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search Sabera App SDK" aria-label="Search Sabera App SDK" autocomplete="off">
+    <label for="search-input" class="search-label"><svg viewBox="0 0 24 24" class="search-icon"><use xlink:href="#svg-search"></use></svg></label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  <button type="button" id="sabera-scheme-toggle" class="scheme-toggle"></button>
+<script>
+  (function () {
+    var link = document.getElementById('sabera-dark-scheme');
+    var button = document.getElementById('sabera-scheme-toggle');
+    var LABEL = { light: 'ライト', dark: 'ダーク' };
+    var ICON = {
+      light:
+        '<svg viewBox="0 0 16 16" aria-hidden="true">' +
+        '<circle cx="8" cy="8" r="3.2" fill="currentColor"/>' +
+        '<path d="M8 0.5v2M8 13.5v2M0.5 8h2M13.5 8h2M2.7 2.7l1.4 1.4M11.9 11.9l1.4 1.4M13.3 2.7l-1.4 1.4M4.1 11.9l-1.4 1.4"' +
+        ' fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>',
+      dark:
+        '<svg viewBox="0 0 16 16" aria-hidden="true">' +
+        '<path d="M14 10.2A6.4 6.4 0 0 1 5.8 2a6.5 6.5 0 1 0 8.2 8.2z" fill="currentColor"/></svg>',
+    };
+
+    function current() {
+      if (link.media === 'all') return 'dark';
+      if (link.media === 'not all') return 'light';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function render() {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      button.innerHTML = ICON[next] + '<span>' + LABEL[next] + '</span>';
+      button.setAttribute('aria-label', LABEL[next] + 'に切り替える');
+    }
+
+    button.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      link.media = next === 'dark' ? 'all' : 'not all';
+      localStorage.setItem('sabera-color-scheme', next);
+      render();
+    });
+
+    render();
+  })();
+</script>
+
+  
+    <nav aria-label="Auxiliary" class="aux-nav">
+  <ul class="aux-nav-list">
+    
+      <li class="aux-nav-list-item">
+        <a href="https://github.com/jig-jp/sabera-sdk" class="site-button"
+          
+        >
+          GitHub
+        </a>
+      </li>
+    
+  </ul>
+</nav>
+
+  
+</div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <h1 id="getting-started">
+  
+  
+    <a href="#getting-started" class="anchor-heading" aria-labelledby="getting-started"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Getting Started
+  
+  
+</h1>
+    
+
+<p>Sabera App SDK を使ってスマートグラスと通信するアプリを作る手順。</p>
+
+<p>Flutter でも KMP でも、<strong>ネイティブ層で呼ぶ SDK の API と順序は同一</strong>。
+このページはその共通部分を扱う。各サンプルの差は橋渡し層（MethodChannel）の形だけで、
+それは<a href="#プラットフォーム別の橋渡し">プラットフォーム別の橋渡し</a>にまとめた。</p>
+<h2 id="sdk-の取得設定">
+  
+  
+    <a href="#sdk-の取得設定" class="anchor-heading" aria-labelledby="sdk-の取得設定"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> SDK の取得設定
+  
+  
+</h2>
+    
+
+<p>SDK は GitHub Packages (<code class="language-plaintext highlighter-rouge">jig-jp/sabera-sdk</code>) で配布している。private パッケージなので、取得には
+<code class="language-plaintext highlighter-rouge">read:packages</code> スコープを持つ Personal Access Token が必要。</p>
+
+<p><code class="language-plaintext highlighter-rouge">~/.gradle/gradle.properties</code> に認証情報を書く。</p>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">gpr.user</span><span class="p">=</span><span class="s">&lt;GitHubのユーザー名&gt;</span>
+<span class="py">gpr.token</span><span class="p">=</span><span class="s">&lt;read:packages を持つ PAT&gt;</span>
+</code></pre></div></div>
+
+<p>環境変数 <code class="language-plaintext highlighter-rouge">GITHUB_ACTOR</code> / <code class="language-plaintext highlighter-rouge">GITHUB_TOKEN</code> でも代用できる。</p>
+<h2 id="全体の流れ">
+  
+  
+    <a href="#全体の流れ" class="anchor-heading" aria-labelledby="全体の流れ"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 全体の流れ
+  
+  
+</h2>
+    
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Application.onCreate()  … SPI を差し込む
+        ↓
+Activity.onCreate()     … デバイス選択ダイアログのフックを差し込む
+        ↓
+getGlassManager(context)
+        ↓
+connectedDevice を購読開始   ← 接続状態はここだけを見る
+        ↓
+showAutomaticSelectionDialog(activity)   … 選択と接続を両方やる
+        ↓
+client.createCommandManager()
+        ↓
+コマンド送信 / gestureEvents 購読
+        ↓
+manager.disconnect(client)
+</code></pre></div></div>
+<h2 id="1-spi-の差し込み">
+  
+  
+    <a href="#1-spi-の差し込み" class="anchor-heading" aria-labelledby="1-spi-の差し込み"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. SPI の差し込み
+  
+  
+</h2>
+    
+
+<p><code class="language-plaintext highlighter-rouge">Application.onCreate()</code> で行う。SDK はプロセスシングルトンで、<strong>後から差し替えても既に発火した
+呼び出しには反映されない</strong>ため、他のどの SDK API より先に実行する必要がある。</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">SampleApplication</span> <span class="p">:</span> <span class="nc">Application</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">.</span><span class="nf">onCreate</span><span class="p">()</span>
+        <span class="nc">GlassesSDK</span><span class="p">.</span><span class="nf">setLogger</span> <span class="p">{</span> <span class="n">tag</span><span class="p">,</span> <span class="n">msg</span> <span class="p">-&gt;</span> <span class="nc">Log</span><span class="p">.</span><span class="nf">d</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="p">}</span>
+        <span class="nc">GlassesSDK</span><span class="p">.</span><span class="nf">setProd</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
+        <span class="nc">GlassesSDK</span><span class="p">.</span><span class="nf">setDevicePersistence</span><span class="p">(</span><span class="nc">SharedPrefsDevicePersistence</span><span class="p">(</span><span class="k">this</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">setDevicePersistence</code> を省くとデフォルトのインメモリ実装になり、プロセスをまたぐと接続先を忘れる。
+前回接続したデバイスへの自動再接続を使うなら必須。</p>
+<h2 id="2-activity-側のフックandroid-のみ">
+  
+  
+    <a href="#2-activity-側のフックandroid-のみ" class="anchor-heading" aria-labelledby="2-activity-側のフックandroid-のみ"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Activity 側のフック（Android のみ）
+  
+  
+</h2>
+    
+
+<p>Companion Device Manager のダイアログは Activity を必要とするため、<code class="language-plaintext highlighter-rouge">SdkActivityHost</code> に
+表示処理を差し込む。iOS では不要（CoreBluetooth は Activity を要求しない）。</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="nc">Bundle</span><span class="p">?)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
+    <span class="nc">SdkActivityHost</span><span class="p">.</span><span class="n">showBleDeviceSelectionDialog</span> <span class="p">=</span> <span class="p">{</span> <span class="n">scope</span><span class="p">,</span> <span class="n">callback</span> <span class="p">-&gt;</span>
+        <span class="nc">BleDeviceSelector</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nf">showDialog</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">singleTarget</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nc">BleCompanionDeviceService</span><span class="p">.</span><span class="nf">connectToLastDevice</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">override</span> <span class="k">fun</span> <span class="nf">onDestroy</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nc">SdkActivityHost</span><span class="p">.</span><span class="n">showBleDeviceSelectionDialog</span> <span class="p">=</span> <span class="k">null</span>
+    <span class="k">super</span><span class="p">.</span><span class="nf">onDestroy</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">connectToLastDevice()</code> は前回接続したデバイスがあれば自動で接続を試みる。これを呼んでおくと
+2回目以降の起動でユーザーにダイアログを見せずに済む。</p>
+<h2 id="3-接続状態を購読する">
+  
+  
+    <a href="#3-接続状態を購読する" class="anchor-heading" aria-labelledby="3-接続状態を購読する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. 接続状態を購読する
+  
+  
+</h2>
+    
+
+<p><code class="language-plaintext highlighter-rouge">GlassManager</code> を取得したら、まず <code class="language-plaintext highlighter-rouge">connectedDevice</code> の購読を始める。接続の成立も切断も
+この Flow ひとつで観測する。</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">manager</span> <span class="p">=</span> <span class="nf">getGlassManager</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+<span class="n">scope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+    <span class="n">manager</span><span class="p">.</span><span class="n">connectedDevice</span><span class="p">.</span><span class="nf">collect</span> <span class="p">{</span> <span class="n">client</span> <span class="p">-&gt;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">client</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// 接続済み。ここで CommandManager を作る</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">// 未接続</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">connectedDevice</code> は <code class="language-plaintext highlighter-rouge">StateFlow&lt;GlassClient?&gt;</code>。<code class="language-plaintext highlighter-rouge">GlassClient</code> にも <code class="language-plaintext highlighter-rouge">connected: StateFlow&lt;Boolean&gt;</code>
+があるが、接続の有無を知るだけなら <code class="language-plaintext highlighter-rouge">connectedDevice</code> が <code class="language-plaintext highlighter-rouge">null</code> かどうかで足りる。</p>
+<h2 id="4-デバイスを選んで接続する">
+  
+  
+    <a href="#4-デバイスを選んで接続する" class="anchor-heading" aria-labelledby="4-デバイスを選んで接続する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. デバイスを選んで接続する
+  
+  
+</h2>
+    
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">client</span><span class="p">:</span> <span class="nc">GlassClient</span><span class="p">?</span> <span class="p">=</span> <span class="n">manager</span><span class="p">.</span><span class="nf">showAutomaticSelectionDialog</span><span class="p">(</span><span class="n">activity</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>OS のデバイス選択 UI が出て、選ばれたデバイスの <code class="language-plaintext highlighter-rouge">GlassClient</code> が返る。
+<strong>この呼び出しは接続まで済ませる。</strong> 返り値を受け取ったあとに別途 <code class="language-plaintext highlighter-rouge">connect()</code> を呼ぶ必要はない。</p>
+
+<p>第1引数は Activity。Application Context を渡すとダイアログが出ないので注意。</p>
+<h2 id="5-コマンドを送る">
+  
+  
+    <a href="#5-コマンドを送る" class="anchor-heading" aria-labelledby="5-コマンドを送る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. コマンドを送る
+  
+  
+</h2>
+    
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">commandManager</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">createCommandManager</span><span class="p">()</span>
+
+<span class="n">commandManager</span><span class="p">.</span><span class="nf">enterTeleprompterPage</span><span class="p">()</span>
+<span class="n">commandManager</span><span class="p">.</span><span class="nf">sendTeleprompterContent</span><span class="p">(</span><span class="s">"Hello"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>送信系は同期メソッドだが内部でキューイングされるため、呼び出しスレッドはブロックしない。</p>
+<h3 id="ページ遷移">
+  
+  
+    <a href="#ページ遷移" class="anchor-heading" aria-labelledby="ページ遷移"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> ページ遷移
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>メソッド</th>
+      <th>遷移先</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">enterHomePage()</code></td>
+      <td>ホーム</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">enterTeleprompterPage()</code></td>
+      <td>テレプロンプター</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">enterAIPage(isAiPower: Boolean = false)</code></td>
+      <td>AI</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">enterTranslatePage()</code></td>
+      <td>翻訳</td>
+    </tr>
+  </tbody>
+</table></div>
+<h3 id="コンテンツ送信">
+  
+  
+    <a href="#コンテンツ送信" class="anchor-heading" aria-labelledby="コンテンツ送信"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> コンテンツ送信
+  
+  
+</h3>
+    
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>メソッド</th>
+      <th>内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">sendTeleprompterContent(content: String)</code></td>
+      <td>テレプロンプターに表示する文字列</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">sendAIContent(content: String)</code></td>
+      <td>AI ページに表示する文字列</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">sendTranslateContent(content: String)</code></td>
+      <td>翻訳ページに表示する文字列</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">sendTranslateLanguage(source: String, target: String)</code></td>
+      <td>翻訳の言語ペア（例: <code class="language-plaintext highlighter-rouge">"en", "ja"</code>）</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>ページを開いてからコンテンツを送る。送信先のページが開いていないと表示されない。</p>
+<h2 id="6-ジェスチャーを受け取る">
+  
+  
+    <a href="#6-ジェスチャーを受け取る" class="anchor-heading" aria-labelledby="6-ジェスチャーを受け取る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. ジェスチャーを受け取る
+  
+  
+</h2>
+    
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+    <span class="n">commandManager</span><span class="p">.</span><span class="n">gestureEvents</span><span class="p">.</span><span class="nf">collect</span> <span class="p">{</span> <span class="n">gesture</span> <span class="p">-&gt;</span>
+        <span class="k">when</span> <span class="p">(</span><span class="n">gesture</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nc">GestureType</span><span class="p">.</span><span class="nc">SINGLE_TAP</span> <span class="p">-&gt;</span> <span class="p">{}</span>
+            <span class="nc">GestureType</span><span class="p">.</span><span class="nc">DOUBLE_TAP</span> <span class="p">-&gt;</span> <span class="p">{}</span>
+            <span class="nc">GestureType</span><span class="p">.</span><span class="nc">HOLD</span> <span class="p">-&gt;</span> <span class="p">{}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">gestureEvents</code> は <code class="language-plaintext highlighter-rouge">SharedFlow&lt;GestureType&gt;</code>。購読を始める前に発生したジェスチャーは受け取れない。</p>
+<h2 id="7-切断する">
+  
+  
+    <a href="#7-切断する" class="anchor-heading" aria-labelledby="7-切断する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. 切断する
+  
+  
+</h2>
+    
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">manager</span><span class="p">.</span><span class="nf">disconnect</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">GlassClient</code> に <code class="language-plaintext highlighter-rouge">disconnect()</code> は無い。型の上で <code class="language-plaintext highlighter-rouge">GlassClientInternal</code> に隔離してあり、
+必ず <code class="language-plaintext highlighter-rouge">GlassManager</code> を経由する。UI 層が接続状態を持たないようにするための制約。</p>
+<h2 id="ハマりどころ">
+  
+  
+    <a href="#ハマりどころ" class="anchor-heading" aria-labelledby="ハマりどころ"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> ハマりどころ
+  
+  
+</h2>
+    
+
+<ul>
+  <li><strong>SPI を Activity で差し込んでいる</strong> — <code class="language-plaintext highlighter-rouge">Application.onCreate()</code> で差し込む。Activity 生成前に
+SDK が動くと反映されない</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">showAutomaticSelectionDialog()</code> に Application Context を渡している</strong> — Activity が必要</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">SdkActivityHost.showBleDeviceSelectionDialog</code> を差し込み忘れている</strong> — Android でダイアログが
+出ない最頻の原因</li>
+  <li><strong>エミュレータ / シミュレータで試している</strong> — BLE の物理層が必要なため動かない。スキャン中のまま
+止まる</li>
+  <li><strong>Android で BLE 権限を実行時要求していない</strong> — API 31 以降は <code class="language-plaintext highlighter-rouge">BLUETOOTH_SCAN</code> と
+<code class="language-plaintext highlighter-rouge">BLUETOOTH_CONNECT</code> が必要</li>
+  <li><strong>iOS で <code class="language-plaintext highlighter-rouge">Info.plist</code> に <code class="language-plaintext highlighter-rouge">NSBluetoothAlwaysUsageDescription</code> が無い</strong> — CoreBluetooth が
+OS に蹴られ、<code class="language-plaintext highlighter-rouge">GlassClient</code> が永遠に得られない</li>
+</ul>
+<h2 id="プラットフォーム別の橋渡し">
+  
+  
+    <a href="#プラットフォーム別の橋渡し" class="anchor-heading" aria-labelledby="プラットフォーム別の橋渡し"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> プラットフォーム別の橋渡し
+  
+  
+</h2>
+    
+
+<p>ネイティブ側で呼ぶ SDK API はどちらのサンプルでも同じ。違うのは、それをアプリの言語へどう渡すかだけ。</p>
+
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>コマンド呼び出し</th>
+      <th>イベント通知</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>KMP</td>
+      <td>橋渡しなし。SDK の型を直接扱う</td>
+      <td>Flow をそのまま <code class="language-plaintext highlighter-rouge">collect</code></td>
+    </tr>
+    <tr>
+      <td>Flutter</td>
+      <td><code class="language-plaintext highlighter-rouge">MethodChannel</code></td>
+      <td><code class="language-plaintext highlighter-rouge">EventChannel</code> 2本（<code class="language-plaintext highlighter-rouge">connectionState</code> / <code class="language-plaintext highlighter-rouge">gestureEvents</code>）</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>Flutter では <code class="language-plaintext highlighter-rouge">GestureType</code> が文字列（<code class="language-plaintext highlighter-rouge">"SINGLE_TAP"</code> / <code class="language-plaintext highlighter-rouge">"DOUBLE_TAP"</code> / <code class="language-plaintext highlighter-rouge">"HOLD"</code>）
+として渡り、Dart 側で独自の型に変換している。接続状態も同様に
+<code class="language-plaintext highlighter-rouge">{connected, deviceId, deviceName}</code> の形に落として渡している。</p>
+
+<p>実装は各サンプルを参照。</p>
+
+<ul>
+  <li><a href="../samples/flutter/">Flutter</a></li>
+  <li><a href="../samples/kmp/">KMP</a></li>
+</ul>
+
+          
+
+          
+            
+          
+        </main>
+        
+
+  <hr>
+  <footer>
+    
+
+    <nav class="page-nav" aria-label="前後のページ">
+  <a class="page-nav-prev" href="/">
+    <span class="page-nav-label">&larr; 前</span>
+    <span class="page-nav-title">ホーム</span>
+  </a>
+  <a class="page-nav-next" href="/api/">
+    <span class="page-nav-label">次 &rarr;</span>
+    <span class="page-nav-title">API リファレンス</span>
+  </a>
+</nav>
+
+    
+  </footer>
+
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+</body>
+</html>
+

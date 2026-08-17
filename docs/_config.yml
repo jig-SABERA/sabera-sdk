@@ -27,7 +27,7 @@ search:
   focus_shortcut_key: 'k'
 
 aux_links:
-  GitHub: https://github.com/jig-jp/sabera-sdk
+  GitHub: https://github.com/jig-SABERA/sabera-sdk
 
 exclude:
   - Gemfile

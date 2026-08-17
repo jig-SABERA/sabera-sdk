@@ -15,5 +15,5 @@ nav_order: 1
 
 | サンプル | プラットフォーム | 説明 |
 |---|---|---|
-| [Flutter](https://github.com/jig-jp/sabera-sdk/tree/main/samples/flutter) | Android | MethodChannel / EventChannel 経由で Dart から操作 |
-| [KMP](https://github.com/jig-jp/sabera-sdk/tree/main/samples/kmp) | Android / iOS | Kotlin Multiplatform から直接利用 |
+| [Flutter](https://github.com/jig-SABERA/sabera-sdk/tree/main/samples/flutter) | Android | MethodChannel / EventChannel 経由で Dart から操作 |
+| [KMP](https://github.com/jig-SABERA/sabera-sdk/tree/main/samples/kmp) | Android / iOS | Kotlin Multiplatform から直接利用 |

@@ -10,7 +10,7 @@ SDKはネイティブAPIとして提供している。
 
 ## SDK の取得設定
 
-SDK は GitHub Packages (`jig-jp/sabera-sdk`) で配布している。private
+SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。private
 パッケージなので、取得には `read:packages` スコープを持つ Personal Access Token
 が必要。発行手順は [GitHub PAT の作り方](github-pat.html) を参照。
 

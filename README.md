@@ -17,7 +17,7 @@ Sabera App SDK の使い方を示すサンプルアプリ集。
 
 ## 前提条件
 
-SDK は GitHub Packages (`jig-jp/sabera-sdk`) から取得する。private パッケージのため、
+SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) から取得する。private パッケージのため、
 `read:packages` スコープを持つ PAT を `~/.gradle/gradle.properties` に設定しておく。
 
 ```properties

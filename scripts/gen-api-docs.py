@@ -198,13 +198,11 @@ SPEC = [
               summary="吹き出しの主体と生成状態をまとめて送る。"
                       "回答を流し始める前に `AI` と `GENERATING` を送る。",
               related=["sendAiChatText"], note=AI_CHAT_ENUM),
-            m("openGlassMic", "fun openGlassMic()\nfun openGlassMic(channel: Int)",
-              [("channel", "Int", "`0`=MIC0, `1`=MIC1, `2`=MIC2")],
+            m("openGlassMic", "fun openGlassMic()",
               summary="グラスのマイクを開く。開いている間、音声は "
                       "`GlassClient.addAudioDataEventListener` に届く。"
-                      "引数なしの呼び出しは EVT1 互換のチャンネル0を開く。",
-              related=["closeGlassMic"],
-              note="チャンネル指定の overload は 0.0.10 には含まれない。"),
+                      "マイクのチャンネルは接続中のデバイスに合わせて SDK 側で決まる。",
+              related=["closeGlassMic"]),
             m("closeGlassMic", "fun closeGlassMic()", related=["openGlassMic"]),
             m("sendMessage", "fun sendMessage(sender: String, body: String, timestamp: Long, appName: String)",
               [("sender", "String"), ("body", "String"), ("timestamp", "Long"), ("appName", "String")],
@@ -229,12 +227,6 @@ SPEC = [
             # ここから下は新ファーム向けに追加したコマンド。0.0.10 には含まれない
             m("enterNotificationPage", "fun enterNotificationPage()",
               summary="通知一覧ページを開く。", related=["sendMessage"], note=UNRELEASED),
-            m("enterNavigationPage", "fun enterNavigationPage()",
-              summary="ナビページを開く。案内内容は sendNavi で送る。",
-              related=["sendNavi", "sendNaviStatus"], note=UNRELEASED),
-            m("enterImageDisplayPage", "fun enterImageDisplayPage()",
-              summary="汎用画像表示ページを開く。画像は sendImage で送る。",
-              related=["sendImage"], note=UNRELEASED),
             m("enterEmptyScreenPage", "fun enterEmptyScreenPage()",
               summary="汎用テキスト表示ページを開く。本文は sendEmptyScreenContent で送る。",
               related=["sendEmptyScreenContent", "sendEmptyScreenStatus"], note=UNRELEASED),
@@ -282,13 +274,6 @@ SPEC = [
               [("status", "CommandManager.TeleprompterStatus", "`READY` / `STARTED` / `PAUSED`")],
               summary="汎用テキスト表示ページの状態を送る。`READY` で空画面に戻る。",
               related=["enterEmptyScreenPage"], note=UNRELEASED),
-            m("sendImage", "fun sendImage(width: Int, height: Int, encodedBitmap: ByteArray)",
-              [("width", "Int", "画像の幅"),
-               ("height", "Int", "画像の高さ"),
-               ("encodedBitmap", "ByteArray", "エンコード済みの画像データ")],
-              summary="汎用画像表示ページに画像を送る。"
-                      "2bits/pixel のグレースケールを RLE 圧縮した形式を想定している。",
-              related=["enterImageDisplayPage"], note=UNRELEASED),
             m("sendAiChatLanguage", "fun sendAiChatLanguage(languageCode: String)",
               [("languageCode", "String", '`"JPN"` / `"ENG"` / `"CHS"` / `"CHT"` 等の3文字')],
               summary="AI チャットの表示言語を通知する。グラス側の本文フォントの選択に使われ、"
@@ -302,48 +287,6 @@ SPEC = [
               summary="FEATURE_VERSION 1.1.0 未満のファーム向けに、改行を流し込んで見かけ上クリアする。"
                       "グラス側に履歴が残るため、対応ファームでは clearAiChat を使う。",
               related=["clearAiChat"], note=UNRELEASED),
-            m("sendNaviStatus", "fun sendNaviStatus(status: CommandManager.NaviStatus)",
-              [("status", "CommandManager.NaviStatus", "`READY` / `START` / `ARRIVED`")],
-              summary="ナビの状態を送る。",
-              related=["sendNavi"], note=UNRELEASED),
-            m("sendNaviCourse", "fun sendNaviCourse(courseDegrees: Double)",
-              [("courseDegrees", "Double", "進行方向[度]。北を0として時計回り")],
-              summary="端末の GPS 進行方向を送る。グラスは磁力計を積んでいないため、"
-                      "この値でナビ中のジャイロのドリフトを補正する。",
-              related=["sendNavi"], note=UNRELEASED),
-            m("sendNaviLanguage", "fun sendNaviLanguage(languageCode: String)",
-              [("languageCode", "String", '`"JPN"` / `"ENG"` 等の3文字')],
-              summary="ナビ画面の表示言語を通知する。到着時刻のラベル等の切り替えに使われる。",
-              related=["sendNavi"], note=UNRELEASED),
-            m("sendNavi",
-              "fun sendNavi(\n"
-              "    maneuverIcon: Byte,\n"
-              "    instructionText: String,\n"
-              "    distanceText: String,\n"
-              "    estimatedArrivalText: String,\n"
-              "    timeAndDistanceText: String,\n"
-              "    bitmapWidth: Int? = null,\n"
-              "    bitmapHeight: Int? = null,\n"
-              "    encodedBitmap: ByteArray? = null,\n"
-              ")",
-              [("maneuverIcon", "Byte", "進行方向アイコンの種別"),
-               ("instructionText", "String", "次のポイントでの指示"),
-               ("distanceText", "String", "次のポイントまでの距離"),
-               ("estimatedArrivalText", "String", "予想到着時刻"),
-               ("timeAndDistanceText", "String", "画面左下に出す残り時間と距離"),
-               ("bitmapWidth", "Int?", "地図画像の幅。255まで。画像を渡すときは必須"),
-               ("bitmapHeight", "Int?", "地図画像の高さ。255まで。画像を渡すときは必須"),
-               ("encodedBitmap", "ByteArray?", "地図画像")],
-              summary="ナビの案内情報を送る。画像は分割して送られる。",
-              related=["sendNaviStatus", "sendNaviLargeImage"], note=UNRELEASED),
-            m("sendNaviLargeImage",
-              "fun sendNaviLargeImage(width: Int, height: Int, encodedBitmap: ByteArray)",
-              [("width", "Int", "画像の幅"),
-               ("height", "Int", "画像の高さ"),
-               ("encodedBitmap", "ByteArray", "エンコード済みの画像データ")],
-              summary="ナビ画面に全画面サイズの地図画像を送る。"
-                      "sendNavi の地図と違い幅・高さが255を超えられる。",
-              related=["sendNavi"], note=UNRELEASED),
             m("sendAdjust",
               "fun sendAdjust(\n"
               "    status: CommandManager.AdjustStatus,\n"

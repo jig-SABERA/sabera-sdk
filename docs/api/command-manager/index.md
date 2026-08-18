@@ -38,8 +38,7 @@ fun sendTeleprompterContent(content: String, percent: Int)` |
     status: CommandManager.AiChatStatus,
     model: CommandManager.AiChatModel? = null,
 )` |
-| [openGlassMic](open-glass-mic.html) | `fun openGlassMic()
-fun openGlassMic(channel: Int)` |
+| [openGlassMic](open-glass-mic.html) | `fun openGlassMic()` |
 | [closeGlassMic](close-glass-mic.html) | `fun closeGlassMic()` |
 | [sendMessage](send-message.html) | `fun sendMessage(sender: String, body: String, timestamp: Long, appName: String)` |
 | [syncNotificationCount](sync-notification-count.html) | `fun syncNotificationCount(count: Int)` |
@@ -50,8 +49,6 @@ fun openGlassMic(channel: Int)` |
 | [removeRemoteControllerEventListener](remove-remote-controller-event-listener.html) | `fun removeRemoteControllerEventListener(listener: CommandManager.RemoteControlListener)` |
 | [parseResponse](parse-response.html) | `fun parseResponse(value: ByteArray)` |
 | [enterNotificationPage](enter-notification-page.html) | `fun enterNotificationPage()` |
-| [enterNavigationPage](enter-navigation-page.html) | `fun enterNavigationPage()` |
-| [enterImageDisplayPage](enter-image-display-page.html) | `fun enterImageDisplayPage()` |
 | [enterEmptyScreenPage](enter-empty-screen-page.html) | `fun enterEmptyScreenPage()` |
 | [enterGlassAngleAdjustmentPage](enter-glass-angle-adjustment-page.html) | `fun enterGlassAngleAdjustmentPage()` |
 | [enterImuDebugPage](enter-imu-debug-page.html) | `fun enterImuDebugPage()` |
@@ -65,24 +62,9 @@ fun openGlassMic(channel: Int)` |
 | [clearInscriptionText](clear-inscription-text.html) | `fun clearInscriptionText()` |
 | [sendEmptyScreenContent](send-empty-screen-content.html) | `fun sendEmptyScreenContent(content: String)` |
 | [sendEmptyScreenStatus](send-empty-screen-status.html) | `fun sendEmptyScreenStatus(status: CommandManager.TeleprompterStatus)` |
-| [sendImage](send-image.html) | `fun sendImage(width: Int, height: Int, encodedBitmap: ByteArray)` |
 | [sendAiChatLanguage](send-ai-chat-language.html) | `fun sendAiChatLanguage(languageCode: String)` |
 | [clearAiChat](clear-ai-chat.html) | `fun clearAiChat()` |
 | [clearAiChatLegacy](clear-ai-chat-legacy.html) | `fun clearAiChatLegacy()` |
-| [sendNaviStatus](send-navi-status.html) | `fun sendNaviStatus(status: CommandManager.NaviStatus)` |
-| [sendNaviCourse](send-navi-course.html) | `fun sendNaviCourse(courseDegrees: Double)` |
-| [sendNaviLanguage](send-navi-language.html) | `fun sendNaviLanguage(languageCode: String)` |
-| [sendNavi](send-navi.html) | `fun sendNavi(
-    maneuverIcon: Byte,
-    instructionText: String,
-    distanceText: String,
-    estimatedArrivalText: String,
-    timeAndDistanceText: String,
-    bitmapWidth: Int? = null,
-    bitmapHeight: Int? = null,
-    encodedBitmap: ByteArray? = null,
-)` |
-| [sendNaviLargeImage](send-navi-large-image.html) | `fun sendNaviLargeImage(width: Int, height: Int, encodedBitmap: ByteArray)` |
 | [sendAdjust](send-adjust.html) | `fun sendAdjust(
     status: CommandManager.AdjustStatus,
     imageType: CommandManager.AdjustImageType,

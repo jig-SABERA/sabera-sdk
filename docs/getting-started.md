@@ -170,8 +170,8 @@ commandManager.sendTeleprompterContent("Hello")
 
 ### そのほかのコマンド
 
-ナビ・汎用画像表示・汎用テキスト表示・設定の書き換えと同期・時刻や天気の同期・
-ログ取得なども `CommandManager` から送れる。一覧は
+汎用テキスト表示・設定の書き換えと同期・時刻や天気の同期・ログ取得なども
+`CommandManager` から送れる。一覧は
 [API リファレンス](api/command-manager/) を見る。新ファーム向けに追加した分は
 配布中の 0.0.10 には入っておらず、各ページに注記がある。
 

@@ -9,21 +9,11 @@ nav_order: 19
 
 ```kotlin
 fun openGlassMic()
-fun openGlassMic(channel: Int)
 ```
 
 ## 概要
 
-グラスのマイクを開く。開いている間、音声は `GlassClient.addAudioDataEventListener` に届く。引数なしの呼び出しは EVT1 互換のチャンネル0を開く。
-
-{: .note }
-> チャンネル指定の overload は 0.0.10 には含まれない。
-
-## 引数
-
-| 名前 | 型 | 説明 |
-|---|---|---|
-| `channel` | `Int` | `0`=MIC0, `1`=MIC1, `2`=MIC2 |
+グラスのマイクを開く。開いている間、音声は `GlassClient.addAudioDataEventListener` に届く。マイクのチャンネルは接続中のデバイスに合わせて SDK 側で決まる。
 
 ## 戻り値
 

@@ -7,22 +7,23 @@ nav_order: 15
 
 # CommandManager.sendAiChatText
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
 fun sendAiChatText(text: String)
 ```
 
 ## 概要
 
-<!-- WIP -->
+AI チャットページの本文にテキストを追記する。enterAiChatPage でページを開いてから呼ぶ。
+
+{: .note }
+> 送信者（あなた／AI）と生成中・完了の状態は SDK からは指定できない。
+> 詳細は enterAiChatPage の注記を参照。
 
 ## 引数
 
 | 名前 | 型 | 説明 |
 |---|---|---|
-| `text` | `String` | <!-- WIP --> |
+| `text` | `String` | グラスに表示する本文 |
 
 ## 戻り値
 

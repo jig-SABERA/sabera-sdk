@@ -38,6 +38,8 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
+    // enterAIPage / sendAIContent は旧ファームの AI ページ向け。
+    // グラスの AI アシスタントは AI チャットページなので enterAiChatPage を使う。
     fun ai(commandManager: CommandManager) {
         // #snippet CommandManager.sendAIContent
         commandManager.enterAIPage()
@@ -76,6 +78,13 @@ internal object CommandSnippets {
             text = "会議室を移動しました",
         )
         commandManager.syncNotificationCount(1)
+        // #endsnippet
+    }
+
+    fun enterAiChat(commandManager: CommandManager) {
+        // #snippet CommandManager.enterAiChatPage
+        // AI アシスタント（AI チャットページ）をグラスに開かせる
+        commandManager.enterAiChatPage()
         // #endsnippet
     }
 

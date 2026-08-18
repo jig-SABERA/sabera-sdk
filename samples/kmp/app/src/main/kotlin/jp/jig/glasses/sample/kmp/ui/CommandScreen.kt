@@ -49,6 +49,7 @@ fun CommandScreen(manager: GlassManager, client: GlassClient) {
 
     var teleprompterText by remember { mutableStateOf("Hello from KMP") }
     var aiText by remember { mutableStateOf("質問内容をどうぞ") }
+    var aiChatText by remember { mutableStateOf("今日の天気は？") }
     var translateText by remember { mutableStateOf("Translate this") }
     var sourceLang by remember { mutableStateOf("en") }
     var targetLang by remember { mutableStateOf("ja") }
@@ -89,7 +90,8 @@ fun CommandScreen(manager: GlassManager, client: GlassClient) {
             SectionTitle("ページ遷移")
             CommandButton("Home に戻す") { safeRun("enterHomePage") { commandManager.enterHomePage() } }
             CommandButton("Teleprompter を開く") { safeRun("enterTeleprompterPage") { commandManager.enterTeleprompterPage() } }
-            CommandButton("AI ページを開く") { safeRun("enterAIPage") { commandManager.enterAIPage(false) } }
+            CommandButton("AI アシスタントを開く") { safeRun("enterAiChatPage") { commandManager.enterAiChatPage() } }
+            CommandButton("AI ページを開く（旧 UI）") { safeRun("enterAIPage") { commandManager.enterAIPage(false) } }
             CommandButton("翻訳ページを開く") { safeRun("enterTranslatePage") { commandManager.enterTranslatePage() } }
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
@@ -107,6 +109,12 @@ fun CommandScreen(manager: GlassManager, client: GlassClient) {
                 value = aiText,
                 onValueChange = { aiText = it },
                 onSend = { safeRun("sendAIContent: $aiText") { commandManager.sendAIContent(aiText) } },
+            )
+            SendableTextField(
+                label = "AI チャットテキスト",
+                value = aiChatText,
+                onValueChange = { aiChatText = it },
+                onSend = { safeRun("sendAiChatText: $aiChatText") { commandManager.sendAiChatText(aiChatText) } },
             )
             SendableTextField(
                 label = "翻訳テキスト",

@@ -16,7 +16,8 @@ fun enterAIPage(isAiPower: Boolean = false)
 
 ## 概要
 
-<!-- WIP -->
+旧ファームの AI ページを開く。グラスの AI アシスタントは AI チャットページなので、
+アシスタントを起動したいときは enterAiChatPage を使う。
 
 ## 引数
 
@@ -37,3 +38,4 @@ fun enterAIPage(isAiPower: Boolean = false)
 ## 関連
 
 - [sendAIContent](send-ai-content.html)
+- [enterAiChatPage](enter-ai-chat-page.html)

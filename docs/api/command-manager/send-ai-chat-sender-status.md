@@ -7,26 +7,28 @@ nav_order: 18
 
 # CommandManager.sendAiChatSenderStatus
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
-fun sendAiChatSenderStatus(sender: PacketCommandUtils.AiChatSender, status: PacketCommandUtils.AiChatStatus)
+fun sendAiChatSenderStatus(
+    sender: CommandManager.AiChatSender,
+    status: CommandManager.AiChatStatus,
+    model: CommandManager.AiChatModel? = null,
+)
 ```
 
 ## 概要
 
-<!-- WIP -->
+吹き出しの主体と生成状態をまとめて送る。回答を流し始める前に `AI` と `GENERATING` を送る。
 
 {: .note }
-> 引数の型が SDK 内部の型のため、アプリからは呼び出せない。AI チャットに文字列を送るには [sendAiChatText](send-ai-chat-text.html) を使う。
+> 0.0.10 では引数の型が SDK 内部の型のため呼び出せない。次のリリースで `CommandManager` の入れ子 enum に変わり、アプリから呼べるようになる。
 
 ## 引数
 
 | 名前 | 型 | 説明 |
 |---|---|---|
-| `sender` | `PacketCommandUtils.AiChatSender` | <!-- WIP --> |
-| `status` | `PacketCommandUtils.AiChatStatus` | <!-- WIP --> |
+| `sender` | `CommandManager.AiChatSender` | 吹き出しの主体 |
+| `status` | `CommandManager.AiChatStatus` | 生成中か完了か |
+| `model` | `CommandManager.AiChatModel?` | `AI` のときに表示する生成モデル |
 
 ## 戻り値
 

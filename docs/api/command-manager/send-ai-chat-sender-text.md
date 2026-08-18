@@ -7,26 +7,28 @@ nav_order: 17
 
 # CommandManager.sendAiChatSenderText
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
-fun sendAiChatSenderText(sender: PacketCommandUtils.AiChatSender, text: String)
+fun sendAiChatSenderText(
+    sender: CommandManager.AiChatSender,
+    text: String,
+    model: CommandManager.AiChatModel? = null,
+)
 ```
 
 ## 概要
 
-<!-- WIP -->
+吹き出しの主体と本文をまとめて送る。質問は `USER`、回答は `AI` で送る。1パケットに収まらない長文は sendAiChatText で続きを流す。
 
 {: .note }
-> 引数の型が SDK 内部の型のため、アプリからは呼び出せない。AI チャットに文字列を送るには [sendAiChatText](send-ai-chat-text.html) を使う。
+> 0.0.10 では引数の型が SDK 内部の型のため呼び出せない。次のリリースで `CommandManager` の入れ子 enum に変わり、アプリから呼べるようになる。
 
 ## 引数
 
 | 名前 | 型 | 説明 |
 |---|---|---|
-| `sender` | `PacketCommandUtils.AiChatSender` | <!-- WIP --> |
-| `text` | `String` | <!-- WIP --> |
+| `sender` | `CommandManager.AiChatSender` | 吹き出しの主体 |
+| `text` | `String` | 表示する本文 |
+| `model` | `CommandManager.AiChatModel?` | `AI` のときに表示する生成モデル |
 
 ## 戻り値
 

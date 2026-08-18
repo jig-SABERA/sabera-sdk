@@ -16,8 +16,8 @@ fun sendAiChatText(text: String)
 AI チャットページの本文にテキストを追記する。enterAiChatPage でページを開いてから呼ぶ。
 
 {: .note }
-> 送信者（あなた／AI）と生成中・完了の状態は SDK からは指定できない。
-> 詳細は enterAiChatPage の注記を参照。
+> 0.0.10 では送信者（あなた／AI）と生成中・完了の状態を指定できない。
+> 次のリリースからは sendAiChatSenderText / sendAiChatSenderStatus を使う。
 
 ## 引数
 

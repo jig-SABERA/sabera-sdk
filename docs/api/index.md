@@ -6,7 +6,10 @@ has_children: true
 
 # API リファレンス
 
-Sabera App SDK (Kotlin) の公開 API。バージョン 0.0.10 時点。
+Sabera App SDK (Kotlin) の公開 API。配布中のバージョンは 0.0.10。
+
+「0.0.10 には含まれない」と注記のあるメソッドは、新ファーム向けに SDK 側へ追加した分で、
+次のリリース以降で使える。
 
 | 型 | 説明 |
 |---|---|

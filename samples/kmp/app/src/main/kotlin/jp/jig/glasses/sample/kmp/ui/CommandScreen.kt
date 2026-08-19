@@ -49,6 +49,7 @@ fun CommandScreen(
     onOpenImageScreen: () -> Unit,
     onOpenNaviScreen: () -> Unit,
     onOpenImuScreen: () -> Unit,
+    onOpenMicScreen: () -> Unit,
     onOpenLayoutScreen: () -> Unit,
     onOpenCanvasScreen: () -> Unit,
 ) {
@@ -107,6 +108,7 @@ fun CommandScreen(
 
             SectionTitle("その他")
             CommandButton("6DoF を受け取る画面へ", onClick = onOpenImuScreen)
+            CommandButton("マイクを受け取る画面へ", onClick = onOpenMicScreen)
             CommandButton("Home に戻す") { safeRun("enterHomePage") { commandManager.enterHomePage() } }
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))

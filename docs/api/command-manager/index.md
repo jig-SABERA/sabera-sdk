@@ -41,6 +41,13 @@ has_children: true
 | [parseResponse](parse-response.html) | `fun parseResponse(value: ByteArray)` |
 | [enterEmptyScreenPage](enter-empty-screen-page.html) | `fun enterEmptyScreenPage()` |
 | [enterImageDisplayPage](enter-image-display-page.html) | `fun enterImageDisplayPage()` |
+| [sendLayout](send-layout.html) | `fun sendLayout(mode: CommandManager.LayoutMode, texts: Map<Int, String> = emptyMap())` |
+| [sendLayoutTexts](send-layout-texts.html) | `fun sendLayoutTexts(texts: Map<Int, String>)` |
+| [closeLayout](close-layout.html) | `fun closeLayout()` |
+| [sendCanvas](send-canvas.html) | `fun sendCanvas(elements: List<CommandManager.CanvasElement>)` |
+| [sendCanvasElements](send-canvas-elements.html) | `fun sendCanvasElements(elements: List<CommandManager.CanvasElement>)` |
+| [clearCanvas](clear-canvas.html) | `fun clearCanvas()` |
+| [closeCanvas](close-canvas.html) | `fun closeCanvas()` |
 | [enterNavigationPage](enter-navigation-page.html) | `fun enterNavigationPage()` |
 | [enterGlassAngleAdjustmentPage](enter-glass-angle-adjustment-page.html) | `fun enterGlassAngleAdjustmentPage()` |
 | [enterImuDebugPage](enter-imu-debug-page.html) | `fun enterImuDebugPage()` |

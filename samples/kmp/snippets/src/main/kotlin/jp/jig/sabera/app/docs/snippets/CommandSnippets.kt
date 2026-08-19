@@ -31,6 +31,64 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
+    fun layout(commandManager: CommandManager) {
+        // #snippet CommandManager.sendLayout
+        // モードを送ると全領域がクリアされ、同じパケットのテキストが反映される
+        commandManager.sendLayout(
+            mode = CommandManager.LayoutMode.LEFT_RIGHT,
+            texts = mapOf(0 to "左", 1 to "右"),
+        )
+        // #endsnippet
+    }
+
+    fun layoutPartialUpdate(commandManager: CommandManager) {
+        // #snippet CommandManager.sendLayoutTexts
+        // 分割は変えず、右側だけ差し替える
+        commandManager.sendLayoutTexts(mapOf(1 to "書き換え"))
+        // #endsnippet
+    }
+
+    fun layoutClose(commandManager: CommandManager) {
+        // #snippet CommandManager.closeLayout
+        commandManager.closeLayout()
+        // #endsnippet
+    }
+
+    fun canvas(commandManager: CommandManager) {
+        // #snippet CommandManager.sendCanvas
+        // 今ある要素は消えて、渡した要素だけが 576×360 のキャンバスに並ぶ
+        commandManager.sendCanvas(
+            listOf(
+                CommandManager.CanvasElement(id = 0, x = 16, y = 8, width = 240, height = 40, text = "上"),
+                CommandManager.CanvasElement(id = 1, x = 16, y = 300, width = 240, height = 40, text = "下"),
+            ),
+        )
+        // #endsnippet
+    }
+
+    fun canvasPartialUpdate(commandManager: CommandManager) {
+        // #snippet CommandManager.sendCanvasElements
+        // 他の要素は残したまま id 1 だけ差し替える。テキストを空にすると消える
+        commandManager.sendCanvasElements(
+            listOf(
+                CommandManager.CanvasElement(id = 1, x = 16, y = 300, width = 240, height = 40, text = "書き換え"),
+            ),
+        )
+        // #endsnippet
+    }
+
+    fun canvasClear(commandManager: CommandManager) {
+        // #snippet CommandManager.clearCanvas
+        commandManager.clearCanvas()
+        // #endsnippet
+    }
+
+    fun canvasClose(commandManager: CommandManager) {
+        // #snippet CommandManager.closeCanvas
+        commandManager.closeCanvas()
+        // #endsnippet
+    }
+
     fun observeImuData(commandManager: CommandManager, scope: CoroutineScope) {
         // #snippet CommandManager.imuData
         scope.launch {

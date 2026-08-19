@@ -2,7 +2,7 @@
 title: sendImage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 41
+nav_order: 48
 ---
 
 # CommandManager.sendImage

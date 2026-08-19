@@ -40,7 +40,12 @@ private const val TAG = "CommandScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommandScreen(manager: GlassManager, client: GlassClient, onOpenImageScreen: () -> Unit) {
+fun CommandScreen(
+    manager: GlassManager,
+    client: GlassClient,
+    onOpenImageScreen: () -> Unit,
+    onOpenNaviScreen: () -> Unit,
+) {
     val scope = rememberCoroutineScope()
     val commandManager = remember(client) { client.createCommandManager() }
 
@@ -94,6 +99,7 @@ fun CommandScreen(manager: GlassManager, client: GlassClient, onOpenImageScreen:
             CommandButton("AI ページを開く（旧 UI）") { safeRun("enterAIPage") { commandManager.enterAIPage(false) } }
             CommandButton("翻訳ページを開く") { safeRun("enterTranslatePage") { commandManager.enterTranslatePage() } }
             CommandButton("画像を送る画面へ", onClick = onOpenImageScreen)
+            CommandButton("ナビを送る画面へ", onClick = onOpenNaviScreen)
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
 

@@ -2,7 +2,7 @@
 title: sendTeleprompterTime
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 37
+nav_order: 35
 ---
 
 # CommandManager.sendTeleprompterTime
@@ -14,9 +14,6 @@ fun sendTeleprompterTime(time: String)
 ## 概要
 
 再生開始からの経過時間を送る。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 引数
 

@@ -2,7 +2,7 @@
 title: syncWeather
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 59
+nav_order: 51
 ---
 
 # CommandManager.syncWeather
@@ -14,9 +14,6 @@ fun syncWeather(type: CommandManager.WeatherType, value: Int)
 ## 概要
 
 天気情報をグラスに同期する。気温とアイコンは別々に送る。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 引数
 

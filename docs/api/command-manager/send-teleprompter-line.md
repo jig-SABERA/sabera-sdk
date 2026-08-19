@@ -2,7 +2,7 @@
 title: sendTeleprompterLine
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 35
+nav_order: 33
 ---
 
 # CommandManager.sendTeleprompterLine
@@ -14,9 +14,6 @@ fun sendTeleprompterLine(text: String, percent: Int, scrollUp: Boolean = false)
 ## 概要
 
 テレプロンプトに1行だけ追記する。全文を送り直す sendTeleprompterContent と違い、読み上げに合わせて差分だけを流すのに使う。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 引数
 

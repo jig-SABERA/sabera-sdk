@@ -2,7 +2,7 @@
 title: sendSetting
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 54
+nav_order: 46
 ---
 
 # CommandManager.sendSetting
@@ -17,9 +17,6 @@ fun sendSetting(name: String, value: ByteArray)
 ## 概要
 
 グラスの設定値を書き換える。値の型ごとにグラスへ送る型が変わるため、文字列とバイト列は別の overload になっている。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 引数
 

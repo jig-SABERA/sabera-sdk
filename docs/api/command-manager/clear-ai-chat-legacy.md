@@ -2,7 +2,7 @@
 title: clearAiChatLegacy
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 45
+nav_order: 42
 ---
 
 # CommandManager.clearAiChatLegacy
@@ -14,9 +14,6 @@ fun clearAiChatLegacy()
 ## 概要
 
 FEATURE_VERSION 1.1.0 未満のファーム向けに、改行を流し込んで見かけ上クリアする。グラス側に履歴が残るため、対応ファームでは clearAiChat を使う。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 戻り値
 

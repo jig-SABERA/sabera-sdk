@@ -16,9 +16,6 @@ fun sendTeleprompterContent(content: String, percent: Int)
 
 テレプロンプトに原稿を送る。200バイトを超える分は分割して送られる。`percent` つきの overload はスクロールバーの位置も一緒に送る。
 
-{: .note }
-> `percent` つきの overload は 0.0.10 には含まれない。
-
 ## 引数
 
 | 名前 | 型 | 説明 |

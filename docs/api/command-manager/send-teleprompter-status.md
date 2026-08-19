@@ -2,7 +2,7 @@
 title: sendTeleprompterStatus
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 36
+nav_order: 34
 ---
 
 # CommandManager.sendTeleprompterStatus
@@ -17,9 +17,6 @@ fun sendTeleprompterStatus(
 ## 概要
 
 テレプロンプトの再生状態と表示モードを送る。別パケットに分けると動作が安定しないため、ファーム側の都合で必ず両方まとめて送る。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 引数
 

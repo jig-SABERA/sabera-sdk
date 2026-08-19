@@ -2,7 +2,7 @@
 title: clearInscriptionText
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 39
+nav_order: 37
 ---
 
 # CommandManager.clearInscriptionText
@@ -14,9 +14,6 @@ fun clearInscriptionText()
 ## 概要
 
 テレプロンプトと翻訳の表示テキストを消す。どちらもグラス側で同じバッファを共有しているため、消去も共通。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 戻り値
 

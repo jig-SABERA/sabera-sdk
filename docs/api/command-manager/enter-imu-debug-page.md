@@ -2,7 +2,7 @@
 title: enterImuDebugPage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 34
+nav_order: 32
 ---
 
 # CommandManager.enterImuDebugPage
@@ -14,9 +14,6 @@ fun enterImuDebugPage()
 ## 概要
 
 IMU・照度のデバッグページを開く。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 戻り値
 

@@ -2,7 +2,7 @@
 title: enterEmptyScreenPage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 32
+nav_order: 30
 ---
 
 # CommandManager.enterEmptyScreenPage
@@ -14,9 +14,6 @@ fun enterEmptyScreenPage()
 ## 概要
 
 汎用テキスト表示ページを開く。本文は sendEmptyScreenContent で送る。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 戻り値
 

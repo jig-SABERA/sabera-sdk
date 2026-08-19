@@ -19,9 +19,6 @@ fun sendAiChatSenderText(
 
 吹き出しの主体と本文をまとめて送る。質問は `USER`、回答は `AI` で送る。1パケットに収まらない長文は sendAiChatText で続きを流す。
 
-{: .note }
-> 0.0.10 では引数の型が SDK 内部の型のため呼び出せない。次のリリースで `CommandManager` の入れ子 enum に変わり、アプリから呼べるようになる。
-
 ## 引数
 
 | 名前 | 型 | 説明 |

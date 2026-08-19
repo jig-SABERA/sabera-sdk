@@ -20,9 +20,8 @@ fun enterAiChatPage()
 開いたあとの本文送信は sendAiChatText。
 
 {: .note }
-> 0.0.10 では、質問文と回答を「あなた」「AI」に振り分ける SENDER、生成中／完了を伝える STATUS、
-> 本文フォントを決める言語通知が送れない。引数の型が SDK 内部の型だったため。
-> 次のリリースからは sendAiChatSenderText / sendAiChatSenderStatus / sendAiChatLanguage で送れる。
+> 質問文と回答の振り分けは sendAiChatSenderText、生成中と完了の通知は sendAiChatSenderStatus、
+> 本文フォントを決める言語通知は sendAiChatLanguage で送る。
 
 ## 戻り値
 

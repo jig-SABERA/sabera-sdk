@@ -15,9 +15,6 @@ fun enterNotificationPage()
 
 通知一覧ページを開く。
 
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
-
 ## 戻り値
 
 `Unit`

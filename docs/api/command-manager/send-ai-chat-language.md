@@ -2,7 +2,7 @@
 title: sendAiChatLanguage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 43
+nav_order: 40
 ---
 
 # CommandManager.sendAiChatLanguage
@@ -14,9 +14,6 @@ fun sendAiChatLanguage(languageCode: String)
 ## 概要
 
 AI チャットの表示言語を通知する。グラス側の本文フォントの選択に使われ、画面遷移は起こさない。フォントを先に確定させるため enterAiChatPage の前に送る。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 引数
 

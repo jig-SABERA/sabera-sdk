@@ -2,7 +2,7 @@
 title: sendWakeupTiltThreshold
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 52
+nav_order: 44
 ---
 
 # CommandManager.sendWakeupTiltThreshold
@@ -14,9 +14,6 @@ fun sendWakeupTiltThreshold(degrees: Int)
 ## 概要
 
 ヘッドアップでウェイクアップする傾きのしきい値を設定する。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 引数
 

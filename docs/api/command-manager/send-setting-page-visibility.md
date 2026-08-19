@@ -2,7 +2,7 @@
 title: sendSettingPageVisibility
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 53
+nav_order: 45
 ---
 
 # CommandManager.sendSettingPageVisibility
@@ -14,9 +14,6 @@ fun sendSettingPageVisibility(show: Boolean)
 ## 概要
 
 グラス側の設定画面の表示・非表示を通知する。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 引数
 

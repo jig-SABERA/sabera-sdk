@@ -19,9 +19,6 @@ fun sendAiChatSenderStatus(
 
 吹き出しの主体と生成状態をまとめて送る。回答を流し始める前に `AI` と `GENERATING` を送る。
 
-{: .note }
-> 0.0.10 では引数の型が SDK 内部の型のため呼び出せない。次のリリースで `CommandManager` の入れ子 enum に変わり、アプリから呼べるようになる。
-
 ## 引数
 
 | 名前 | 型 | 説明 |

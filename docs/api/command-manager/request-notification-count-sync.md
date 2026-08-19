@@ -2,7 +2,7 @@
 title: requestNotificationCountSync
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 57
+nav_order: 49
 ---
 
 # CommandManager.requestNotificationCountSync
@@ -14,9 +14,6 @@ fun requestNotificationCountSync()
 ## 概要
 
 未読通知数の同期をグラスに要求する。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 戻り値
 

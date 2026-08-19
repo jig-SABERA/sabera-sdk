@@ -2,7 +2,7 @@
 title: sendEmptyScreenStatus
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 41
+nav_order: 39
 ---
 
 # CommandManager.sendEmptyScreenStatus
@@ -14,9 +14,6 @@ fun sendEmptyScreenStatus(status: CommandManager.TeleprompterStatus)
 ## 概要
 
 汎用テキスト表示ページの状態を送る。`READY` で空画面に戻る。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 引数
 

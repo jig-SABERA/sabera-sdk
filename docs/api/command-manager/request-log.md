@@ -2,7 +2,7 @@
 title: requestLog
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 56
+nav_order: 48
 ---
 
 # CommandManager.requestLog
@@ -14,9 +14,6 @@ fun requestLog(type: CommandManager.GlassLogType)
 ## 概要
 
 グラスにログを要求する。クラッシュ前のログや再起動理由の調査に使う。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 引数
 

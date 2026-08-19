@@ -2,7 +2,7 @@
 title: sendEmptyScreenContent
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 40
+nav_order: 38
 ---
 
 # CommandManager.sendEmptyScreenContent
@@ -14,9 +14,6 @@ fun sendEmptyScreenContent(content: String)
 ## 概要
 
 汎用テキスト表示ページに本文を送る。200バイトを超える分は分割して送られる。
-
-{: .note }
-> 0.0.10 には含まれない。次のリリースから使える。
 
 ## 引数
 

@@ -2,7 +2,7 @@
 title: sendEmptyScreenStatus
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 39
+nav_order: 38
 ---
 
 # CommandManager.sendEmptyScreenStatus

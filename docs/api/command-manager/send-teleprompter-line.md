@@ -2,7 +2,7 @@
 title: sendTeleprompterLine
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 33
+nav_order: 32
 ---
 
 # CommandManager.sendTeleprompterLine

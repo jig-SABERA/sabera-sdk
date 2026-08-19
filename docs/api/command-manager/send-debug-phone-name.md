@@ -2,7 +2,7 @@
 title: sendDebugPhoneName
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 23
+nav_order: 21
 ---
 
 # CommandManager.sendDebugPhoneName

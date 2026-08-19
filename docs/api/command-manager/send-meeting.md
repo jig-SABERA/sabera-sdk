@@ -2,7 +2,7 @@
 title: sendMeeting
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 12
+nav_order: 10
 ---
 
 # CommandManager.sendMeeting
@@ -36,6 +36,3 @@ fun sendMeeting(meetingType: Byte, text: String, percent: Int)
 <!-- WIP -->
 <!-- /snippet -->
 
-## 関連
-
-- [enterMeetingPage](enter-meeting-page.html)

@@ -2,7 +2,7 @@
 title: removeGlassPowerEventListener
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 25
+nav_order: 23
 ---
 
 # CommandManager.removeGlassPowerEventListener

@@ -2,7 +2,7 @@
 title: enterAiChatPage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 13
+nav_order: 11
 ---
 
 # CommandManager.enterAiChatPage
@@ -14,8 +14,7 @@ fun enterAiChatPage()
 ## 概要
 
 グラスに AI チャットページを開かせる。グラス上の AI アシスタントはこのページで、
-[enterAIPage](enter-ai-page.html) が開く AI ページとは別物。AI アシスタントを起動したいときは
-こちらを呼ぶ。
+AI アシスタントを起動したいときはこちらを呼ぶ。
 
 開いたあとの本文送信は sendAiChatText。
 

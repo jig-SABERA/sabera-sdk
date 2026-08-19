@@ -2,7 +2,7 @@
 title: syncNotificationCount
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 22
+nav_order: 20
 ---
 
 # CommandManager.syncNotificationCount

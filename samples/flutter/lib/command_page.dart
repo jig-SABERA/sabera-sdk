@@ -78,10 +78,6 @@ class _CommandPageState extends State<CommandPage> {
               onPressed: () => _safeRun(_sdk.enterTeleprompterPage),
             ),
             _CommandButton(
-              label: 'AI ページを開く',
-              onPressed: () => _safeRun(_sdk.enterAIPage),
-            ),
-            _CommandButton(
               label: '翻訳ページを開く',
               onPressed: () => _safeRun(_sdk.enterTranslatePage),
             ),

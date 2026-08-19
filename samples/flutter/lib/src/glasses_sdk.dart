@@ -68,8 +68,6 @@ class GlassesSdk {
   Future<void> enterHomePage() => _method.invokeMethod('enterHomePage');
   Future<void> enterTeleprompterPage() =>
       _method.invokeMethod('enterTeleprompterPage');
-  Future<void> enterAIPage({bool isAiPower = false}) =>
-      _method.invokeMethod('enterAIPage', {'isAiPower': isAiPower});
   Future<void> enterTranslatePage() =>
       _method.invokeMethod('enterTranslatePage');
 

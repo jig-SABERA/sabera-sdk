@@ -14,6 +14,7 @@ private enum class ConnectedScreen {
     NAVI,
     IMU,
     LAYOUT,
+    CANVAS,
 }
 
 @Composable
@@ -35,6 +36,7 @@ fun GlassesApp(manager: GlassManager) {
             onOpenNaviScreen = { screen = ConnectedScreen.NAVI },
             onOpenImuScreen = { screen = ConnectedScreen.IMU },
             onOpenLayoutScreen = { screen = ConnectedScreen.LAYOUT },
+            onOpenCanvasScreen = { screen = ConnectedScreen.CANVAS },
         )
 
         ConnectedScreen.IMAGE -> ImageScreen(
@@ -53,6 +55,11 @@ fun GlassesApp(manager: GlassManager) {
         )
 
         ConnectedScreen.LAYOUT -> LayoutScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.CANVAS -> CanvasScreen(
             client = currentClient,
             onBack = { screen = ConnectedScreen.COMMAND },
         )

@@ -2,7 +2,7 @@
 title: syncWeather
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 63
+nav_order: 67
 ---
 
 # CommandManager.syncWeather

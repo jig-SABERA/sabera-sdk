@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.1.1 の公開 API に合わせたもの。
+シグネチャは SDK 0.2.0 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -259,6 +259,32 @@ SPEC = [
               summary="分割レイアウトを閉じてホームなどに戻す。表示していたテキストは破棄される。"
                       "リモコンの戻る操作やホームへの遷移でも閉じる。",
               related=["sendLayout"]),
+            m("sendCanvas",
+              "fun sendCanvas(elements: List<CommandManager.CanvasElement>)",
+              [("elements", "List<CommandManager.CanvasElement>",
+                "配置する要素。id は 0..7 の8個まで")],
+              summary="自由配置キャンバスを開いて、要素を置き直す。送るだけで画面が切り替わるので、"
+                      "先にページを開く必要はない。今ある要素は全て消えてから elements が並ぶ。"
+                      "キャンバスは 576×360 で、座標は左上が原点。はみ出した矩形は端で切られ、"
+                      "キャンバスの外に出た要素は描かれない。テキストは矩形内で左揃えに折り返し、"
+                      "あふれた分は切られる。分割して送れないため、テキストの合計は190バイト程度までに"
+                      "収める。収まらないときは sendCanvasElements で1要素ずつ送れば表示は積み上がる。"
+                      "FEATURE_VERSION 2.1.0 以上のファームが対象。",
+              related=["sendCanvasElements", "clearCanvas", "closeCanvas"]),
+            m("sendCanvasElements",
+              "fun sendCanvasElements(elements: List<CommandManager.CanvasElement>)",
+              [("elements", "List<CommandManager.CanvasElement>",
+                "配置する要素。テキストが空の要素はその id を消す")],
+              summary="今ある要素を残したまま、渡した要素だけ置き直す。既にある id に送ると座標と"
+                      "サイズごと差し替わる。キャンバスが閉じているときは新しく開く。",
+              related=["sendCanvas", "clearCanvas", "closeCanvas"]),
+            m("clearCanvas", "fun clearCanvas()",
+              summary="キャンバスは開いたまま、全ての要素を消す。",
+              related=["sendCanvas", "closeCanvas"]),
+            m("closeCanvas", "fun closeCanvas()",
+              summary="自由配置キャンバスを閉じてホームなどに戻す。表示していた要素は破棄される。"
+                      "リモコンの戻る操作やホームへの遷移でも閉じる。",
+              related=["sendCanvas"]),
             m("enterNavigationPage", "fun enterNavigationPage()",
               summary="ナビページを開く。案内内容は sendNaviStatus と sendNavi で送る。",
               related=["sendNaviStatus", "sendNavi"]),

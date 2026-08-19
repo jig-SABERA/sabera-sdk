@@ -47,6 +47,7 @@ fun CommandScreen(
     onOpenNaviScreen: () -> Unit,
     onOpenImuScreen: () -> Unit,
     onOpenLayoutScreen: () -> Unit,
+    onOpenCanvasScreen: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val commandManager = remember(client) { client.createCommandManager() }
@@ -103,6 +104,7 @@ fun CommandScreen(
             CommandButton("ナビを送る画面へ", onClick = onOpenNaviScreen)
             CommandButton("6DoF を受け取る画面へ", onClick = onOpenImuScreen)
             CommandButton("分割レイアウトの画面へ", onClick = onOpenLayoutScreen)
+            CommandButton("自由配置キャンバスの画面へ", onClick = onOpenCanvasScreen)
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
 

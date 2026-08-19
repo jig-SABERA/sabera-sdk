@@ -31,6 +31,34 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
+    fun observeImuData(commandManager: CommandManager, scope: CoroutineScope) {
+        // #snippet CommandManager.imuData
+        scope.launch {
+            commandManager.imuData.collect { data ->
+                // 並べ替えや間隔の計算は受信時刻ではなく timestampMs を使う
+                Log.d("sample", "${data.timestampMs}ms pitch=${data.pitchDegrees}")
+            }
+        }
+        commandManager.startImuData()
+        // #endsnippet
+    }
+
+    fun stopImuData(commandManager: CommandManager) {
+        // #snippet CommandManager.stopImuData
+        commandManager.stopImuData()
+        // #endsnippet
+    }
+
+    fun observeImuDataStarted(commandManager: CommandManager, scope: CoroutineScope) {
+        // #snippet CommandManager.imuDataStarted
+        scope.launch {
+            commandManager.imuDataStarted.collect { started ->
+                Log.d("sample", if (started) "6DoF 受信中" else "6DoF 停止中")
+            }
+        }
+        // #endsnippet
+    }
+
     fun teleprompter(commandManager: CommandManager) {
         // #snippet CommandManager.sendTeleprompterContent
         commandManager.enterTeleprompterPage()

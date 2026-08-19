@@ -13,6 +13,8 @@ has_children: true
 |---|---|
 | [connected](connected.html) | `val connected: StateFlow<Boolean>` |
 | [gestureEvents](gesture-events.html) | `val gestureEvents: SharedFlow<GestureType>` |
+| [imuData](imu-data.html) | `val imuData: SharedFlow<CommandManager.ImuData>` |
+| [imuDataStarted](imu-data-started.html) | `val imuDataStarted: StateFlow<Boolean>` |
 | [enterHomePage](enter-home-page.html) | `fun enterHomePage()` |
 | [enterTeleprompterPage](enter-teleprompter-page.html) | `fun enterTeleprompterPage()` |
 | [sendTeleprompterContent](send-teleprompter-content.html) | `fun sendTeleprompterContent(content: String)`<br>`fun sendTeleprompterContent(content: String, percent: Int)` |
@@ -64,6 +66,8 @@ has_children: true
 | [sendSetting](send-setting.html) | `fun sendSetting(name: String, value: Int)`<br>`fun sendSetting(name: String, value: Boolean)`<br>`fun sendSetting(name: String, value: String)`<br>`fun sendSetting(name: String, value: ByteArray)` |
 | [requestSettingSync](request-setting-sync.html) | `fun requestSettingSync()` |
 | [requestLog](request-log.html) | `fun requestLog(type: CommandManager.GlassLogType)` |
+| [startImuData](start-imu-data.html) | `fun startImuData()` |
+| [stopImuData](stop-imu-data.html) | `fun stopImuData()` |
 | [requestNotificationCountSync](request-notification-count-sync.html) | `fun requestNotificationCountSync()` |
 | [syncTime](sync-time.html) | `fun syncTime()` |
 | [syncWeather](sync-weather.html) | `fun syncWeather(type: CommandManager.WeatherType, value: Int)` |

@@ -2,7 +2,7 @@
 title: sendAIContent
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 6
+nav_order: 8
 ---
 
 # CommandManager.sendAIContent

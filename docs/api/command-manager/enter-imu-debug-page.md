@@ -2,7 +2,7 @@
 title: enterImuDebugPage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 33
+nav_order: 36
 ---
 
 # CommandManager.enterImuDebugPage

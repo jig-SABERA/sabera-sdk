@@ -31,6 +31,29 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
+    fun layout(commandManager: CommandManager) {
+        // #snippet CommandManager.sendLayout
+        // モードを送ると全領域がクリアされ、同じパケットのテキストが反映される
+        commandManager.sendLayout(
+            mode = CommandManager.LayoutMode.LEFT_RIGHT,
+            texts = mapOf(0 to "左", 1 to "右"),
+        )
+        // #endsnippet
+    }
+
+    fun layoutPartialUpdate(commandManager: CommandManager) {
+        // #snippet CommandManager.sendLayoutTexts
+        // 分割は変えず、右側だけ差し替える
+        commandManager.sendLayoutTexts(mapOf(1 to "書き換え"))
+        // #endsnippet
+    }
+
+    fun layoutClose(commandManager: CommandManager) {
+        // #snippet CommandManager.closeLayout
+        commandManager.closeLayout()
+        // #endsnippet
+    }
+
     fun observeImuData(commandManager: CommandManager, scope: CoroutineScope) {
         // #snippet CommandManager.imuData
         scope.launch {

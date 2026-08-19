@@ -2,7 +2,7 @@
 title: clearInscriptionText
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 38
+nav_order: 41
 ---
 
 # CommandManager.clearInscriptionText

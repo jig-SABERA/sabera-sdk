@@ -2,7 +2,7 @@
 title: sendEmptyScreenContent
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 39
+nav_order: 42
 ---
 
 # CommandManager.sendEmptyScreenContent

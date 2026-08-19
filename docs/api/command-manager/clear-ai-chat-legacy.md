@@ -2,7 +2,7 @@
 title: clearAiChatLegacy
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 44
+nav_order: 47
 ---
 
 # CommandManager.clearAiChatLegacy

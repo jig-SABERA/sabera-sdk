@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.0.14 の公開 API に合わせたもの。
+シグネチャは SDK 0.1.1 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -233,6 +233,32 @@ SPEC = [
               summary="画像表示ページを開く。技適マークの表示に使っている画面で、"
                       "画像は sendImage で送る。",
               related=["sendImage"]),
+            m("sendLayout",
+              "fun sendLayout(\n"
+              "    mode: CommandManager.LayoutMode,\n"
+              "    texts: Map<Int, String> = emptyMap(),\n"
+              ")",
+              [("mode", "CommandManager.LayoutMode",
+                "`FULL` / `TOP_BOTTOM` / `LEFT_RIGHT` / `QUAD`"),
+               ("texts", "Map<Int, String>", "領域番号ごとの表示テキスト")],
+              summary="分割レイアウトを開いて、分割と初期テキストを送る。送るだけで画面が切り替わるので、"
+                      "先にページを開く必要はない。モードを送るとレイアウトは作り直され、全領域の"
+                      "テキストが消えたうえで texts が反映される。領域番号は分割ごとに意味が変わり、"
+                      "`TOP_BOTTOM` なら 0=上・1=下、`QUAD` なら 0=左上・1=右上・2=左下・3=右下。"
+                      "渡さなかった領域は空のまま。テキストは領域内で折り返し、あふれた分は切られる。"
+                      "分割して送れないため、テキストの合計は190バイト程度までに収める。"
+                      "FEATURE_VERSION 2.0.0 以上のファームが対象。",
+              related=["sendLayoutTexts", "closeLayout"]),
+            m("sendLayoutTexts", "fun sendLayoutTexts(texts: Map<Int, String>)",
+              [("texts", "Map<Int, String>",
+                "領域番号ごとの表示テキスト。空文字でその領域を消す")],
+              summary="分割を保ったまま、指定した領域のテキストだけ差し替える。"
+                      "レイアウトが閉じているときは全画面1領域として開く。",
+              related=["sendLayout", "closeLayout"]),
+            m("closeLayout", "fun closeLayout()",
+              summary="分割レイアウトを閉じてホームなどに戻す。表示していたテキストは破棄される。"
+                      "リモコンの戻る操作やホームへの遷移でも閉じる。",
+              related=["sendLayout"]),
             m("enterNavigationPage", "fun enterNavigationPage()",
               summary="ナビページを開く。案内内容は sendNaviStatus と sendNavi で送る。",
               related=["sendNaviStatus", "sendNavi"]),

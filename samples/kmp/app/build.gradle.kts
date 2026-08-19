@@ -38,7 +38,7 @@ android {
 
 dependencies {
     // Sabera App SDK
-    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.1.0")
+    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 
     // Compose

@@ -2,7 +2,7 @@
 title: stopImuData
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 64
+nav_order: 68
 ---
 
 # CommandManager.stopImuData

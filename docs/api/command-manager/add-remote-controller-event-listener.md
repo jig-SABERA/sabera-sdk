@@ -2,7 +2,7 @@
 title: addRemoteControllerEventListener
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 26
+nav_order: 30
 ---
 
 # CommandManager.addRemoteControllerEventListener

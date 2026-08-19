@@ -2,7 +2,7 @@
 title: enterHomePage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 5
+nav_order: 7
 ---
 
 # CommandManager.enterHomePage

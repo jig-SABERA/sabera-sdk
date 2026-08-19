@@ -16,6 +16,7 @@ private enum class ConnectedScreen {
     IMAGE,
     NAVI,
     IMU,
+    MIC,
     LAYOUT,
     CANVAS,
 }
@@ -41,6 +42,7 @@ fun GlassesApp(manager: GlassManager) {
             onOpenImageScreen = { screen = ConnectedScreen.IMAGE },
             onOpenNaviScreen = { screen = ConnectedScreen.NAVI },
             onOpenImuScreen = { screen = ConnectedScreen.IMU },
+            onOpenMicScreen = { screen = ConnectedScreen.MIC },
             onOpenLayoutScreen = { screen = ConnectedScreen.LAYOUT },
             onOpenCanvasScreen = { screen = ConnectedScreen.CANVAS },
         )
@@ -71,6 +73,11 @@ fun GlassesApp(manager: GlassManager) {
         )
 
         ConnectedScreen.IMU -> ImuScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.MIC -> MicScreen(
             client = currentClient,
             onBack = { screen = ConnectedScreen.COMMAND },
         )

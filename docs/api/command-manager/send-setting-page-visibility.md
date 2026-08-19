@@ -2,7 +2,7 @@
 title: sendSettingPageVisibility
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 63
+nav_order: 64
 ---
 
 # CommandManager.sendSettingPageVisibility

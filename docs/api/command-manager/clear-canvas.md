@@ -2,7 +2,7 @@
 title: clearCanvas
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 40
+nav_order: 41
 ---
 
 # CommandManager.clearCanvas
@@ -13,7 +13,7 @@ fun clearCanvas()
 
 ## 概要
 
-キャンバスは開いたまま、全ての要素を消す。
+キャンバスは開いたまま、全ての要素を消す。置いた画像も一緒に消える。
 
 ## 戻り値
 
@@ -30,4 +30,5 @@ commandManager.clearCanvas()
 ## 関連
 
 - [sendCanvas](send-canvas.html)
+- [sendCanvasImage](send-canvas-image.html)
 - [closeCanvas](close-canvas.html)

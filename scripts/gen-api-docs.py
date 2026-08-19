@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.3.1 の公開 API に合わせたもの。
+シグネチャは SDK 0.4.0 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -299,9 +299,25 @@ SPEC = [
               summary="今ある要素を残したまま、渡した要素だけ置き直す。既にある id に送ると座標と"
                       "サイズごと差し替わる。キャンバスが閉じているときは新しく開く。",
               related=["sendCanvas", "clearCanvas", "closeCanvas"]),
+            m("sendCanvasImage",
+              "fun sendCanvasImage(x: Int, y: Int, width: Int, height: Int, grayscale: ByteArray)",
+              [("x", "Int", "画像の左上のx座標。x + width は 576 まで"),
+               ("y", "Int", "画像の左上のy座標。y + height は 360 まで"),
+               ("width", "Int", "画像の幅"),
+               ("height", "Int", "画像の高さ"),
+               ("grayscale", "ByteArray",
+                "1画素1バイトのグレースケール。長さは width * height 以上")],
+              summary="キャンバスに画像を置く。送るだけで画面が切り替わるので、先にページを開く必要はない。"
+                      "今ある要素は残したまま、画像だけ差し替わる。渡すのはリサイズ済みのグレースケールで、"
+                      "左上から行優先の並び。輝度は 0-255 のまま渡してよく、3bit(0-7)への量子化と"
+                      "RLE圧縮はSDK内で行う。置けるのは1枚だけで、送るたび前の画像は破棄される。"
+                      "画像はテキスト要素の背面に描かれる。ナビの全体ルート画像とバッファを共有しているため、"
+                      "ナビ表示中は使えない。数百バイトずつに分けて送るので、大きい画像ほど表示まで時間がかかる。"
+                      "FEATURE_VERSION 2.2.0 以上のファームが対象。",
+              related=["sendCanvas", "sendCanvasElements", "clearCanvas"]),
             m("clearCanvas", "fun clearCanvas()",
-              summary="キャンバスは開いたまま、全ての要素を消す。",
-              related=["sendCanvas", "closeCanvas"]),
+              summary="キャンバスは開いたまま、全ての要素を消す。画像も一緒に消える。",
+              related=["sendCanvas", "sendCanvasImage", "closeCanvas"]),
             m("closeCanvas", "fun closeCanvas()",
               summary="自由配置キャンバスを閉じてホームなどに戻す。表示していた要素は破棄される。"
                       "リモコンの戻る操作やホームへの遷移でも閉じる。",

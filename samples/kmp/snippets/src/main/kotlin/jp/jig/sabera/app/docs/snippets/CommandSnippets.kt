@@ -77,6 +77,19 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
+    fun canvasImage(commandManager: CommandManager, grayscale: ByteArray) {
+        // #snippet CommandManager.sendCanvasImage
+        // grayscale は1画素1バイト・左上から行優先。3bitへの量子化とRLE圧縮はSDKが行う
+        commandManager.sendCanvasImage(x = 100, y = 50, width = 192, height = 192, grayscale = grayscale)
+        // テキストは画像の手前に描かれるので、キャプションを重ねられる
+        commandManager.sendCanvasElements(
+            listOf(
+                CommandManager.CanvasElement(id = 0, x = 100, y = 250, width = 192, height = 40, text = "キャプション"),
+            ),
+        )
+        // #endsnippet
+    }
+
     fun canvasClear(commandManager: CommandManager) {
         // #snippet CommandManager.clearCanvas
         commandManager.clearCanvas()

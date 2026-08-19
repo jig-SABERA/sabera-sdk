@@ -1,6 +1,11 @@
 package jp.jig.glasses.sample.kmp.ui
 
+import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -31,6 +37,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import app.jigglass.glass.CommandManager
@@ -47,6 +55,9 @@ private const val CANVAS_HEIGHT = 360
 
 /** 同時に置ける要素の数。id は 0..7 */
 private const val MAX_ELEMENTS = 8
+
+/** 画像はキャンバスより小さくしておく。大きいほど分割送信が増えて表示が遅くなる */
+private const val CANVAS_IMAGE_MAX_SIZE = 240
 
 /** 要素TLVの固定部（id + x + y + w + h）とTLVヘッダ */
 private const val ELEMENT_OVERHEAD_BYTES = 12
@@ -67,9 +78,13 @@ private val demoElements = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
+    val context = LocalContext.current
     val commandManager = remember(client) { client.createCommandManager() }
 
     val elements = remember { mutableStateListOf(demoElements[0], demoElements[3]) }
+    var image by remember { mutableStateOf<GrayscaleImage?>(null) }
+    var imageX by remember { mutableStateOf(100) }
+    var imageY by remember { mutableStateOf(50) }
     var error by remember { mutableStateOf<String?>(null) }
 
     val used = elements.sumOf { it.text.toByteArray().size + ELEMENT_OVERHEAD_BYTES }
@@ -81,6 +96,18 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
         } catch (e: Throwable) {
             Log.e(TAG, "safeRun: $label FAILED", e)
             error = e.message
+        }
+    }
+
+    val picker = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia(),
+    ) { uri ->
+        uri ?: return@rememberLauncherForActivityResult
+        safeRun("loadImage") {
+            val bitmap = context.contentResolver.openInputStream(uri)?.use {
+                BitmapFactory.decodeStream(it)
+            } ?: throw IllegalStateException("画像を読み込めませんでした")
+            image = bitmap.toGlassGrayscale(CANVAS_IMAGE_MAX_SIZE)
         }
     }
 
@@ -184,7 +211,72 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
             ) {
                 Text("1要素ずつ送る")
             }
+
+            HorizontalDivider(Modifier.padding(vertical = 16.dp))
+
+            Text("画像", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "置けるのは1枚だけ。送るたび前の画像は破棄され、テキストの背面に描かれる。" +
+                    "FEATURE_VERSION 2.2.0 以上のファームが対象。",
+                style = MaterialTheme.typography.bodySmall,
+            )
             Spacer(Modifier.height(8.dp))
+            Row(Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+                NumberField("画像のx", imageX, { imageX = it }, Modifier.weight(1f))
+                Spacer(Modifier.width(4.dp))
+                NumberField("画像のy", imageY, { imageY = it }, Modifier.weight(1f))
+            }
+            OutlinedButton(
+                onClick = {
+                    picker.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("画像を選ぶ")
+            }
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = { image = testPatternImage(CANVAS_IMAGE_MAX_SIZE) },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("テストパターンを使う")
+            }
+
+            image?.let { current ->
+                Spacer(Modifier.height(16.dp))
+                Image(
+                    bitmap = remember(current) { current.toBitmap().asImageBitmap() },
+                    contentDescription = "グラスに送る画像のプレビュー",
+                    modifier = Modifier.size(120.dp),
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "${current.width}×${current.height} を ($imageX, $imageY) に置く",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Spacer(Modifier.height(8.dp))
+                Button(
+                    onClick = {
+                        safeRun("sendCanvasImage ${current.width}x${current.height}") {
+                            commandManager.sendCanvasImage(
+                                x = imageX,
+                                y = imageY,
+                                width = current.width,
+                                height = current.height,
+                                grayscale = current.pixels,
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("画像を送る")
+                }
+            }
+
+            HorizontalDivider(Modifier.padding(vertical = 16.dp))
+
             OutlinedButton(
                 onClick = { safeRun("clearCanvas") { commandManager.clearCanvas() } },
                 modifier = Modifier.fillMaxWidth(),

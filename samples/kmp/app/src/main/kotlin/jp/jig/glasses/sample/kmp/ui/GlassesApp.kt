@@ -10,6 +10,9 @@ import app.jigglass.glass.GlassManager
 
 private enum class ConnectedScreen {
     COMMAND,
+    TELEPROMPTER,
+    AI_CHAT,
+    TRANSLATE,
     IMAGE,
     NAVI,
     IMU,
@@ -32,11 +35,29 @@ fun GlassesApp(manager: GlassManager) {
         ConnectedScreen.COMMAND -> CommandScreen(
             manager = manager,
             client = currentClient,
+            onOpenTeleprompterScreen = { screen = ConnectedScreen.TELEPROMPTER },
+            onOpenAiChatScreen = { screen = ConnectedScreen.AI_CHAT },
+            onOpenTranslateScreen = { screen = ConnectedScreen.TRANSLATE },
             onOpenImageScreen = { screen = ConnectedScreen.IMAGE },
             onOpenNaviScreen = { screen = ConnectedScreen.NAVI },
             onOpenImuScreen = { screen = ConnectedScreen.IMU },
             onOpenLayoutScreen = { screen = ConnectedScreen.LAYOUT },
             onOpenCanvasScreen = { screen = ConnectedScreen.CANVAS },
+        )
+
+        ConnectedScreen.TELEPROMPTER -> TeleprompterScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.AI_CHAT -> AiChatScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.TRANSLATE -> TranslateScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
         )
 
         ConnectedScreen.IMAGE -> ImageScreen(

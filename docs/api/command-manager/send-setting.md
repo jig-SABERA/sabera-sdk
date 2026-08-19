@@ -2,7 +2,7 @@
 title: sendSetting
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 64
+nav_order: 65
 ---
 
 # CommandManager.sendSetting

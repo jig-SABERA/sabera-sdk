@@ -2,7 +2,7 @@
 title: sendAiChatLanguage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 53
+nav_order: 54
 ---
 
 # CommandManager.sendAiChatLanguage

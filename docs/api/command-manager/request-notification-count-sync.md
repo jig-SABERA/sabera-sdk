@@ -2,7 +2,7 @@
 title: requestNotificationCountSync
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 69
+nav_order: 70
 ---
 
 # CommandManager.requestNotificationCountSync

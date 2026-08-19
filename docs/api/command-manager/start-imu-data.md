@@ -2,7 +2,7 @@
 title: startImuData
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 67
+nav_order: 68
 ---
 
 # CommandManager.startImuData

@@ -50,6 +50,7 @@ has_children: true
 | [closeLayout](close-layout.html) | `fun closeLayout()` |
 | [sendCanvas](send-canvas.html) | `fun sendCanvas(elements: List<CommandManager.CanvasElement>)` |
 | [sendCanvasElements](send-canvas-elements.html) | `fun sendCanvasElements(elements: List<CommandManager.CanvasElement>)` |
+| [sendCanvasImage](send-canvas-image.html) | `fun sendCanvasImage(x: Int, y: Int, width: Int, height: Int, grayscale: ByteArray)` |
 | [clearCanvas](clear-canvas.html) | `fun clearCanvas()` |
 | [closeCanvas](close-canvas.html) | `fun closeCanvas()` |
 | [enterNavigationPage](enter-navigation-page.html) | `fun enterNavigationPage()` |

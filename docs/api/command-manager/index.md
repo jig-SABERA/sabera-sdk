@@ -51,6 +51,7 @@ fun sendTeleprompterContent(content: String, percent: Int)` |
 | [enterNotificationPage](enter-notification-page.html) | `fun enterNotificationPage()` |
 | [enterEmptyScreenPage](enter-empty-screen-page.html) | `fun enterEmptyScreenPage()` |
 | [enterImageDisplayPage](enter-image-display-page.html) | `fun enterImageDisplayPage()` |
+| [enterNavigationPage](enter-navigation-page.html) | `fun enterNavigationPage()` |
 | [enterGlassAngleAdjustmentPage](enter-glass-angle-adjustment-page.html) | `fun enterGlassAngleAdjustmentPage()` |
 | [enterImuDebugPage](enter-imu-debug-page.html) | `fun enterImuDebugPage()` |
 | [sendTeleprompterLine](send-teleprompter-line.html) | `fun sendTeleprompterLine(text: String, percent: Int, scrollUp: Boolean = false)` |
@@ -67,6 +68,20 @@ fun sendTeleprompterContent(content: String, percent: Int)` |
 | [sendAiChatLanguage](send-ai-chat-language.html) | `fun sendAiChatLanguage(languageCode: String)` |
 | [clearAiChat](clear-ai-chat.html) | `fun clearAiChat()` |
 | [clearAiChatLegacy](clear-ai-chat-legacy.html) | `fun clearAiChatLegacy()` |
+| [sendNaviStatus](send-navi-status.html) | `fun sendNaviStatus(status: CommandManager.NaviStatus)` |
+| [sendNaviCourse](send-navi-course.html) | `fun sendNaviCourse(courseDegrees: Double)` |
+| [sendNaviLanguage](send-navi-language.html) | `fun sendNaviLanguage(languageCode: String)` |
+| [sendNavi](send-navi.html) | `fun sendNavi(
+    maneuverIcon: CommandManager.ManeuverIcon,
+    instructionText: String,
+    distanceText: String,
+    estimatedArrivalText: String,
+    timeAndDistanceText: String,
+    bitmapWidth: Int? = null,
+    bitmapHeight: Int? = null,
+    grayscale: ByteArray? = null,
+)` |
+| [sendNaviLargeImage](send-navi-large-image.html) | `fun sendNaviLargeImage(width: Int, height: Int, grayscale: ByteArray)` |
 | [sendAdjust](send-adjust.html) | `fun sendAdjust(
     status: CommandManager.AdjustStatus,
     imageType: CommandManager.AdjustImageType,

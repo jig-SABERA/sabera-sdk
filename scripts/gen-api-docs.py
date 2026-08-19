@@ -226,6 +226,9 @@ SPEC = [
               summary="画像表示ページを開く。技適マークの表示に使っている画面で、"
                       "画像は sendImage で送る。",
               related=["sendImage"]),
+            m("enterNavigationPage", "fun enterNavigationPage()",
+              summary="ナビページを開く。案内内容は sendNaviStatus と sendNavi で送る。",
+              related=["sendNaviStatus", "sendNavi"]),
             m("enterGlassAngleAdjustmentPage", "fun enterGlassAngleAdjustmentPage()",
               summary="ヘッドアップ角度調整ページを開く。閾値は sendWakeupTiltThreshold で送る。",
               related=["sendWakeupTiltThreshold"]),
@@ -294,6 +297,55 @@ SPEC = [
               summary="FEATURE_VERSION 1.1.0 未満のファーム向けに、改行を流し込んで見かけ上クリアする。"
                       "グラス側に履歴が残るため、対応ファームでは clearAiChat を使う。",
               related=["clearAiChat"]),
+            m("sendNaviStatus", "fun sendNaviStatus(status: CommandManager.NaviStatus)",
+              [("status", "CommandManager.NaviStatus", "`READY` / `START` / `ARRIVED`")],
+              summary="ナビの状態を送る。sendNavi で送った案内は `START` のときだけ表示される。"
+                      "`READY` は案内前の待機画面、`ARRIVED` は到着画面になる。",
+              related=["enterNavigationPage", "sendNavi"]),
+            m("sendNaviCourse", "fun sendNaviCourse(courseDegrees: Double)",
+              [("courseDegrees", "Double", "進行方向[度]。0以上360未満。北を0として時計回り")],
+              summary="端末の GPS 進行方向を送る。グラスは磁力計を持たず方位を単体で保てないため、"
+                      "この値をジャイロのドリフト補正に使う。案内中に数秒おきに送る。",
+              related=["sendNaviStatus"]),
+            m("sendNaviLanguage", "fun sendNaviLanguage(languageCode: String)",
+              [("languageCode", "String", '`"JPN"` / `"ENG"` 等の3文字')],
+              summary="ナビ画面の表示言語を通知する。到着時刻ラベル等の切り替えに使われ、"
+                      "画面遷移や表示状態には影響しない。",
+              related=["enterNavigationPage"]),
+            m("sendNavi",
+              "fun sendNavi(\n"
+              "    maneuverIcon: CommandManager.ManeuverIcon,\n"
+              "    instructionText: String,\n"
+              "    distanceText: String,\n"
+              "    estimatedArrivalText: String,\n"
+              "    timeAndDistanceText: String,\n"
+              "    bitmapWidth: Int? = null,\n"
+              "    bitmapHeight: Int? = null,\n"
+              "    grayscale: ByteArray? = null,\n"
+              ")",
+              [("maneuverIcon", "CommandManager.ManeuverIcon",
+                "次のポイントの進行方向アイコン。`TURN_LEFT` / `STRAIGHT` など"),
+               ("instructionText", "String", "次のポイントでの指示。「○○を右折」など"),
+               ("distanceText", "String", "次のポイントまでの距離。「300m」など"),
+               ("estimatedArrivalText", "String", "予想到着時刻"),
+               ("timeAndDistanceText", "String", "画面左下に出す残り時間と距離"),
+               ("bitmapWidth", "Int?", "地図画像の幅。255まで。`grayscale` があるときは必須"),
+               ("bitmapHeight", "Int?", "地図画像の高さ。255まで。`grayscale` があるときは必須"),
+               ("grayscale", "ByteArray?",
+                "地図画像。長さは `bitmapWidth * bitmapHeight` 以上")],
+              summary="ナビの案内情報を送る。事前に sendNaviStatus で `START` にしておく。"
+                      "地図画像は sendImage と同じく1画素1バイト・左上から行優先のグレースケールで、"
+                      "3bitへの量子化とRLE圧縮は SDK が行う。",
+              related=["enterNavigationPage", "sendNaviStatus", "sendNaviLargeImage"]),
+            m("sendNaviLargeImage",
+              "fun sendNaviLargeImage(width: Int, height: Int, grayscale: ByteArray)",
+              [("width", "Int", "画像の幅"),
+               ("height", "Int", "画像の高さ"),
+               ("grayscale", "ByteArray",
+                "1画素1バイトのグレースケール。長さは `width * height` 以上")],
+              summary="ナビ画面に全体ルートの地図画像を送る。sendNavi に載せる地図より"
+                      "大きいサイズを扱える。",
+              related=["sendNavi"]),
             m("sendAdjust",
               "fun sendAdjust(\n"
               "    status: CommandManager.AdjustStatus,\n"
@@ -527,8 +579,20 @@ def link_index():
     return "\n".join(lines) + "\n"
 
 
+def sync_nav_order(path, body):
+    want = re.search(r"^nav_order: (\d+)$", body, re.M)
+    current = path.read_text(encoding="utf-8")
+    if want is None or re.search(r"^nav_order: \d+$", current, re.M) is None:
+        return
+    updated = re.sub(r"^nav_order: \d+$", want.group(0), current, count=1, flags=re.M)
+    if updated != current:
+        path.write_text(updated, encoding="utf-8")
+
+
 def write(path, body, force, stats):
     if path.exists() and not force:
+        # メソッドが増えると後ろのページの並び順がずれるので、nav_order だけは追従させる
+        sync_nav_order(path, body)
         stats["skipped"] += 1
         return
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -545,7 +609,8 @@ def main():
     write(DOCS / "api" / "index.md", api_index(), args.force, stats)
     for group in SPEC:
         base = DOCS / "api" / group["dir"]
-        write(base / "index.md", type_index(group), args.force, stats)
+        # 型のindexは表だけの生成物なので常に作り直す
+        write(base / "index.md", type_index(group), True, stats)
         for i, meth in enumerate(group["methods"], start=1):
             write(base / f"{slug(meth['name'])}.md", method_page(group, meth, i), args.force, stats)
 

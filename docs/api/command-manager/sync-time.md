@@ -2,7 +2,7 @@
 title: syncTime
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 50
+nav_order: 58
 ---
 
 # CommandManager.syncTime

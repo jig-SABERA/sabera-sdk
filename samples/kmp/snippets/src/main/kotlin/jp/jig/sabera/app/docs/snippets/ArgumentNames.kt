@@ -60,6 +60,38 @@ internal object ArgumentNames {
         commandManager.syncNotificationCount(count = 1)
         commandManager.sendMeeting(meetingType = 0x00, text = "text", percent = 0)
         commandManager.sendAiChatText(text = "text")
+        commandManager.sendTeleprompterContent(content = "content", percent = 0)
+        commandManager.sendTeleprompterLine(text = "text", percent = 0, scrollUp = false)
+        commandManager.sendTeleprompterTime(time = "01:23")
+        commandManager.sendEmptyScreenContent(content = "content")
+        commandManager.sendImage(width = 196, height = 196, grayscale = ByteArray(196 * 196))
+        commandManager.sendAiChatLanguage(languageCode = "JPN")
+        commandManager.sendWakeupTiltThreshold(degrees = 10)
+        commandManager.sendSettingPageVisibility(show = true)
+        commandManager.sendSetting(name = CommandManager.SettingKey.FONT_SIZE, value = 1)
+        commandManager.syncWeather(type = CommandManager.WeatherType.TEMPERATURE, value = 20)
+        commandManager.requestLog(type = CommandManager.GlassLogType.SYSLOG)
+        commandManager.sendTeleprompterStatus(
+            status = CommandManager.TeleprompterStatus.STARTED,
+            mode = CommandManager.TeleprompterMode.TELEPROMPT,
+        )
+        commandManager.sendEmptyScreenStatus(status = CommandManager.TeleprompterStatus.READY)
+        commandManager.sendAdjust(
+            status = CommandManager.AdjustStatus.SHOW,
+            imageType = CommandManager.AdjustImageType.HOME,
+        )
+        commandManager.sendAiChatSenderText(
+            sender = CommandManager.AiChatSender.AI,
+            text = "text",
+            model = CommandManager.AiChatModel.SABERA_AI,
+        )
+        commandManager.sendAiChatSenderStatus(
+            sender = CommandManager.AiChatSender.AI,
+            status = CommandManager.AiChatStatus.GENERATING,
+            model = CommandManager.AiChatModel.SABERA_AI,
+        )
+        commandManager.sendAiChatSender(sender = CommandManager.AiChatSender.USER)
+        commandManager.sendAiChatStatus(status = CommandManager.AiChatStatus.COMPLETE)
     }
 
     fun remoteControlListener(commandManager: CommandManager, listener: CommandManager.RemoteControlListener) {

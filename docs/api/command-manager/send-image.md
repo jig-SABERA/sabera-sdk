@@ -30,7 +30,11 @@ fun sendImage(width: Int, height: Int, grayscale: ByteArray)
 ## 使用例
 
 <!-- snippet: CommandManager.sendImage -->
-<!-- WIP -->
+```kotlin
+commandManager.enterImageDisplayPage()
+// grayscale は1画素1バイト・左上から行優先。3bitへの量子化とRLE圧縮はSDKが行う
+commandManager.sendImage(width = 196, height = 196, grayscale = grayscale)
+```
 <!-- /snippet -->
 
 ## 関連

@@ -22,7 +22,10 @@ fun enterImageDisplayPage()
 ## 使用例
 
 <!-- snippet: CommandManager.enterImageDisplayPage -->
-<!-- WIP -->
+```kotlin
+// 技適マークの表示にも使っている画像表示ページ
+commandManager.enterImageDisplayPage()
+```
 <!-- /snippet -->
 
 ## 関連

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.3.0 の公開 API に合わせたもの。
+シグネチャは SDK 0.3.1 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -148,7 +148,8 @@ SPEC = [
               summary="グラスのマイク音声。PCM16 のリトルエンディアン、16kHz モノラル。"
                       "startMicStreaming を呼ぶまで何も流れない。デバイスの世代で音声の形式が"
                       "変わる（Ogg Opus か record stream）が、判別とデコードは SDK 側で行うため"
-                      "利用側は PCM だけ受け取ればよい。購読が遅れると古いデータから捨てるので、"
+                      "利用側は PCM だけ受け取ればよい。グラスの録音は小さいため、SDK が3倍に"
+                      "持ち上げてから流す。購読が遅れると古いデータから捨てるので、"
                       "録音として貯めるなら受け取り側でバッファする。",
               related=["startMicStreaming", "stopMicStreaming", "micStreaming"]),
             m("micStreaming", "val micStreaming: StateFlow<Boolean>",

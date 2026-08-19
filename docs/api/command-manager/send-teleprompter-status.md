@@ -2,7 +2,7 @@
 title: sendTeleprompterStatus
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 33
+nav_order: 35
 ---
 
 # CommandManager.sendTeleprompterStatus

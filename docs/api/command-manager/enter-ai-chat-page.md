@@ -2,7 +2,7 @@
 title: enterAiChatPage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 11
+nav_order: 13
 ---
 
 # CommandManager.enterAiChatPage

@@ -45,6 +45,7 @@ fun CommandScreen(
     client: GlassClient,
     onOpenImageScreen: () -> Unit,
     onOpenNaviScreen: () -> Unit,
+    onOpenImuScreen: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val commandManager = remember(client) { client.createCommandManager() }
@@ -99,6 +100,7 @@ fun CommandScreen(
             CommandButton("翻訳ページを開く") { safeRun("enterTranslatePage") { commandManager.enterTranslatePage() } }
             CommandButton("画像を送る画面へ", onClick = onOpenImageScreen)
             CommandButton("ナビを送る画面へ", onClick = onOpenNaviScreen)
+            CommandButton("6DoF を受け取る画面へ", onClick = onOpenImuScreen)
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
 

@@ -2,7 +2,7 @@
 title: sendMessage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 19
+nav_order: 21
 ---
 
 # CommandManager.sendMessage

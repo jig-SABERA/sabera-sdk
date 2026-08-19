@@ -2,7 +2,7 @@
 title: enterTeleprompterPage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 4
+nav_order: 6
 ---
 
 # CommandManager.enterTeleprompterPage

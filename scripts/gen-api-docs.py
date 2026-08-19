@@ -131,6 +131,18 @@ SPEC = [
         "methods": [
             m("connected", "val connected: StateFlow<Boolean>", returns="StateFlow<Boolean>"),
             m("gestureEvents", "val gestureEvents: SharedFlow<GestureType>", returns="SharedFlow<GestureType>"),
+            m("imuData", "val imuData: SharedFlow<CommandManager.ImuData>",
+              returns="SharedFlow<CommandManager.ImuData>",
+              summary="6DoF のセンサー値。startImuData を呼ぶまで何も流れない。"
+                      "1サンプルは加速度[mg]・角速度[dps]・ピッチとヨー[度]と、"
+                      "AR起動からの経過時間[ms]を持つ。並べ替えや間隔の計算は受信時刻ではなく"
+                      "この経過時間を使う。送信キューが詰まるとグラス側がサンプルを捨てるため、"
+                      "指定した周期どおりには届かない。",
+              related=["startImuData", "stopImuData"]),
+            m("imuDataStarted", "val imuDataStarted: StateFlow<Boolean>",
+              returns="StateFlow<Boolean>",
+              summary="6DoF が流れている間 true。開始・停止の応答で切り替わる。",
+              related=["startImuData"]),
             m("enterHomePage", "fun enterHomePage()"),
             m("enterTeleprompterPage", "fun enterTeleprompterPage()", related=["sendTeleprompterContent"]),
             m("sendTeleprompterContent",
@@ -374,6 +386,14 @@ SPEC = [
               [("type", "CommandManager.GlassLogType",
                 "`REALTIME` / `SYSLOG` / `RUNTIME` / `RESET_REASON` / `STOP`")],
               summary="グラスにログを要求する。クラッシュ前のログや再起動理由の調査に使う。"),
+            m("startImuData", "fun startImuData()",
+              summary="6DoF の送信を開始する。値は imuData に流れる。"
+                      "FEATURE_VERSION 2.0.0 以上のファームが対象で、それ未満では何も起きない。"
+                      "切断するとグラス側で止まるため、再接続後も続けるなら呼び直す。",
+              related=["imuData", "stopImuData"]),
+            m("stopImuData", "fun stopImuData()",
+              summary="6DoF の送信を止める。",
+              related=["imuData", "startImuData"]),
             m("requestNotificationCountSync", "fun requestNotificationCountSync()",
               summary="未読通知数の同期をグラスに要求する。",
               related=["syncNotificationCount"]),

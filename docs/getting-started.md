@@ -170,8 +170,9 @@ commandManager.sendTeleprompterContent("Hello")
 
 ### そのほかのコマンド
 
-汎用テキスト表示・設定の書き換えと同期・時刻や天気の同期・ログ取得なども
-`CommandManager` から送れる。一覧は [API リファレンス](api/command-manager/) を見る。
+汎用テキスト表示・画像表示（技適マークに使っている画面）・設定の書き換えと同期・
+時刻や天気の同期・ログ取得なども `CommandManager` から送れる。一覧は
+[API リファレンス](api/command-manager/) を見る。
 
 ## 6. ジェスチャーを受け取る
 

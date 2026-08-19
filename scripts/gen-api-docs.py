@@ -222,6 +222,10 @@ SPEC = [
             m("enterEmptyScreenPage", "fun enterEmptyScreenPage()",
               summary="汎用テキスト表示ページを開く。本文は sendEmptyScreenContent で送る。",
               related=["sendEmptyScreenContent", "sendEmptyScreenStatus"]),
+            m("enterImageDisplayPage", "fun enterImageDisplayPage()",
+              summary="画像表示ページを開く。技適マークの表示に使っている画面で、"
+                      "画像は sendImage で送る。",
+              related=["sendImage"]),
             m("enterGlassAngleAdjustmentPage", "fun enterGlassAngleAdjustmentPage()",
               summary="ヘッドアップ角度調整ページを開く。閾値は sendWakeupTiltThreshold で送る。",
               related=["sendWakeupTiltThreshold"]),
@@ -266,6 +270,16 @@ SPEC = [
               [("status", "CommandManager.TeleprompterStatus", "`READY` / `STARTED` / `PAUSED`")],
               summary="汎用テキスト表示ページの状態を送る。`READY` で空画面に戻る。",
               related=["enterEmptyScreenPage"]),
+            m("sendImage", "fun sendImage(width: Int, height: Int, encodedBitmap: ByteArray)",
+              [("width", "Int", "画像の幅。196まで"),
+               ("height", "Int", "画像の高さ。196まで"),
+               ("encodedBitmap", "ByteArray", "エンコード済みの画像データ")],
+              summary="画像表示ページに画像を送る。enterImageDisplayPage で開いてから呼ぶ。"
+                      "ビットマップは3bitグレースケールをRLE圧縮したバイト列で、"
+                      "エンコードは呼び出し側で行う。"
+                      "グラス側のバッファは静的で、196x196 を超えるサイズはファーム側で弾かれ、"
+                      "何も表示されない。",
+              related=["enterImageDisplayPage"]),
             m("sendAiChatLanguage", "fun sendAiChatLanguage(languageCode: String)",
               [("languageCode", "String", '`"JPN"` / `"ENG"` / `"CHS"` / `"CHT"` 等の3文字')],
               summary="AI チャットの表示言語を通知する。グラス側の本文フォントの選択に使われ、"

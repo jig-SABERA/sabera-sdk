@@ -50,6 +50,7 @@ fun sendTeleprompterContent(content: String, percent: Int)` |
 | [parseResponse](parse-response.html) | `fun parseResponse(value: ByteArray)` |
 | [enterNotificationPage](enter-notification-page.html) | `fun enterNotificationPage()` |
 | [enterEmptyScreenPage](enter-empty-screen-page.html) | `fun enterEmptyScreenPage()` |
+| [enterImageDisplayPage](enter-image-display-page.html) | `fun enterImageDisplayPage()` |
 | [enterGlassAngleAdjustmentPage](enter-glass-angle-adjustment-page.html) | `fun enterGlassAngleAdjustmentPage()` |
 | [enterImuDebugPage](enter-imu-debug-page.html) | `fun enterImuDebugPage()` |
 | [sendTeleprompterLine](send-teleprompter-line.html) | `fun sendTeleprompterLine(text: String, percent: Int, scrollUp: Boolean = false)` |
@@ -62,6 +63,7 @@ fun sendTeleprompterContent(content: String, percent: Int)` |
 | [clearInscriptionText](clear-inscription-text.html) | `fun clearInscriptionText()` |
 | [sendEmptyScreenContent](send-empty-screen-content.html) | `fun sendEmptyScreenContent(content: String)` |
 | [sendEmptyScreenStatus](send-empty-screen-status.html) | `fun sendEmptyScreenStatus(status: CommandManager.TeleprompterStatus)` |
+| [sendImage](send-image.html) | `fun sendImage(width: Int, height: Int, encodedBitmap: ByteArray)` |
 | [sendAiChatLanguage](send-ai-chat-language.html) | `fun sendAiChatLanguage(languageCode: String)` |
 | [clearAiChat](clear-ai-chat.html) | `fun clearAiChat()` |
 | [clearAiChatLegacy](clear-ai-chat-legacy.html) | `fun clearAiChatLegacy()` |

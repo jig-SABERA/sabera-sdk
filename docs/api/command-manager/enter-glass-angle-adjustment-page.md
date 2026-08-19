@@ -2,7 +2,7 @@
 title: enterGlassAngleAdjustmentPage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 33
+nav_order: 30
 ---
 
 # CommandManager.enterGlassAngleAdjustmentPage

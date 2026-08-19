@@ -16,12 +16,10 @@ has_children: true
 | [enterHomePage](enter-home-page.html) | `fun enterHomePage()` |
 | [enterTeleprompterPage](enter-teleprompter-page.html) | `fun enterTeleprompterPage()` |
 | [sendTeleprompterContent](send-teleprompter-content.html) | `fun sendTeleprompterContent(content: String)`<br>`fun sendTeleprompterContent(content: String, percent: Int)` |
-| [enterAIPage](enter-ai-page.html) | `fun enterAIPage(isAiPower: Boolean = false)` |
 | [sendAIContent](send-ai-content.html) | `fun sendAIContent(content: String)` |
 | [enterTranslatePage](enter-translate-page.html) | `fun enterTranslatePage()` |
 | [sendTranslateContent](send-translate-content.html) | `fun sendTranslateContent(content: String)` |
 | [sendTranslateLanguage](send-translate-language.html) | `fun sendTranslateLanguage(source: String, target: String)` |
-| [enterMeetingPage](enter-meeting-page.html) | `fun enterMeetingPage()` |
 | [sendMeeting](send-meeting.html) | `fun sendMeeting(meetingType: Byte, text: String, percent: Int)` |
 | [enterAiChatPage](enter-ai-chat-page.html) | `fun enterAiChatPage()` |
 | [sendAiChatSender](send-ai-chat-sender.html) | `fun sendAiChatSender(sender: CommandManager.AiChatSender)` |
@@ -39,7 +37,6 @@ has_children: true
 | [addRemoteControllerEventListener](add-remote-controller-event-listener.html) | `fun addRemoteControllerEventListener(listener: CommandManager.RemoteControlListener)` |
 | [removeRemoteControllerEventListener](remove-remote-controller-event-listener.html) | `fun removeRemoteControllerEventListener(listener: CommandManager.RemoteControlListener)` |
 | [parseResponse](parse-response.html) | `fun parseResponse(value: ByteArray)` |
-| [enterNotificationPage](enter-notification-page.html) | `fun enterNotificationPage()` |
 | [enterEmptyScreenPage](enter-empty-screen-page.html) | `fun enterEmptyScreenPage()` |
 | [enterImageDisplayPage](enter-image-display-page.html) | `fun enterImageDisplayPage()` |
 | [enterNavigationPage](enter-navigation-page.html) | `fun enterNavigationPage()` |

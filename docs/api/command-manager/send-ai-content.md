@@ -2,7 +2,7 @@
 title: sendAIContent
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 7
+nav_order: 6
 ---
 
 # CommandManager.sendAIContent
@@ -31,13 +31,9 @@ fun sendAIContent(content: String)
 ## 使用例
 
 <!-- snippet: CommandManager.sendAIContent -->
-```kotlin
-commandManager.enterAIPage()
-commandManager.sendAIContent("AI の回答")
-```
+<!-- WIP -->
 <!-- /snippet -->
 
 ## 関連
 
-- [enterAIPage](enter-ai-page.html)
 - [sendAiChatText](send-ai-chat-text.html)

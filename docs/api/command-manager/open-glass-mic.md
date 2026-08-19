@@ -2,7 +2,7 @@
 title: openGlassMic
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 19
+nav_order: 17
 ---
 
 # CommandManager.openGlassMic

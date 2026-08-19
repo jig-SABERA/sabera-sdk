@@ -145,10 +145,6 @@ class GlassesSdkPlugin(private val activity: Activity) :
             // Page navigation
             "enterHomePage" -> runCommand(result) { it.enterHomePage() }
             "enterTeleprompterPage" -> runCommand(result) { it.enterTeleprompterPage() }
-            "enterAIPage" -> {
-                val isAiPower = call.argument<Boolean>("isAiPower") ?: false
-                runCommand(result) { it.enterAIPage(isAiPower) }
-            }
             "enterTranslatePage" -> runCommand(result) { it.enterTranslatePage() }
 
             // Content sending

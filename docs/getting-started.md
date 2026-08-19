@@ -151,10 +151,6 @@ commandManager.sendTeleprompterContent("Hello")
 | `enterTeleprompterPage()`                 | テレプロンプター           |
 | `enterAiChatPage()`                       | AI アシスタント            |
 | `enterTranslatePage()`                    | 翻訳                       |
-| `enterAIPage(isAiPower: Boolean = false)` | AI ページ（旧ファーム向け） |
-
-グラスの AI アシスタントは AI チャットページで、`enterAIPage()` が開く AI
-ページとは別物。アシスタントを出したいときは `enterAiChatPage()` を使う。
 
 ### コンテンツ送信
 

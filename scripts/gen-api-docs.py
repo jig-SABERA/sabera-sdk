@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.0.12 の公開 API に合わせたもの。
+シグネチャは SDK 0.0.14 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -142,18 +142,15 @@ SPEC = [
                       "`percent` つきの overload はスクロールバーの位置も一緒に送る。",
               related=["enterTeleprompterPage", "sendTeleprompterLine"]),
 
-            m("enterAIPage", "fun enterAIPage(isAiPower: Boolean = false)", [("isAiPower", "Boolean")],
-              related=["sendAIContent"]),
-            m("sendAIContent", "fun sendAIContent(content: String)", [("content", "String")], related=["enterAIPage"]),
+            m("sendAIContent", "fun sendAIContent(content: String)", [("content", "String")]),
             m("enterTranslatePage", "fun enterTranslatePage()",
               related=["sendTranslateContent", "sendTranslateLanguage"]),
             m("sendTranslateContent", "fun sendTranslateContent(content: String)", [("content", "String")],
               related=["enterTranslatePage", "sendTranslateLanguage"]),
             m("sendTranslateLanguage", "fun sendTranslateLanguage(source: String, target: String)",
               [("source", "String"), ("target", "String")], related=["sendTranslateContent"]),
-            m("enterMeetingPage", "fun enterMeetingPage()", related=["sendMeeting"]),
             m("sendMeeting", "fun sendMeeting(meetingType: Byte, text: String, percent: Int)",
-              [("meetingType", "Byte"), ("text", "String"), ("percent", "Int")], related=["enterMeetingPage"]),
+              [("meetingType", "Byte"), ("text", "String"), ("percent", "Int")]),
             m("enterAiChatPage", "fun enterAiChatPage()", related=["sendAiChatSenderText"]),
             m("sendAiChatSender", "fun sendAiChatSender(sender: CommandManager.AiChatSender)",
               [("sender", "CommandManager.AiChatSender", "吹き出しの主体。`USER` か `AI`")],
@@ -217,8 +214,6 @@ SPEC = [
             m("parseResponse", "fun parseResponse(value: ByteArray)", [("value", "ByteArray")]),
 
             # ここから下は新ファーム向けのコマンド
-            m("enterNotificationPage", "fun enterNotificationPage()",
-              summary="通知一覧ページを開く。", related=["sendMessage"]),
             m("enterEmptyScreenPage", "fun enterEmptyScreenPage()",
               summary="汎用テキスト表示ページを開く。本文は sendEmptyScreenContent で送る。",
               related=["sendEmptyScreenContent", "sendEmptyScreenStatus"]),

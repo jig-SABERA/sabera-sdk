@@ -50,7 +50,6 @@ internal object ArgumentNames {
         commandManager.parseResponse(value = byteArrayOf(0x00))
         commandManager.addGlassPowerEventListener(listener = listener)
         commandManager.removeGlassPowerEventListener(listener = listener)
-        commandManager.enterAIPage(isAiPower = false)
         commandManager.sendTeleprompterContent(content = "content")
         commandManager.sendAIContent(content = "content")
         commandManager.sendTranslateContent(content = "content")

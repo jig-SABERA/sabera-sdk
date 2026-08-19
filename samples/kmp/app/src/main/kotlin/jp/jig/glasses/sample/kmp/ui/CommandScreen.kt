@@ -96,7 +96,6 @@ fun CommandScreen(
             CommandButton("Home に戻す") { safeRun("enterHomePage") { commandManager.enterHomePage() } }
             CommandButton("Teleprompter を開く") { safeRun("enterTeleprompterPage") { commandManager.enterTeleprompterPage() } }
             CommandButton("AI アシスタントを開く") { safeRun("enterAiChatPage") { commandManager.enterAiChatPage() } }
-            CommandButton("AI ページを開く（旧 UI）") { safeRun("enterAIPage") { commandManager.enterAIPage(false) } }
             CommandButton("翻訳ページを開く") { safeRun("enterTranslatePage") { commandManager.enterTranslatePage() } }
             CommandButton("画像を送る画面へ", onClick = onOpenImageScreen)
             CommandButton("ナビを送る画面へ", onClick = onOpenNaviScreen)

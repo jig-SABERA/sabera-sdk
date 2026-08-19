@@ -2,7 +2,7 @@
 title: requestSystemStatus
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 60
+nav_order: 57
 ---
 
 # CommandManager.requestSystemStatus

@@ -16,8 +16,7 @@ has_children: true
 | [deviceIdentifier](device-identifier.html) | `val deviceIdentifier: String?` |
 | [isConnectionValid](is-connection-valid.html) | `fun isConnectionValid(): Boolean` |
 | [createCommandManager](create-command-manager.html) | `fun createCommandManager(): CommandManager` |
-| [micChannel](mic-channel.html) | `val micChannel: StateFlow<Int?>
-fun setMicChannel(channel: Int?)` |
+| [micChannel](mic-channel.html) | `val micChannel: StateFlow<Int?>`<br>`fun setMicChannel(channel: Int?)` |
 | [sendCommand](send-command.html) | `suspend fun sendCommand(command: ByteArray)` |
 | [sendCommandList](send-command-list.html) | `suspend fun sendCommandList(command: List<ByteArray>)` |
 | [sendText](send-text.html) | `suspend fun sendText(page: Byte, content: String)` |

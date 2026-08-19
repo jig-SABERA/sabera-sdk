@@ -15,8 +15,7 @@ has_children: true
 | [gestureEvents](gesture-events.html) | `val gestureEvents: SharedFlow<GestureType>` |
 | [enterHomePage](enter-home-page.html) | `fun enterHomePage()` |
 | [enterTeleprompterPage](enter-teleprompter-page.html) | `fun enterTeleprompterPage()` |
-| [sendTeleprompterContent](send-teleprompter-content.html) | `fun sendTeleprompterContent(content: String)
-fun sendTeleprompterContent(content: String, percent: Int)` |
+| [sendTeleprompterContent](send-teleprompter-content.html) | `fun sendTeleprompterContent(content: String)`<br>`fun sendTeleprompterContent(content: String, percent: Int)` |
 | [enterAIPage](enter-ai-page.html) | `fun enterAIPage(isAiPower: Boolean = false)` |
 | [sendAIContent](send-ai-content.html) | `fun sendAIContent(content: String)` |
 | [enterTranslatePage](enter-translate-page.html) | `fun enterTranslatePage()` |
@@ -28,16 +27,8 @@ fun sendTeleprompterContent(content: String, percent: Int)` |
 | [sendAiChatSender](send-ai-chat-sender.html) | `fun sendAiChatSender(sender: CommandManager.AiChatSender)` |
 | [sendAiChatText](send-ai-chat-text.html) | `fun sendAiChatText(text: String)` |
 | [sendAiChatStatus](send-ai-chat-status.html) | `fun sendAiChatStatus(status: CommandManager.AiChatStatus)` |
-| [sendAiChatSenderText](send-ai-chat-sender-text.html) | `fun sendAiChatSenderText(
-    sender: CommandManager.AiChatSender,
-    text: String,
-    model: CommandManager.AiChatModel? = null,
-)` |
-| [sendAiChatSenderStatus](send-ai-chat-sender-status.html) | `fun sendAiChatSenderStatus(
-    sender: CommandManager.AiChatSender,
-    status: CommandManager.AiChatStatus,
-    model: CommandManager.AiChatModel? = null,
-)` |
+| [sendAiChatSenderText](send-ai-chat-sender-text.html) | `fun sendAiChatSenderText(sender: CommandManager.AiChatSender, text: String, model: CommandManager.AiChatModel? = null)` |
+| [sendAiChatSenderStatus](send-ai-chat-sender-status.html) | `fun sendAiChatSenderStatus(sender: CommandManager.AiChatSender, status: CommandManager.AiChatStatus, model: CommandManager.AiChatModel? = null)` |
 | [openGlassMic](open-glass-mic.html) | `fun openGlassMic()` |
 | [closeGlassMic](close-glass-mic.html) | `fun closeGlassMic()` |
 | [sendMessage](send-message.html) | `fun sendMessage(sender: String, body: String, timestamp: Long, appName: String)` |
@@ -55,10 +46,7 @@ fun sendTeleprompterContent(content: String, percent: Int)` |
 | [enterGlassAngleAdjustmentPage](enter-glass-angle-adjustment-page.html) | `fun enterGlassAngleAdjustmentPage()` |
 | [enterImuDebugPage](enter-imu-debug-page.html) | `fun enterImuDebugPage()` |
 | [sendTeleprompterLine](send-teleprompter-line.html) | `fun sendTeleprompterLine(text: String, percent: Int, scrollUp: Boolean = false)` |
-| [sendTeleprompterStatus](send-teleprompter-status.html) | `fun sendTeleprompterStatus(
-    status: CommandManager.TeleprompterStatus,
-    mode: CommandManager.TeleprompterMode,
-)` |
+| [sendTeleprompterStatus](send-teleprompter-status.html) | `fun sendTeleprompterStatus(status: CommandManager.TeleprompterStatus, mode: CommandManager.TeleprompterMode)` |
 | [sendTeleprompterTime](send-teleprompter-time.html) | `fun sendTeleprompterTime(time: String)` |
 | [sendTeleprompterGenerating](send-teleprompter-generating.html) | `fun sendTeleprompterGenerating()` |
 | [clearInscriptionText](clear-inscription-text.html) | `fun clearInscriptionText()` |
@@ -71,27 +59,12 @@ fun sendTeleprompterContent(content: String, percent: Int)` |
 | [sendNaviStatus](send-navi-status.html) | `fun sendNaviStatus(status: CommandManager.NaviStatus)` |
 | [sendNaviCourse](send-navi-course.html) | `fun sendNaviCourse(courseDegrees: Double)` |
 | [sendNaviLanguage](send-navi-language.html) | `fun sendNaviLanguage(languageCode: String)` |
-| [sendNavi](send-navi.html) | `fun sendNavi(
-    maneuverIcon: CommandManager.ManeuverIcon,
-    instructionText: String,
-    distanceText: String,
-    estimatedArrivalText: String,
-    timeAndDistanceText: String,
-    bitmapWidth: Int? = null,
-    bitmapHeight: Int? = null,
-    grayscale: ByteArray? = null,
-)` |
+| [sendNavi](send-navi.html) | `fun sendNavi(maneuverIcon: CommandManager.ManeuverIcon, instructionText: String, distanceText: String, estimatedArrivalText: String, timeAndDistanceText: String, bitmapWidth: Int? = null, bitmapHeight: Int? = null, grayscale: ByteArray? = null)` |
 | [sendNaviLargeImage](send-navi-large-image.html) | `fun sendNaviLargeImage(width: Int, height: Int, grayscale: ByteArray)` |
-| [sendAdjust](send-adjust.html) | `fun sendAdjust(
-    status: CommandManager.AdjustStatus,
-    imageType: CommandManager.AdjustImageType,
-)` |
+| [sendAdjust](send-adjust.html) | `fun sendAdjust(status: CommandManager.AdjustStatus, imageType: CommandManager.AdjustImageType)` |
 | [sendWakeupTiltThreshold](send-wakeup-tilt-threshold.html) | `fun sendWakeupTiltThreshold(degrees: Int)` |
 | [sendSettingPageVisibility](send-setting-page-visibility.html) | `fun sendSettingPageVisibility(show: Boolean)` |
-| [sendSetting](send-setting.html) | `fun sendSetting(name: String, value: Int)
-fun sendSetting(name: String, value: Boolean)
-fun sendSetting(name: String, value: String)
-fun sendSetting(name: String, value: ByteArray)` |
+| [sendSetting](send-setting.html) | `fun sendSetting(name: String, value: Int)`<br>`fun sendSetting(name: String, value: Boolean)`<br>`fun sendSetting(name: String, value: String)`<br>`fun sendSetting(name: String, value: ByteArray)` |
 | [requestSettingSync](request-setting-sync.html) | `fun requestSettingSync()` |
 | [requestLog](request-log.html) | `fun requestLog(type: CommandManager.GlassLogType)` |
 | [requestNotificationCountSync](request-notification-count-sync.html) | `fun requestNotificationCountSync()` |

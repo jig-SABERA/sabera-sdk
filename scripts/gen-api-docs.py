@@ -512,6 +512,25 @@ def method_page(group, meth, nav_order):
     return "\n".join(lines)
 
 
+def table_sig(sig):
+    """複数行のシグネチャを表のセルに収める。
+
+    Markdown の表は改行でセルが切れる。宣言そのものの折り返しは1行に畳み、
+    オーバーロードのように宣言が複数あるものは `<br>` で分ける。
+    """
+    decls = []
+    for line in sig.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if decls and not stripped.startswith(("fun ", "val ", "var ")):
+            decls[-1] += " " + stripped
+        else:
+            decls.append(stripped)
+    flat = [d.replace("( ", "(").replace(", )", ")").replace(" )", ")") for d in decls]
+    return "<br>".join(f"`{d}`" for d in flat)
+
+
 def type_index(group):
     lines = [
         "---",
@@ -528,7 +547,8 @@ def type_index(group):
         "| メソッド | シグネチャ |",
         "|---|---|",
     ]
-    lines += [f"| [{x['name']}]({slug(x['name'])}.html) | `{x['sig']}` |" for x in group["methods"]]
+    lines += [f"| [{x['name']}]({slug(x['name'])}.html) | {table_sig(x['sig'])} |"
+              for x in group["methods"]]
     lines += [""]
     return "\n".join(lines)
 

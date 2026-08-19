@@ -15,6 +15,8 @@ has_children: true
 | [gestureEvents](gesture-events.html) | `val gestureEvents: SharedFlow<GestureType>` |
 | [imuData](imu-data.html) | `val imuData: SharedFlow<CommandManager.ImuData>` |
 | [imuDataStarted](imu-data-started.html) | `val imuDataStarted: StateFlow<Boolean>` |
+| [micAudio](mic-audio.html) | `val micAudio: SharedFlow<ByteArray>` |
+| [micStreaming](mic-streaming.html) | `val micStreaming: StateFlow<Boolean>` |
 | [enterHomePage](enter-home-page.html) | `fun enterHomePage()` |
 | [enterTeleprompterPage](enter-teleprompter-page.html) | `fun enterTeleprompterPage()` |
 | [sendTeleprompterContent](send-teleprompter-content.html) | `fun sendTeleprompterContent(content: String)`<br>`fun sendTeleprompterContent(content: String, percent: Int)` |
@@ -31,6 +33,8 @@ has_children: true
 | [sendAiChatSenderStatus](send-ai-chat-sender-status.html) | `fun sendAiChatSenderStatus(sender: CommandManager.AiChatSender, status: CommandManager.AiChatStatus, model: CommandManager.AiChatModel? = null)` |
 | [openGlassMic](open-glass-mic.html) | `fun openGlassMic()` |
 | [closeGlassMic](close-glass-mic.html) | `fun closeGlassMic()` |
+| [startMicStreaming](start-mic-streaming.html) | `fun startMicStreaming()` |
+| [stopMicStreaming](stop-mic-streaming.html) | `fun stopMicStreaming()` |
 | [sendMessage](send-message.html) | `fun sendMessage(sender: String, body: String, timestamp: Long, appName: String)` |
 | [syncNotificationCount](sync-notification-count.html) | `fun syncNotificationCount(count: Int)` |
 | [sendDebugPhoneName](send-debug-phone-name.html) | `fun sendDebugPhoneName(phoneName: String)` |

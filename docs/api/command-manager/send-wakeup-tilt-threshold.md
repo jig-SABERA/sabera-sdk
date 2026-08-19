@@ -2,7 +2,7 @@
 title: sendWakeupTiltThreshold
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 58
+nav_order: 62
 ---
 
 # CommandManager.sendWakeupTiltThreshold

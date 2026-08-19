@@ -101,6 +101,24 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
+    fun observeMicAudio(commandManager: CommandManager, scope: CoroutineScope) {
+        // #snippet CommandManager.micAudio
+        scope.launch {
+            commandManager.micAudio.collect { pcm ->
+                // PCM16 リトルエンディアン、16kHz モノラル
+                Log.d("sample", "${pcm.size} bytes")
+            }
+        }
+        commandManager.startMicStreaming()
+        // #endsnippet
+    }
+
+    fun stopMicStreaming(commandManager: CommandManager) {
+        // #snippet CommandManager.stopMicStreaming
+        commandManager.stopMicStreaming()
+        // #endsnippet
+    }
+
     fun stopImuData(commandManager: CommandManager) {
         // #snippet CommandManager.stopImuData
         commandManager.stopImuData()

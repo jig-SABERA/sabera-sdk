@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.2.1 の公開 API に合わせたもの。
+シグネチャは SDK 0.3.0 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -143,6 +143,18 @@ SPEC = [
               returns="StateFlow<Boolean>",
               summary="6DoF が流れている間 true。開始・停止の応答で切り替わる。",
               related=["startImuData"]),
+            m("micAudio", "val micAudio: SharedFlow<ByteArray>",
+              returns="SharedFlow<ByteArray>",
+              summary="グラスのマイク音声。PCM16 のリトルエンディアン、16kHz モノラル。"
+                      "startMicStreaming を呼ぶまで何も流れない。デバイスの世代で音声の形式が"
+                      "変わる（Ogg Opus か record stream）が、判別とデコードは SDK 側で行うため"
+                      "利用側は PCM だけ受け取ればよい。購読が遅れると古いデータから捨てるので、"
+                      "録音として貯めるなら受け取り側でバッファする。",
+              related=["startMicStreaming", "stopMicStreaming", "micStreaming"]),
+            m("micStreaming", "val micStreaming: StateFlow<Boolean>",
+              returns="StateFlow<Boolean>",
+              summary="マイクが流れている間 true。",
+              related=["startMicStreaming"]),
             m("enterHomePage", "fun enterHomePage()"),
             m("enterTeleprompterPage", "fun enterTeleprompterPage()", related=["sendTeleprompterContent"]),
             m("sendTeleprompterContent",
@@ -205,6 +217,14 @@ SPEC = [
                       "マイクのチャンネルは接続中のデバイスに合わせて SDK 側で決まる。",
               related=["closeGlassMic"]),
             m("closeGlassMic", "fun closeGlassMic()", related=["openGlassMic"]),
+            m("startMicStreaming", "fun startMicStreaming()",
+              summary="マイクを開いて、届いた音声をデコードしながら micAudio に流す。"
+                      "すでに流れているときは開き直す。生の Opus を自分で扱いたい場合は"
+                      "openGlassMic と GlassClient.addAudioDataEventListener を使う。",
+              related=["micAudio", "stopMicStreaming"]),
+            m("stopMicStreaming", "fun stopMicStreaming()",
+              summary="マイクを閉じて micAudio を止める。デコーダも解放する。",
+              related=["micAudio", "startMicStreaming"]),
             m("sendMessage", "fun sendMessage(sender: String, body: String, timestamp: Long, appName: String)",
               [("sender", "String"), ("body", "String"), ("timestamp", "Long"), ("appName", "String")],
               related=["syncNotificationCount"]),

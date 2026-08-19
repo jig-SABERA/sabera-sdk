@@ -28,6 +28,6 @@ android {
 }
 
 dependencies {
-    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.2.1")
+    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 }

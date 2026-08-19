@@ -98,6 +98,21 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
+    fun imageDisplay(commandManager: CommandManager, grayscale: ByteArray) {
+        // #snippet CommandManager.sendImage
+        commandManager.enterImageDisplayPage()
+        // grayscale は1画素1バイト・左上から行優先。3bitへの量子化とRLE圧縮はSDKが行う
+        commandManager.sendImage(width = 196, height = 196, grayscale = grayscale)
+        // #endsnippet
+    }
+
+    fun enterImageDisplay(commandManager: CommandManager) {
+        // #snippet CommandManager.enterImageDisplayPage
+        // 技適マークの表示にも使っている画像表示ページ
+        commandManager.enterImageDisplayPage()
+        // #endsnippet
+    }
+
     fun remoteController(commandManager: CommandManager) {
         // #snippet CommandManager.addRemoteControllerEventListener
         val listener = object : CommandManager.RemoteControlListener {

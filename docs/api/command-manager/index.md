@@ -63,7 +63,7 @@ fun sendTeleprompterContent(content: String, percent: Int)` |
 | [clearInscriptionText](clear-inscription-text.html) | `fun clearInscriptionText()` |
 | [sendEmptyScreenContent](send-empty-screen-content.html) | `fun sendEmptyScreenContent(content: String)` |
 | [sendEmptyScreenStatus](send-empty-screen-status.html) | `fun sendEmptyScreenStatus(status: CommandManager.TeleprompterStatus)` |
-| [sendImage](send-image.html) | `fun sendImage(width: Int, height: Int, encodedBitmap: ByteArray)` |
+| [sendImage](send-image.html) | `fun sendImage(width: Int, height: Int, grayscale: ByteArray)` |
 | [sendAiChatLanguage](send-ai-chat-language.html) | `fun sendAiChatLanguage(languageCode: String)` |
 | [clearAiChat](clear-ai-chat.html) | `fun clearAiChat()` |
 | [clearAiChatLegacy](clear-ai-chat-legacy.html) | `fun clearAiChatLegacy()` |

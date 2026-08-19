@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.0.11 の公開 API に合わせたもの。
+シグネチャは SDK 0.0.12 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -270,13 +270,14 @@ SPEC = [
               [("status", "CommandManager.TeleprompterStatus", "`READY` / `STARTED` / `PAUSED`")],
               summary="汎用テキスト表示ページの状態を送る。`READY` で空画面に戻る。",
               related=["enterEmptyScreenPage"]),
-            m("sendImage", "fun sendImage(width: Int, height: Int, encodedBitmap: ByteArray)",
+            m("sendImage", "fun sendImage(width: Int, height: Int, grayscale: ByteArray)",
               [("width", "Int", "画像の幅。196まで"),
                ("height", "Int", "画像の高さ。196まで"),
-               ("encodedBitmap", "ByteArray", "エンコード済みの画像データ")],
+               ("grayscale", "ByteArray",
+                "1画素1バイトのグレースケール。長さは `width * height` 以上")],
               summary="画像表示ページに画像を送る。enterImageDisplayPage で開いてから呼ぶ。"
-                      "ビットマップは3bitグレースケールをRLE圧縮したバイト列で、"
-                      "エンコードは呼び出し側で行う。"
+                      "渡すのはリサイズ済みのグレースケールで、1画素1バイト・左上から行優先の並び。"
+                      "輝度は 0-255 のままでよく、グラスが読む3bitへの量子化とRLE圧縮は SDK が行う。"
                       "グラス側のバッファは静的で、196x196 を超えるサイズはファーム側で弾かれ、"
                       "何も表示されない。",
               related=["enterImageDisplayPage"]),
@@ -490,7 +491,7 @@ def api_index():
         "",
         f"# {API_TITLE}",
         "",
-        "Sabera App SDK (Kotlin) の公開 API。バージョン 0.0.11 時点。",
+        "Sabera App SDK (Kotlin) の公開 API。バージョン 0.0.12 時点。",
         "",
         "| 型 | 説明 |",
         "|---|---|",

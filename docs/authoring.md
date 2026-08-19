@@ -70,9 +70,9 @@ python3 scripts/gen-api-docs.py
 シグネチャは AAR を読んで確定させる。
 
 ```console
-# 0.0.11 の AAR を GitHub Packages から取る
+# 0.0.12 の AAR を GitHub Packages から取る
 curl -sL -u "<user>:<PAT>" -o core.aar \
-  https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-core-android/0.0.11/sabera-app-core-android-0.0.11.aar
+  https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-core-android/0.0.12/sabera-app-core-android-0.0.12.aar
 unzip -o core.aar -d aar && unzip -o aar/classes.jar -d cls
 javap -public cls/app/jigglass/glass/CommandManager.class
 ```

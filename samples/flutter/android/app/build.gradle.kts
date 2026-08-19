@@ -42,6 +42,6 @@ flutter {
 }
 
 dependencies {
-    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.0.11")
+    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.0.12")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 }

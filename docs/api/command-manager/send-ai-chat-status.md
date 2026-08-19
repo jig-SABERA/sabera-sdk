@@ -7,25 +7,19 @@ nav_order: 16
 
 # CommandManager.sendAiChatStatus
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
-fun sendAiChatStatus(status: PacketCommandUtils.AiChatStatus)
+fun sendAiChatStatus(status: CommandManager.AiChatStatus)
 ```
 
 ## 概要
 
-<!-- WIP -->
-
-{: .note }
-> 引数の型が SDK 内部の型のため、アプリからは呼び出せない。AI チャットに文字列を送るには [sendAiChatText](send-ai-chat-text.html) を使う。
+AI 応答の生成状態を送る。`COMPLETE` を送るまでグラスは生成中の表示を続ける。
 
 ## 引数
 
 | 名前 | 型 | 説明 |
 |---|---|---|
-| `status` | `PacketCommandUtils.AiChatStatus` | <!-- WIP --> |
+| `status` | `CommandManager.AiChatStatus` | `GENERATING` か `COMPLETE` |
 
 ## 戻り値
 
@@ -39,4 +33,4 @@ fun sendAiChatStatus(status: PacketCommandUtils.AiChatStatus)
 
 ## 関連
 
-- [sendAiChatText](send-ai-chat-text.html)
+- [sendAiChatSenderStatus](send-ai-chat-sender-status.html)

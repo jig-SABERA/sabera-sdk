@@ -7,16 +7,21 @@ nav_order: 13
 
 # CommandManager.enterAiChatPage
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
 fun enterAiChatPage()
 ```
 
 ## 概要
 
-<!-- WIP -->
+グラスに AI チャットページを開かせる。グラス上の AI アシスタントはこのページで、
+[enterAIPage](enter-ai-page.html) が開く AI ページとは別物。AI アシスタントを起動したいときは
+こちらを呼ぶ。
+
+開いたあとの本文送信は sendAiChatText。
+
+{: .note }
+> 質問文と回答の振り分けは sendAiChatSenderText、生成中と完了の通知は sendAiChatSenderStatus、
+> 本文フォントを決める言語通知は sendAiChatLanguage で送る。
 
 ## 戻り値
 
@@ -25,9 +30,12 @@ fun enterAiChatPage()
 ## 使用例
 
 <!-- snippet: CommandManager.enterAiChatPage -->
-<!-- WIP -->
+```kotlin
+// AI アシスタント（AI チャットページ）をグラスに開かせる
+commandManager.enterAiChatPage()
+```
 <!-- /snippet -->
 
 ## 関連
 
-- [sendAiChatSenderText](send-ai-chat-sender-text.html)
+- [sendAiChatText](send-ai-chat-text.html)

@@ -7,16 +7,13 @@ nav_order: 19
 
 # CommandManager.openGlassMic
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
 fun openGlassMic()
 ```
 
 ## 概要
 
-<!-- WIP -->
+グラスのマイクを開く。開いている間、音声は `GlassClient.addAudioDataEventListener` に届く。マイクのチャンネルは接続中のデバイスに合わせて SDK 側で決まる。
 
 ## 戻り値
 

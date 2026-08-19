@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.0.10 の AAR を javap -public で読んで確定したもの。
+シグネチャは SDK 0.0.11 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -14,20 +14,20 @@ from pathlib import Path
 DOCS = Path(__file__).resolve().parent.parent / "docs"
 API_TITLE = "API リファレンス"
 
-AI_CHAT_INTERNAL = (
-    "引数の型が SDK 内部の型のため、アプリからは呼び出せない。"
-    "AI チャットに文字列を送るには [sendAiChatText](send-ai-chat-text.html) を使う。"
-)
+def m(name, sig, params=(), returns="Unit", related=(), note=None, summary=None):
+    """1メソッド分のページ定義。
 
-
-def m(name, sig, params=(), returns="Unit", related=(), note=None):
+    params は (名前, 型) か (名前, 型, 説明) のタプル。
+    summary を書いたページは執筆中の警告を出さない。
+    """
     return {
         "name": name,
         "sig": sig,
-        "params": list(params),
+        "params": [(p + ("",))[:3] if len(p) == 2 else p for p in params],
         "returns": returns,
         "related": list(related),
         "note": note,
+        "summary": summary,
     }
 
 
@@ -133,8 +133,15 @@ SPEC = [
             m("gestureEvents", "val gestureEvents: SharedFlow<GestureType>", returns="SharedFlow<GestureType>"),
             m("enterHomePage", "fun enterHomePage()"),
             m("enterTeleprompterPage", "fun enterTeleprompterPage()", related=["sendTeleprompterContent"]),
-            m("sendTeleprompterContent", "fun sendTeleprompterContent(content: String)", [("content", "String")],
-              related=["enterTeleprompterPage"]),
+            m("sendTeleprompterContent",
+              "fun sendTeleprompterContent(content: String)\n"
+              "fun sendTeleprompterContent(content: String, percent: Int)",
+              [("content", "String", "表示する原稿"),
+               ("percent", "Int", "スクロールバーの位置（0..100）")],
+              summary="テレプロンプトに原稿を送る。200バイトを超える分は分割して送られる。"
+                      "`percent` つきの overload はスクロールバーの位置も一緒に送る。",
+              related=["enterTeleprompterPage", "sendTeleprompterLine"]),
+
             m("enterAIPage", "fun enterAIPage(isAiPower: Boolean = false)", [("isAiPower", "Boolean")],
               related=["sendAIContent"]),
             m("sendAIContent", "fun sendAIContent(content: String)", [("content", "String")], related=["enterAIPage"]),
@@ -148,21 +155,46 @@ SPEC = [
             m("sendMeeting", "fun sendMeeting(meetingType: Byte, text: String, percent: Int)",
               [("meetingType", "Byte"), ("text", "String"), ("percent", "Int")], related=["enterMeetingPage"]),
             m("enterAiChatPage", "fun enterAiChatPage()", related=["sendAiChatSenderText"]),
-            m("sendAiChatSender", "fun sendAiChatSender(sender: PacketCommandUtils.AiChatSender)",
-              [("sender", "PacketCommandUtils.AiChatSender")], related=["sendAiChatText"], note=AI_CHAT_INTERNAL),
+            m("sendAiChatSender", "fun sendAiChatSender(sender: CommandManager.AiChatSender)",
+              [("sender", "CommandManager.AiChatSender", "吹き出しの主体。`USER` か `AI`")],
+              summary="次に送る本文の吹き出しをどちら側にするかを切り替える。"
+                      "本文と一度に送る sendAiChatSenderText の方が確実。",
+              related=["sendAiChatSenderText"]),
             m("sendAiChatText", "fun sendAiChatText(text: String)", [("text", "String")],
               related=["enterAiChatPage"]),
-            m("sendAiChatStatus", "fun sendAiChatStatus(status: PacketCommandUtils.AiChatStatus)",
-              [("status", "PacketCommandUtils.AiChatStatus")], related=["sendAiChatText"], note=AI_CHAT_INTERNAL),
+            m("sendAiChatStatus", "fun sendAiChatStatus(status: CommandManager.AiChatStatus)",
+              [("status", "CommandManager.AiChatStatus", "`GENERATING` か `COMPLETE`")],
+              summary="AI 応答の生成状態を送る。`COMPLETE` を送るまでグラスは生成中の表示を続ける。",
+              related=["sendAiChatSenderStatus"]),
             m("sendAiChatSenderText",
-              "fun sendAiChatSenderText(sender: PacketCommandUtils.AiChatSender, text: String)",
-              [("sender", "PacketCommandUtils.AiChatSender"), ("text", "String")],
-              related=["sendAiChatText"], note=AI_CHAT_INTERNAL),
+              "fun sendAiChatSenderText(\n"
+              "    sender: CommandManager.AiChatSender,\n"
+              "    text: String,\n"
+              "    model: CommandManager.AiChatModel? = null,\n"
+              ")",
+              [("sender", "CommandManager.AiChatSender", "吹き出しの主体"),
+               ("text", "String", "表示する本文"),
+               ("model", "CommandManager.AiChatModel?", "`AI` のときに表示する生成モデル")],
+              summary="吹き出しの主体と本文をまとめて送る。質問は `USER`、回答は `AI` で送る。"
+                      "1パケットに収まらない長文は sendAiChatText で続きを流す。",
+              related=["sendAiChatText"]),
             m("sendAiChatSenderStatus",
-              "fun sendAiChatSenderStatus(sender: PacketCommandUtils.AiChatSender, status: PacketCommandUtils.AiChatStatus)",
-              [("sender", "PacketCommandUtils.AiChatSender"), ("status", "PacketCommandUtils.AiChatStatus")],
-              related=["sendAiChatText"], note=AI_CHAT_INTERNAL),
-            m("openGlassMic", "fun openGlassMic()", related=["closeGlassMic"]),
+              "fun sendAiChatSenderStatus(\n"
+              "    sender: CommandManager.AiChatSender,\n"
+              "    status: CommandManager.AiChatStatus,\n"
+              "    model: CommandManager.AiChatModel? = null,\n"
+              ")",
+              [("sender", "CommandManager.AiChatSender", "吹き出しの主体"),
+               ("status", "CommandManager.AiChatStatus", "生成中か完了か"),
+               ("model", "CommandManager.AiChatModel?", "`AI` のときに表示する生成モデル")],
+              summary="吹き出しの主体と生成状態をまとめて送る。"
+                      "回答を流し始める前に `AI` と `GENERATING` を送る。",
+              related=["sendAiChatText"]),
+            m("openGlassMic", "fun openGlassMic()",
+              summary="グラスのマイクを開く。開いている間、音声は "
+                      "`GlassClient.addAudioDataEventListener` に届く。"
+                      "マイクのチャンネルは接続中のデバイスに合わせて SDK 側で決まる。",
+              related=["closeGlassMic"]),
             m("closeGlassMic", "fun closeGlassMic()", related=["openGlassMic"]),
             m("sendMessage", "fun sendMessage(sender: String, body: String, timestamp: Long, appName: String)",
               [("sender", "String"), ("body", "String"), ("timestamp", "Long"), ("appName", "String")],
@@ -183,6 +215,130 @@ SPEC = [
               [("listener", "CommandManager.RemoteControlListener")],
               related=["addRemoteControllerEventListener"]),
             m("parseResponse", "fun parseResponse(value: ByteArray)", [("value", "ByteArray")]),
+
+            # ここから下は新ファーム向けのコマンド
+            m("enterNotificationPage", "fun enterNotificationPage()",
+              summary="通知一覧ページを開く。", related=["sendMessage"]),
+            m("enterEmptyScreenPage", "fun enterEmptyScreenPage()",
+              summary="汎用テキスト表示ページを開く。本文は sendEmptyScreenContent で送る。",
+              related=["sendEmptyScreenContent", "sendEmptyScreenStatus"]),
+            m("enterImageDisplayPage", "fun enterImageDisplayPage()",
+              summary="画像表示ページを開く。技適マークの表示に使っている画面で、"
+                      "画像は sendImage で送る。",
+              related=["sendImage"]),
+            m("enterGlassAngleAdjustmentPage", "fun enterGlassAngleAdjustmentPage()",
+              summary="ヘッドアップ角度調整ページを開く。閾値は sendWakeupTiltThreshold で送る。",
+              related=["sendWakeupTiltThreshold"]),
+            m("enterImuDebugPage", "fun enterImuDebugPage()",
+              summary="IMU・照度のデバッグページを開く。"),
+            m("sendTeleprompterLine",
+              "fun sendTeleprompterLine(text: String, percent: Int, scrollUp: Boolean = false)",
+              [("text", "String", "追記する1行"),
+               ("percent", "Int", "スクロールバーの位置（0..100）"),
+               ("scrollUp", "Boolean", "`true` で1行上へ、`false` で1行下へスクロールさせる")],
+              summary="テレプロンプトに1行だけ追記する。全文を送り直す sendTeleprompterContent と違い、"
+                      "読み上げに合わせて差分だけを流すのに使う。",
+              related=["sendTeleprompterContent"]),
+            m("sendTeleprompterStatus",
+              "fun sendTeleprompterStatus(\n"
+              "    status: CommandManager.TeleprompterStatus,\n"
+              "    mode: CommandManager.TeleprompterMode,\n"
+              ")",
+              [("status", "CommandManager.TeleprompterStatus", "`READY` / `STARTED` / `PAUSED`"),
+               ("mode", "CommandManager.TeleprompterMode",
+                "`TELEPROMPT` / `TRANSCRIPT` / `TRANSLATION`")],
+              summary="テレプロンプトの再生状態と表示モードを送る。"
+                      "別パケットに分けると動作が安定しないため、ファーム側の都合で必ず両方まとめて送る。",
+              related=["sendTeleprompterTime"]),
+            m("sendTeleprompterTime", "fun sendTeleprompterTime(time: String)",
+              [("time", "String", "`mm:ss` 形式の5文字。短ければ先頭を0埋め、長ければ切り捨てる")],
+              summary="再生開始からの経過時間を送る。",
+              related=["sendTeleprompterStatus"]),
+            m("sendTeleprompterGenerating", "fun sendTeleprompterGenerating()",
+              summary="テレプロンプトに生成中の表示を出す。",
+              related=["sendTeleprompterContent"]),
+            m("clearInscriptionText", "fun clearInscriptionText()",
+              summary="テレプロンプトと翻訳の表示テキストを消す。"
+                      "どちらもグラス側で同じバッファを共有しているため、消去も共通。",
+              related=["sendTeleprompterContent", "sendTranslateContent"]),
+            m("sendEmptyScreenContent", "fun sendEmptyScreenContent(content: String)",
+              [("content", "String", "表示する本文")],
+              summary="汎用テキスト表示ページに本文を送る。200バイトを超える分は分割して送られる。",
+              related=["enterEmptyScreenPage"]),
+            m("sendEmptyScreenStatus",
+              "fun sendEmptyScreenStatus(status: CommandManager.TeleprompterStatus)",
+              [("status", "CommandManager.TeleprompterStatus", "`READY` / `STARTED` / `PAUSED`")],
+              summary="汎用テキスト表示ページの状態を送る。`READY` で空画面に戻る。",
+              related=["enterEmptyScreenPage"]),
+            m("sendImage", "fun sendImage(width: Int, height: Int, encodedBitmap: ByteArray)",
+              [("width", "Int", "画像の幅。196まで"),
+               ("height", "Int", "画像の高さ。196まで"),
+               ("encodedBitmap", "ByteArray", "エンコード済みの画像データ")],
+              summary="画像表示ページに画像を送る。enterImageDisplayPage で開いてから呼ぶ。"
+                      "ビットマップは3bitグレースケールをRLE圧縮したバイト列で、"
+                      "エンコードは呼び出し側で行う。"
+                      "グラス側のバッファは静的で、196x196 を超えるサイズはファーム側で弾かれ、"
+                      "何も表示されない。",
+              related=["enterImageDisplayPage"]),
+            m("sendAiChatLanguage", "fun sendAiChatLanguage(languageCode: String)",
+              [("languageCode", "String", '`"JPN"` / `"ENG"` / `"CHS"` / `"CHT"` 等の3文字')],
+              summary="AI チャットの表示言語を通知する。グラス側の本文フォントの選択に使われ、"
+                      "画面遷移は起こさない。フォントを先に確定させるため enterAiChatPage の前に送る。",
+              related=["enterAiChatPage"]),
+            m("clearAiChat", "fun clearAiChat()",
+              summary="AI チャットの表示を消して先頭に戻す。FEATURE_VERSION 1.1.0 以降のファームが対象で、"
+                      "未対応のファームはこのコマンドを読み捨てるため表示が残る。",
+              related=["clearAiChatLegacy"]),
+            m("clearAiChatLegacy", "fun clearAiChatLegacy()",
+              summary="FEATURE_VERSION 1.1.0 未満のファーム向けに、改行を流し込んで見かけ上クリアする。"
+                      "グラス側に履歴が残るため、対応ファームでは clearAiChat を使う。",
+              related=["clearAiChat"]),
+            m("sendAdjust",
+              "fun sendAdjust(\n"
+              "    status: CommandManager.AdjustStatus,\n"
+              "    imageType: CommandManager.AdjustImageType,\n"
+              ")",
+              [("status", "CommandManager.AdjustStatus", "`SHOW` / `CLOSE`"),
+               ("imageType", "CommandManager.AdjustImageType",
+                "`HOME` / `NAVIGATE` / `TELEPROMPT`")],
+              summary="画面位置調整用の画像の表示を制御する。"),
+            m("sendWakeupTiltThreshold", "fun sendWakeupTiltThreshold(degrees: Int)",
+              [("degrees", "Int", "しきい値[度]。0..65535")],
+              summary="ヘッドアップでウェイクアップする傾きのしきい値を設定する。",
+              related=["enterGlassAngleAdjustmentPage"]),
+            m("sendSettingPageVisibility", "fun sendSettingPageVisibility(show: Boolean)",
+              [("show", "Boolean", "`true` で表示、`false` で非表示")],
+              summary="グラス側の設定画面の表示・非表示を通知する。"),
+            m("sendSetting",
+              "fun sendSetting(name: String, value: Int)\n"
+              "fun sendSetting(name: String, value: Boolean)\n"
+              "fun sendSetting(name: String, value: String)\n"
+              "fun sendSetting(name: String, value: ByteArray)",
+              [("name", "String", "設定キー。`CommandManager.SettingKey` の定数を使う"),
+               ("value", "Int / Boolean / String / ByteArray", "設定値")],
+              summary="グラスの設定値を書き換える。値の型ごとにグラスへ送る型が変わるため、"
+                      "文字列とバイト列は別の overload になっている。",
+              related=["requestSettingSync"]),
+            m("requestSettingSync", "fun requestSettingSync()",
+              summary="全設定値の送信をグラスに要求する。応答は parseResponse で受ける。",
+              related=["sendSetting", "parseResponse"]),
+            m("requestLog", "fun requestLog(type: CommandManager.GlassLogType)",
+              [("type", "CommandManager.GlassLogType",
+                "`REALTIME` / `SYSLOG` / `RUNTIME` / `RESET_REASON` / `STOP`")],
+              summary="グラスにログを要求する。クラッシュ前のログや再起動理由の調査に使う。"),
+            m("requestNotificationCountSync", "fun requestNotificationCountSync()",
+              summary="未読通知数の同期をグラスに要求する。",
+              related=["syncNotificationCount"]),
+            m("syncTime", "fun syncTime()",
+              summary="端末の現在時刻をグラスに同期する。ホーム画面の時計に反映される。"),
+            m("syncWeather", "fun syncWeather(type: CommandManager.WeatherType, value: Int)",
+              [("type", "CommandManager.WeatherType", "`TEMPERATURE` か `ICON`"),
+               ("value", "Int", "気温、または天気アイコンの種別")],
+              summary="天気情報をグラスに同期する。気温とアイコンは別々に送る。"),
+            m("requestSystemStatus", "fun requestSystemStatus()",
+              summary="バッテリー残量・装着状態・充電状態の通知をグラスに要求する。"
+                      "応答は parseResponse で受ける。",
+              related=["parseResponse"]),
         ],
     },
     {
@@ -269,14 +425,20 @@ def method_page(group, meth, nav_order):
         "",
         "## 概要",
         "",
-        "<!-- WIP -->",
+        meth["summary"] or "<!-- WIP -->",
         "",
     ]
+    if meth["summary"]:
+        # 本文を書いたページに執筆中の警告は出さない
+        lines = [x for x in lines if x not in ("{: .warning }", "> このページは執筆中です。")]
+        lines = [x for i, x in enumerate(lines) if x or lines[i - 1 : i] != [""]]
     if meth["note"]:
         lines += ["{: .note }", f"> {meth['note']}", ""]
     if meth["params"]:
         lines += ["## 引数", "", "| 名前 | 型 | 説明 |", "|---|---|---|"]
-        lines += [f"| `{n}` | `{t}` | <!-- WIP --> |" for n, t in meth["params"]]
+        lines += [
+            f"| `{n}` | `{t}` | {d or '<!-- WIP -->'} |" for n, t, d in meth["params"]
+        ]
         lines += [""]
     lines += [
         "## 戻り値",
@@ -328,7 +490,7 @@ def api_index():
         "",
         f"# {API_TITLE}",
         "",
-        "Sabera App SDK (Kotlin) の公開 API。バージョン 0.0.10 時点。",
+        "Sabera App SDK (Kotlin) の公開 API。バージョン 0.0.11 時点。",
         "",
         "| 型 | 説明 |",
         "|---|---|",

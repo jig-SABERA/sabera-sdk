@@ -145,12 +145,16 @@ commandManager.sendTeleprompterContent("Hello")
 
 ### ページ遷移
 
-| メソッド                                  | 遷移先           |
-| ----------------------------------------- | ---------------- |
-| `enterHomePage()`                         | ホーム           |
-| `enterTeleprompterPage()`                 | テレプロンプター |
-| `enterAIPage(isAiPower: Boolean = false)` | AI               |
-| `enterTranslatePage()`                    | 翻訳             |
+| メソッド                                  | 遷移先                     |
+| ----------------------------------------- | -------------------------- |
+| `enterHomePage()`                         | ホーム                     |
+| `enterTeleprompterPage()`                 | テレプロンプター           |
+| `enterAiChatPage()`                       | AI アシスタント            |
+| `enterTranslatePage()`                    | 翻訳                       |
+| `enterAIPage(isAiPower: Boolean = false)` | AI ページ（旧ファーム向け） |
+
+グラスの AI アシスタントは AI チャットページで、`enterAIPage()` が開く AI
+ページとは別物。アシスタントを出したいときは `enterAiChatPage()` を使う。
 
 ### コンテンツ送信
 
@@ -160,8 +164,15 @@ commandManager.sendTeleprompterContent("Hello")
 | `sendAIContent(content: String)`                        | AI ページに表示する文字列          |
 | `sendTranslateContent(content: String)`                 | 翻訳ページに表示する文字列         |
 | `sendTranslateLanguage(source: String, target: String)` | 翻訳の言語ペア（例: `"en", "ja"`） |
+| `sendAiChatText(text: String)`                          | AI チャットに表示する文字列        |
 
 ページを開いてからコンテンツを送る。送信先のページが開いていないと表示されない。
+
+### そのほかのコマンド
+
+汎用テキスト表示・画像表示（技適マークに使っている画面）・設定の書き換えと同期・
+時刻や天気の同期・ログ取得なども `CommandManager` から送れる。一覧は
+[API リファレンス](api/command-manager/) を見る。
 
 ## 6. ジェスチャーを受け取る
 

@@ -62,14 +62,17 @@ python3 scripts/gen-api-docs.py
 ```
 
 既存ファイルは上書きしないので、書いた本文は残る。雛形そのものを変えたときだけ `--force`
-を使うが、本文を書いた後に使うと消える。
+を使うが、本文を書いた後に使うと消える。書き直したいページだけ消してから実行するのが安全。
+
+`SPEC` の `m()` に `summary` を書くと、そのページは概要つきで生成され、執筆中の警告が出ない。
+引数の説明は `("名前", "型", "説明")` の3要素で書く。`note` は本文の下に出る注意書き。
 
 シグネチャは AAR を読んで確定させる。
 
 ```console
-# 0.0.10 の AAR を GitHub Packages から取る
+# 0.0.11 の AAR を GitHub Packages から取る
 curl -sL -u "<user>:<PAT>" -o core.aar \
-  https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-core-android/0.0.10/sabera-app-core-android-0.0.10.aar
+  https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-core-android/0.0.11/sabera-app-core-android-0.0.11.aar
 unzip -o core.aar -d aar && unzip -o aar/classes.jar -d cls
 javap -public cls/app/jigglass/glass/CommandManager.class
 ```

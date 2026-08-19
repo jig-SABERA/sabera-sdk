@@ -16,7 +16,7 @@ fun sendAIContent(content: String)
 
 ## 概要
 
-<!-- WIP -->
+旧ファームの AI ページに本文を送る。AI チャットページへの送信は sendAiChatText。
 
 ## 引数
 
@@ -40,3 +40,4 @@ commandManager.sendAIContent("AI の回答")
 ## 関連
 
 - [enterAIPage](enter-ai-page.html)
+- [sendAiChatText](send-ai-chat-text.html)

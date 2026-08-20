@@ -57,3 +57,19 @@ fun testPatternImage(size: Int = GLASS_IMAGE_MAX_SIZE): GrayscaleImage {
     }
     return GrayscaleImage(size, size, pixels)
 }
+
+/** 並べたときにどの画像がどこに出たか分かるよう、縞の太さを変えたパターン */
+fun stripePatternImage(size: Int, stripeWidth: Int): GrayscaleImage {
+    val pixels = ByteArray(size * size) { index ->
+        val x = index % size
+        val y = index / size
+        // 外周を枠にして、画像の境目を見えるようにする
+        val onBorder = x < 2 || y < 2 || x >= size - 2 || y >= size - 2
+        when {
+            onBorder -> 0xFF.toByte()
+            (x / stripeWidth) % 2 == 0 -> 0xC0.toByte()
+            else -> 0x20.toByte()
+        }
+    }
+    return GrayscaleImage(size, size, pixels)
+}

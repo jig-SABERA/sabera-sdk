@@ -2,7 +2,7 @@
 title: sendNavi
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 60
+nav_order: 52
 ---
 
 # CommandManager.sendNavi

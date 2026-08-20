@@ -2,7 +2,7 @@
 title: sendCanvasElements
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 39
+nav_order: 32
 ---
 
 # CommandManager.sendCanvasElements

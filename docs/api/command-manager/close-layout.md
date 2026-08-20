@@ -2,7 +2,7 @@
 title: closeLayout
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 37
+nav_order: 30
 ---
 
 # CommandManager.closeLayout

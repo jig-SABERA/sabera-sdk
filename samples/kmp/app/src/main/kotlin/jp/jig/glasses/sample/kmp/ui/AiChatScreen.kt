@@ -37,7 +37,6 @@ private const val TAG = "AiChatScreen"
 fun AiChatScreen(client: GlassClient, onBack: () -> Unit) {
     val commandManager = remember(client) { client.createCommandManager() }
 
-    var aiText by remember { mutableStateOf("質問内容をどうぞ") }
     var chatText by remember { mutableStateOf("今日の天気は？") }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -71,12 +70,6 @@ fun AiChatScreen(client: GlassClient, onBack: () -> Unit) {
             )
             Spacer(Modifier.height(16.dp))
 
-            SendableTextField(
-                label = "AI テキスト",
-                value = aiText,
-                onValueChange = { aiText = it },
-                onSend = { safeRun("sendAIContent: $aiText") { commandManager.sendAIContent(aiText) } },
-            )
             SendableTextField(
                 label = "AI チャットテキスト",
                 value = chatText,

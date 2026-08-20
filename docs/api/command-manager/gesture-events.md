@@ -7,16 +7,13 @@ nav_order: 2
 
 # CommandManager.gestureEvents
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
 val gestureEvents: SharedFlow<GestureType>
 ```
 
 ## 概要
 
-<!-- WIP -->
+グラスのタッチ操作が流れる。シングルタップ・ダブルタップ・長押しの3種。どのページを開いていても届くので、アプリが背面にいる間の操作も拾える。
 
 ## 戻り値
 

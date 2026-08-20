@@ -2,13 +2,10 @@
 title: sendTranslateLanguage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 13
+nav_order: 12
 ---
 
 # CommandManager.sendTranslateLanguage
-
-{: .warning }
-> このページは執筆中です。
 
 ```kotlin
 fun sendTranslateLanguage(source: String, target: String)
@@ -16,14 +13,14 @@ fun sendTranslateLanguage(source: String, target: String)
 
 ## 概要
 
-<!-- WIP -->
+翻訳ページに出す言語ラベルを切り替える。本文を送る前に呼ぶ。画面遷移は起こらない。
 
 ## 引数
 
 | 名前 | 型 | 説明 |
 |---|---|---|
-| `source` | `String` | <!-- WIP --> |
-| `target` | `String` | <!-- WIP --> |
+| `source` | `String` | 翻訳元の言語コード。"en" など |
+| `target` | `String` | 翻訳先の言語コード。"ja" など |
 
 ## 戻り値
 

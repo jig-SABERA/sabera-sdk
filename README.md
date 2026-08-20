@@ -12,6 +12,7 @@ Sabera App SDK の使い方を示すサンプルアプリ集。
 ## ドキュメント
 
 - [Getting Started](docs/getting-started.md) — SDK のセットアップと基本的な使い方
+- [ページごとの使い方](docs/pages/) — グラスの画面ごとに、開き方と送るもの
 - [API リファレンス](docs/api/) — 公開 API の一覧（内容は執筆中）
 - [ドキュメントの作り方](docs/authoring.md) — サイトの構成、コード例の検証、デプロイ
 

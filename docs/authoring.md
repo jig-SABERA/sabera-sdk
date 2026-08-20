@@ -1,6 +1,6 @@
 ---
 title: ドキュメントの作り方
-nav_order: 6
+nav_order: 7
 ---
 
 # ドキュメントの作り方
@@ -14,12 +14,13 @@ nav_order: 6
 | `docs/_config.yml` | Jekyll の設定 |
 | `docs/Gemfile` | Jekyll とテーマ（just-the-docs）の固定 |
 | `docs/index.md` / `getting-started.md` | トップと入門 |
+| `docs/pages/**` | グラスの画面ごとの使い方。手で書く |
 | `docs/api/**` | メソッドごとのページ。`scripts/gen-api-docs.py` が雛形を作る |
 | `docs/_sass/color_schemes/` | 配色。`sabera.scss` がライト、`sabera-dark.scss` がダーク |
 | `docs/_sass/custom/custom.scss` | 前後リンクと配色切り替えボタンの見た目 |
 | `docs/_includes/` | head / ヘッダ / フッタへの差し込み |
 | `scripts/gen-api-docs.py` | API ページの雛形を書き出す |
-| `scripts/sync-snippets.py` | コード例を Kotlin から `docs/api/**` へ写す |
+| `scripts/sync-snippets.py` | コード例を Kotlin から `docs/api/**` と `docs/pages/**` へ写す |
 | `samples/kmp/snippets/` | コード例の出処。コンパイルと ktlint を通る |
 
 公開は GitHub Pages。`main` への push で Actions がビルドしてデプロイする（[デプロイ](#デプロイ)）。
@@ -106,7 +107,7 @@ Markdown 側の貼り先は雛形が用意している。
 python3 scripts/sync-snippets.py
 ```
 
-マーカー間が ` ```kotlin ` ブロックに置き換わる。id が一致するスニペットが無いページは
+マーカー間が ` ```kotlin ` ブロックに置き換わる。写す先は `docs/api/**` と `docs/pages/**`。id が一致するスニペットが無いページは
 そのまま残る。1つのスニペットを複数ページに貼りたいときは、貼り先の id を揃える。
 
 Jekyll の `include` を使わずページに直接書き込んでいるのは、GitHub 上で `.md` を読んだときにも

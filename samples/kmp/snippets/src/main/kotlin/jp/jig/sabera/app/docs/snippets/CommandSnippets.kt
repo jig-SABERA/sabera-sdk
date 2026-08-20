@@ -260,9 +260,6 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
-    // sendAiChatSender / sendAiChatStatus / sendAiChatSenderText / sendAiChatSenderStatus は
-    // 引数の PacketCommandUtils.AiChatSender・AiChatStatus が SDK 内部の型で、外から参照できない。
-    // アプリから使えるのは以下の2つだけ。
     fun aiChat(commandManager: CommandManager) {
         // #snippet CommandManager.sendAiChatText
         commandManager.enterAiChatPage()

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'command_page.dart';
+import 'music_search_page.dart';
+import 'saved_tracks_map_page.dart';
 import 'scan_page.dart';
 import 'src/glasses_sdk.dart';
 
@@ -32,9 +34,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _tabIndex = 0;
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<GlassConnectionState>(
+    final glassesTab = StreamBuilder<GlassConnectionState>(
       stream: GlassesSdk.instance.connectionState,
       initialData: GlassConnectionState.disconnected,
       builder: (context, snapshot) {
@@ -44,6 +48,21 @@ class _HomePageState extends State<HomePage> {
         }
         return const ScanPage();
       },
+    );
+
+    final pages = [glassesTab, const MusicSearchPage(), SavedTracksMapPage()];
+
+    return Scaffold(
+      body: pages[_tabIndex],
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _tabIndex,
+        onDestinationSelected: (index) => setState(() => _tabIndex = index),
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.bluetooth), label: 'Glasses'),
+          NavigationDestination(icon: Icon(Icons.music_note), label: '楽曲検索'),
+          NavigationDestination(icon: Icon(Icons.map), label: '保存した曲'),
+        ],
+      ),
     );
   }
 }

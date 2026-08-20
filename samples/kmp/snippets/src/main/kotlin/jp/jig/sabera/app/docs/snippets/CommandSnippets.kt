@@ -276,34 +276,6 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
-    fun remoteController(commandManager: CommandManager) {
-        // #snippet CommandManager.addRemoteControllerEventListener
-        val listener = object : CommandManager.RemoteControlListener {
-            override fun onPrev() {
-                Log.d("sample", "prev")
-            }
-
-            override fun onNext() {
-                Log.d("sample", "next")
-            }
-
-            override fun onEsc() {
-                Log.d("sample", "esc")
-            }
-        }
-        commandManager.addRemoteControllerEventListener(listener)
-        // #endsnippet
-        commandManager.removeRemoteControllerEventListener(listener)
-    }
-
-    fun powerEvent(commandManager: CommandManager) {
-        // #snippet CommandManager.addGlassPowerEventListener
-        val listener: () -> Unit = { Log.d("sample", "power button") }
-        commandManager.addGlassPowerEventListener(listener)
-        // #endsnippet
-        commandManager.removeGlassPowerEventListener(listener)
-    }
-
     fun deviceInfo(client: GlassClient) {
         // #snippet GlassClient.deviceName
         Log.d("sample", "${client.deviceName} (${client.deviceIdentifier})")

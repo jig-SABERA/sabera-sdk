@@ -2,7 +2,7 @@
 title: sendAiChatSenderText
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 19
+nav_order: 16
 ---
 
 # CommandManager.sendAiChatSenderText

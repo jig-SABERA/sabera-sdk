@@ -2,7 +2,7 @@
 title: sendTranslateLanguage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 13
+nav_order: 12
 ---
 
 # CommandManager.sendTranslateLanguage

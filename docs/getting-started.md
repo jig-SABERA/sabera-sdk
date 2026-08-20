@@ -157,7 +157,6 @@ commandManager.sendTeleprompterContent("Hello")
 | メソッド                                                | 内容                               |
 | ------------------------------------------------------- | ---------------------------------- |
 | `sendTeleprompterContent(content: String)`              | テレプロンプターに表示する文字列   |
-| `sendAIContent(content: String)`                        | AI ページに表示する文字列          |
 | `sendTranslateContent(content: String)`                 | 翻訳ページに表示する文字列         |
 | `sendTranslateLanguage(source: String, target: String)` | 翻訳の言語ペア（例: `"en", "ja"`） |
 | `sendAiChatText(text: String)`                          | AI チャットに表示する文字列        |
@@ -167,7 +166,7 @@ commandManager.sendTeleprompterContent("Hello")
 ### そのほかのコマンド
 
 汎用テキスト表示・画像表示（技適マークに使っている画面）・設定の書き換えと同期・
-時刻や天気の同期・ログ取得なども `CommandManager` から送れる。一覧は
+時刻や天気の同期なども `CommandManager` から送れる。一覧は
 [API リファレンス](api/command-manager/) を見る。
 
 ## 6. ジェスチャーを受け取る

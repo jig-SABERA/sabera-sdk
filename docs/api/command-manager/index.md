@@ -43,7 +43,8 @@ has_children: true
 | [closeLayout](close-layout.html) | `fun closeLayout()` |
 | [sendCanvas](send-canvas.html) | `fun sendCanvas(elements: List<CommandManager.CanvasElement>)` |
 | [sendCanvasElements](send-canvas-elements.html) | `fun sendCanvasElements(elements: List<CommandManager.CanvasElement>)` |
-| [sendCanvasImage](send-canvas-image.html) | `fun sendCanvasImage(x: Int, y: Int, width: Int, height: Int, grayscale: ByteArray)` |
+| [sendCanvasImage](send-canvas-image.html) | `fun sendCanvasImage(id: Int, x: Int, y: Int, width: Int, height: Int, grayscale: ByteArray)` |
+| [removeCanvasImage](remove-canvas-image.html) | `fun removeCanvasImage(id: Int)` |
 | [clearCanvas](clear-canvas.html) | `fun clearCanvas()` |
 | [closeCanvas](close-canvas.html) | `fun closeCanvas()` |
 | [enterNavigationPage](enter-navigation-page.html) | `fun enterNavigationPage()` |

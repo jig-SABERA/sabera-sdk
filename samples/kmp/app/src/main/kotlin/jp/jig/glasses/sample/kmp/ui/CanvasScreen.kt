@@ -59,6 +59,19 @@ private const val MAX_ELEMENTS = 8
 /** 画像はキャンバスより小さくしておく。大きいほど分割送信が増えて表示が遅くなる */
 private const val CANVAS_IMAGE_MAX_SIZE = 240
 
+/** 複数枚を並べるデモ。64角なら四隅に置いてもバッファに余裕がある */
+private const val TILED_IMAGE_SIZE = 64
+
+/** 縞の太さを変えて、どの id がどこに出たか見分けられるようにする */
+private val TILED_IMAGES = listOf(
+    TiledImage(x = 16, y = 16, stripeWidth = 2),
+    TiledImage(x = 496, y = 16, stripeWidth = 4),
+    TiledImage(x = 16, y = 280, stripeWidth = 8),
+    TiledImage(x = 496, y = 280, stripeWidth = 16),
+)
+
+private data class TiledImage(val x: Int, val y: Int, val stripeWidth: Int)
+
 /** 要素TLVの固定部（id + x + y + w + h）とTLVヘッダ */
 private const val ELEMENT_OVERHEAD_BYTES = 12
 
@@ -83,6 +96,7 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
 
     val elements = remember { mutableStateListOf(demoElements[0], demoElements[3]) }
     var image by remember { mutableStateOf<GrayscaleImage?>(null) }
+    var imageId by remember { mutableStateOf(0) }
     var imageX by remember { mutableStateOf(100) }
     var imageY by remember { mutableStateOf(50) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -216,12 +230,19 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
 
             Text("画像", style = MaterialTheme.typography.titleMedium)
             Text(
-                "置けるのは1枚だけ。送るたび前の画像は破棄され、テキストの背面に描かれる。" +
+                "id ごとに8枚まで置ける。テキストの背面に描かれる。" +
                     "FEATURE_VERSION 2.2.0 以上のファームが対象。",
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
+                "全画像の w×h×2 の合計が 380,000 バイトを超えると受け取れない。" +
+                    "${CANVAS_IMAGE_MAX_SIZE}角なら${CANVAS_IMAGE_MAX_SIZE * CANVAS_IMAGE_MAX_SIZE * 2}バイト/枚",
                 style = MaterialTheme.typography.bodySmall,
             )
             Spacer(Modifier.height(8.dp))
             Row(Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+                NumberField("画像のid", imageId, { imageId = it }, Modifier.weight(1f))
+                Spacer(Modifier.width(4.dp))
                 NumberField("画像のx", imageX, { imageX = it }, Modifier.weight(1f))
                 Spacer(Modifier.width(4.dp))
                 NumberField("画像のy", imageY, { imageY = it }, Modifier.weight(1f))
@@ -253,14 +274,15 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "${current.width}×${current.height} を ($imageX, $imageY) に置く",
+                    "${current.width}×${current.height} を id $imageId の ($imageX, $imageY) に置く",
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Spacer(Modifier.height(8.dp))
                 Button(
                     onClick = {
-                        safeRun("sendCanvasImage ${current.width}x${current.height}") {
+                        safeRun("sendCanvasImage id=$imageId") {
                             commandManager.sendCanvasImage(
+                                id = imageId,
                                 x = imageX,
                                 y = imageY,
                                 width = current.width,
@@ -273,6 +295,38 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
                 ) {
                     Text("画像を送る")
                 }
+            }
+
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = {
+                    safeRun("sendCanvasImage tiled") {
+                        // 続けて呼んでもSDKが送信を直列化するので、チャンクは混ざらない
+                        TILED_IMAGES.forEachIndexed { index, tile ->
+                            commandManager.sendCanvasImage(
+                                id = index,
+                                x = tile.x,
+                                y = tile.y,
+                                width = TILED_IMAGE_SIZE,
+                                height = TILED_IMAGE_SIZE,
+                                grayscale = stripePatternImage(
+                                    size = TILED_IMAGE_SIZE,
+                                    stripeWidth = tile.stripeWidth,
+                                ).pixels,
+                            )
+                        }
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("${TILED_IMAGE_SIZE}角を四隅に${TILED_IMAGES.size}枚置く")
+            }
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = { safeRun("removeCanvasImage $imageId") { commandManager.removeCanvasImage(imageId) } },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("id $imageId の画像を消す")
             }
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))

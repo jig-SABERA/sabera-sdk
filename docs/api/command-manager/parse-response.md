@@ -2,7 +2,7 @@
 title: parseResponse
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 32
+nav_order: 25
 ---
 
 # CommandManager.parseResponse

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.4.0 の公開 API に合わせたもの。
+シグネチャは SDK 0.5.0 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -179,8 +179,6 @@ SPEC = [
               summary="テレプロンプトに原稿を送る。200バイトを超える分は分割して送られる。"
                       "`percent` つきの overload はスクロールバーの位置も一緒に送る。",
               related=["enterTeleprompterPage", "sendTeleprompterLine"]),
-
-            m("sendAIContent", "fun sendAIContent(content: String)", [("content", "String")]),
             m("enterTranslatePage", "fun enterTranslatePage()",
               summary="翻訳ページを開く。開いたあとに sendTranslateLanguage で言語ペアを送り、"
                       "sendTranslateContent で本文を送る、の順で使う。",
@@ -196,17 +194,10 @@ SPEC = [
               summary="翻訳ページに出す言語ラベルを切り替える。本文を送る前に呼ぶ。"
                       "画面遷移は起こらない。",
               related=["sendTranslateContent"]),
-            m("sendMeeting", "fun sendMeeting(meetingType: Byte, text: String, percent: Int)",
-              [("meetingType", "Byte"), ("text", "String"), ("percent", "Int")]),
             m("enterAiChatPage", "fun enterAiChatPage()",
               summary="AI アシスタントページを開く。吹き出しは sendAiChatSenderText で送る。"
                       "本文のフォントが言語で変わるため、開く前に sendAiChatLanguage を送っておく。",
               related=["sendAiChatSenderText", "sendAiChatLanguage"]),
-            m("sendAiChatSender", "fun sendAiChatSender(sender: CommandManager.AiChatSender)",
-              [("sender", "CommandManager.AiChatSender", "吹き出しの主体。`USER` か `AI`")],
-              summary="次に送る本文の吹き出しをどちら側にするかを切り替える。"
-                      "本文と一度に送る sendAiChatSenderText の方が確実。",
-              related=["sendAiChatSenderText"]),
             m("sendAiChatText", "fun sendAiChatText(text: String)",
               [("text", "String", "表示する本文")],
               summary="AI アシスタントページに本文だけを送る。"
@@ -273,18 +264,6 @@ SPEC = [
               [("phoneName", "String", "スマホ本体の Bluetooth 名")],
               summary="開発用。接続元のスマホ名をグラスに送り、グラス側のデバッグ表示で"
                       "どの端末とつながっているか分かるようにする。"),
-            m("addGlassPowerEventListener", "fun addGlassPowerEventListener(listener: () -> Unit)",
-              [("listener", "() -> Unit")], related=["removeGlassPowerEventListener"]),
-            m("removeGlassPowerEventListener", "fun removeGlassPowerEventListener(listener: () -> Unit)",
-              [("listener", "() -> Unit")], related=["addGlassPowerEventListener"]),
-            m("addRemoteControllerEventListener",
-              "fun addRemoteControllerEventListener(listener: CommandManager.RemoteControlListener)",
-              [("listener", "CommandManager.RemoteControlListener")],
-              related=["removeRemoteControllerEventListener"]),
-            m("removeRemoteControllerEventListener",
-              "fun removeRemoteControllerEventListener(listener: CommandManager.RemoteControlListener)",
-              [("listener", "CommandManager.RemoteControlListener")],
-              related=["addRemoteControllerEventListener"]),
             m("parseResponse", "fun parseResponse(value: ByteArray)",
               [("value", "ByteArray", "グラスから届いたパケット")],
               summary="グラスから届いたパケットを解析する。"
@@ -295,7 +274,7 @@ SPEC = [
             # ここから下は新ファーム向けのコマンド
             m("enterEmptyScreenPage", "fun enterEmptyScreenPage()",
               summary="汎用テキスト表示ページを開く。本文は sendEmptyScreenContent で送る。",
-              related=["sendEmptyScreenContent", "sendEmptyScreenStatus"]),
+              related=["sendEmptyScreenContent"]),
             m("enterImageDisplayPage", "fun enterImageDisplayPage()",
               summary="画像表示ページを開く。技適マークの表示に使っている画面で、"
                       "画像は sendImage で送る。",
@@ -400,9 +379,6 @@ SPEC = [
               [("time", "String", "`mm:ss` 形式の5文字。短ければ先頭を0埋め、長ければ切り捨てる")],
               summary="再生開始からの経過時間を送る。",
               related=["sendTeleprompterStatus"]),
-            m("sendTeleprompterGenerating", "fun sendTeleprompterGenerating()",
-              summary="テレプロンプトに生成中の表示を出す。",
-              related=["sendTeleprompterContent"]),
             m("clearInscriptionText", "fun clearInscriptionText()",
               summary="テレプロンプトと翻訳の表示テキストを消す。"
                       "どちらもグラス側で同じバッファを共有しているため、消去も共通。",
@@ -410,11 +386,6 @@ SPEC = [
             m("sendEmptyScreenContent", "fun sendEmptyScreenContent(content: String)",
               [("content", "String", "表示する本文")],
               summary="汎用テキスト表示ページに本文を送る。200バイトを超える分は分割して送られる。",
-              related=["enterEmptyScreenPage"]),
-            m("sendEmptyScreenStatus",
-              "fun sendEmptyScreenStatus(status: CommandManager.TeleprompterStatus)",
-              [("status", "CommandManager.TeleprompterStatus", "`READY` / `STARTED` / `PAUSED`")],
-              summary="汎用テキスト表示ページの状態を送る。`READY` で空画面に戻る。",
               related=["enterEmptyScreenPage"]),
             m("sendImage", "fun sendImage(width: Int, height: Int, grayscale: ByteArray)",
               [("width", "Int", "画像の幅。196まで"),
@@ -518,10 +489,6 @@ SPEC = [
             m("requestSettingSync", "fun requestSettingSync()",
               summary="全設定値の送信をグラスに要求する。応答は parseResponse で受ける。",
               related=["sendSetting", "parseResponse"]),
-            m("requestLog", "fun requestLog(type: CommandManager.GlassLogType)",
-              [("type", "CommandManager.GlassLogType",
-                "`REALTIME` / `SYSLOG` / `RUNTIME` / `RESET_REASON` / `STOP`")],
-              summary="グラスにログを要求する。クラッシュ前のログや再起動理由の調査に使う。"),
             m("startImuData", "fun startImuData()",
               summary="6DoF の送信を開始する。値は imuData に流れる。"
                       "FEATURE_VERSION 2.0.0 以上のファームが対象で、それ未満では何も起きない。"
@@ -530,9 +497,6 @@ SPEC = [
             m("stopImuData", "fun stopImuData()",
               summary="6DoF の送信を止める。",
               related=["imuData", "startImuData"]),
-            m("requestNotificationCountSync", "fun requestNotificationCountSync()",
-              summary="未読通知数の同期をグラスに要求する。",
-              related=["syncNotificationCount"]),
             m("syncTime", "fun syncTime()",
               summary="端末の現在時刻をグラスに同期する。ホーム画面の時計に反映される。"),
             m("syncWeather", "fun syncWeather(type: CommandManager.WeatherType, value: Int)",
@@ -714,7 +678,7 @@ def api_index():
         "",
         f"# {API_TITLE}",
         "",
-        "Sabera App SDK (Kotlin) の公開 API。バージョン 0.4.0 時点。",
+        "Sabera App SDK (Kotlin) の公開 API。バージョン 0.5.0 時点。",
         "",
         "メソッドごとに使えるようになったバージョンは"
         "[メソッドの追加履歴](../api-history.html)にまとめてある。",

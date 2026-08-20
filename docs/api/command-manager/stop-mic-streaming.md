@@ -2,7 +2,7 @@
 title: stopMicStreaming
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 24
+nav_order: 21
 ---
 
 # CommandManager.stopMicStreaming

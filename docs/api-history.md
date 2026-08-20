@@ -10,6 +10,13 @@ nav_order: 5
 配布しているのは Android のみで、iOS は 0.0.10 で止まっている。iOS で使えるのは
 0.0.10 時点の API までになる。
 
+## 0.5.0
+
+アプリ本体に実装がないメソッドを公開 API から外した。撤去したのは
+`sendMeeting` / `sendAIContent` / `sendAiChatSender` / `sendEmptyScreenStatus` /
+`sendTeleprompterGenerating` / `requestLog` / `requestNotificationCountSync` と、
+電源・リモコンのイベントリスナー4つ。
+
 ## 0.4.0
 
 | メソッド | 補足 |

@@ -7,22 +7,19 @@ nav_order: 27
 
 # CommandManager.sendDebugPhoneName
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
 fun sendDebugPhoneName(phoneName: String)
 ```
 
 ## 概要
 
-<!-- WIP -->
+開発用。接続元のスマホ名をグラスに送り、グラス側のデバッグ表示でどの端末とつながっているか分かるようにする。
 
 ## 引数
 
 | 名前 | 型 | 説明 |
 |---|---|---|
-| `phoneName` | `String` | <!-- WIP --> |
+| `phoneName` | `String` | スマホ本体の Bluetooth 名 |
 
 ## 戻り値
 
@@ -31,5 +28,7 @@ fun sendDebugPhoneName(phoneName: String)
 ## 使用例
 
 <!-- snippet: CommandManager.sendDebugPhoneName -->
-<!-- WIP -->
+```kotlin
+commandManager.sendDebugPhoneName(phoneName)
+```
 <!-- /snippet -->

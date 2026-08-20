@@ -7,25 +7,22 @@ nav_order: 25
 
 # CommandManager.sendMessage
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
-fun sendMessage(sender: String, body: String, timestamp: Long, appName: String)
+fun sendMessage(name: String, title: String, time: Long, text: String)
 ```
 
 ## 概要
 
-<!-- WIP -->
+スマホに届いた通知をグラスに転送する。件数の表示は syncNotificationCount が別にある。
 
 ## 引数
 
 | 名前 | 型 | 説明 |
 |---|---|---|
-| `sender` | `String` | <!-- WIP --> |
-| `body` | `String` | <!-- WIP --> |
-| `timestamp` | `Long` | <!-- WIP --> |
-| `appName` | `String` | <!-- WIP --> |
+| `name` | `String` | 通知を出したアプリの名前 |
+| `title` | `String` | 送信者名など、通知の見出し |
+| `time` | `Long` | 通知が届いた時刻。エポックミリ秒 |
+| `text` | `String` | 本文 |
 
 ## 戻り値
 

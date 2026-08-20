@@ -35,7 +35,7 @@ has_children: true
 | [closeGlassMic](close-glass-mic.html) | `fun closeGlassMic()` |
 | [startMicStreaming](start-mic-streaming.html) | `fun startMicStreaming()` |
 | [stopMicStreaming](stop-mic-streaming.html) | `fun stopMicStreaming()` |
-| [sendMessage](send-message.html) | `fun sendMessage(sender: String, body: String, timestamp: Long, appName: String)` |
+| [sendMessage](send-message.html) | `fun sendMessage(name: String, title: String, time: Long, text: String)` |
 | [syncNotificationCount](sync-notification-count.html) | `fun syncNotificationCount(count: Int)` |
 | [sendDebugPhoneName](send-debug-phone-name.html) | `fun sendDebugPhoneName(phoneName: String)` |
 | [addGlassPowerEventListener](add-glass-power-event-listener.html) | `fun addGlassPowerEventListener(listener: () -> Unit)` |

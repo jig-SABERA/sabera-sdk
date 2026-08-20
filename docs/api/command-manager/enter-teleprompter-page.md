@@ -7,16 +7,13 @@ nav_order: 8
 
 # CommandManager.enterTeleprompterPage
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
 fun enterTeleprompterPage()
 ```
 
 ## 概要
 
-<!-- WIP -->
+テレプロンプトページを開く。原稿は sendTeleprompterContent で送る。開く前に送った原稿は表示されない。
 
 ## 戻り値
 
@@ -25,7 +22,11 @@ fun enterTeleprompterPage()
 ## 使用例
 
 <!-- snippet: CommandManager.enterTeleprompterPage -->
-<!-- WIP -->
+```kotlin
+// 開いてからでないと原稿は表示されない
+commandManager.enterTeleprompterPage()
+commandManager.sendTeleprompterContent("読み上げる原稿")
+```
 <!-- /snippet -->
 
 ## 関連

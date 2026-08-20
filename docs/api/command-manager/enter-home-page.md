@@ -7,16 +7,13 @@ nav_order: 7
 
 # CommandManager.enterHomePage
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
 fun enterHomePage()
 ```
 
 ## 概要
 
-<!-- WIP -->
+グラスをホーム画面に戻す。開いていたページは閉じ、表示していた内容は破棄される。機能を止めるときの後片付けに使う。
 
 ## 戻り値
 

@@ -104,7 +104,10 @@ SPEC = [
         "nav_order": 3,
         "summary": "接続済みの1台を表す。`GlassManager.connectedDevice` から得る。",
         "methods": [
-            m("connected", "val connected: StateFlow<Boolean>", returns="StateFlow<Boolean>"),
+            m("connected", "val connected: StateFlow<Boolean>", returns="StateFlow<Boolean>",
+              summary="グラスとつながっている間 true。切断で false に戻る。"
+                      "送信メソッドは未接続だと黙って捨てられるので、通知の転送のように"
+                      "取りこぼしたくないものはこれを見てから送る。"),
             m("deviceName", "val deviceName: String?", returns="String?"),
             m("deviceIdentifier", "val deviceIdentifier: String?", returns="String?"),
             m("isConnectionValid", "fun isConnectionValid(): Boolean", returns="Boolean"),
@@ -129,8 +132,13 @@ SPEC = [
         "nav_order": 4,
         "summary": "グラス側の画面遷移・コンテンツ送信・イベント購読。`GlassClient.createCommandManager()` で作る。",
         "methods": [
-            m("connected", "val connected: StateFlow<Boolean>", returns="StateFlow<Boolean>"),
-            m("gestureEvents", "val gestureEvents: SharedFlow<GestureType>", returns="SharedFlow<GestureType>"),
+            m("connected", "val connected: StateFlow<Boolean>", returns="StateFlow<Boolean>",
+              summary="グラスとつながっている間 true。GlassClient.connected と同じ状態を返す。"
+                      "送信メソッドは未接続だと黙って捨てられるので、通知の転送のように"
+                      "取りこぼしたくないものはこれを見てから送る。"),
+            m("gestureEvents", "val gestureEvents: SharedFlow<GestureType>", returns="SharedFlow<GestureType>",
+              summary="グラスのタッチ操作が流れる。シングルタップ・ダブルタップ・長押しの3種。"
+                      "どのページを開いていても届くので、アプリが背面にいる間の操作も拾える。"),
             m("imuData", "val imuData: SharedFlow<CommandManager.ImuData>",
               returns="SharedFlow<CommandManager.ImuData>",
               summary="6DoF のセンサー値。startImuData を呼ぶまで何も流れない。"
@@ -156,8 +164,13 @@ SPEC = [
               returns="StateFlow<Boolean>",
               summary="マイクが流れている間 true。",
               related=["startMicStreaming"]),
-            m("enterHomePage", "fun enterHomePage()"),
-            m("enterTeleprompterPage", "fun enterTeleprompterPage()", related=["sendTeleprompterContent"]),
+            m("enterHomePage", "fun enterHomePage()",
+              summary="グラスをホーム画面に戻す。開いていたページは閉じ、表示していた内容は破棄される。"
+                      "機能を止めるときの後片付けに使う。"),
+            m("enterTeleprompterPage", "fun enterTeleprompterPage()",
+              summary="テレプロンプトページを開く。原稿は sendTeleprompterContent で送る。"
+                      "開く前に送った原稿は表示されない。",
+              related=["sendTeleprompterContent"]),
             m("sendTeleprompterContent",
               "fun sendTeleprompterContent(content: String)\n"
               "fun sendTeleprompterContent(content: String, percent: Int)",
@@ -169,21 +182,36 @@ SPEC = [
 
             m("sendAIContent", "fun sendAIContent(content: String)", [("content", "String")]),
             m("enterTranslatePage", "fun enterTranslatePage()",
+              summary="翻訳ページを開く。開いたあとに sendTranslateLanguage で言語ペアを送り、"
+                      "sendTranslateContent で本文を送る、の順で使う。",
               related=["sendTranslateContent", "sendTranslateLanguage"]),
-            m("sendTranslateContent", "fun sendTranslateContent(content: String)", [("content", "String")],
+            m("sendTranslateContent", "fun sendTranslateContent(content: String)",
+              [("content", "String", "表示する訳文。長い分は分割して送られる")],
+              summary="翻訳ページに訳文を送る。enterTranslatePage で開いてから呼ぶ。"
+                      "送るたび表示は置き換わる。消すときは clearInscriptionText を使う。",
               related=["enterTranslatePage", "sendTranslateLanguage"]),
             m("sendTranslateLanguage", "fun sendTranslateLanguage(source: String, target: String)",
-              [("source", "String"), ("target", "String")], related=["sendTranslateContent"]),
+              [("source", "String", "翻訳元の言語コード。\"en\" など"),
+               ("target", "String", "翻訳先の言語コード。\"ja\" など")],
+              summary="翻訳ページに出す言語ラベルを切り替える。本文を送る前に呼ぶ。"
+                      "画面遷移は起こらない。",
+              related=["sendTranslateContent"]),
             m("sendMeeting", "fun sendMeeting(meetingType: Byte, text: String, percent: Int)",
               [("meetingType", "Byte"), ("text", "String"), ("percent", "Int")]),
-            m("enterAiChatPage", "fun enterAiChatPage()", related=["sendAiChatSenderText"]),
+            m("enterAiChatPage", "fun enterAiChatPage()",
+              summary="AI アシスタントページを開く。吹き出しは sendAiChatSenderText で送る。"
+                      "本文のフォントが言語で変わるため、開く前に sendAiChatLanguage を送っておく。",
+              related=["sendAiChatSenderText", "sendAiChatLanguage"]),
             m("sendAiChatSender", "fun sendAiChatSender(sender: CommandManager.AiChatSender)",
               [("sender", "CommandManager.AiChatSender", "吹き出しの主体。`USER` か `AI`")],
               summary="次に送る本文の吹き出しをどちら側にするかを切り替える。"
                       "本文と一度に送る sendAiChatSenderText の方が確実。",
               related=["sendAiChatSenderText"]),
-            m("sendAiChatText", "fun sendAiChatText(text: String)", [("text", "String")],
-              related=["enterAiChatPage"]),
+            m("sendAiChatText", "fun sendAiChatText(text: String)",
+              [("text", "String", "表示する本文")],
+              summary="AI アシスタントページに本文だけを送る。"
+                      "どちらの吹き出しに出すかも指定できる sendAiChatSenderText の方が確実。",
+              related=["enterAiChatPage", "sendAiChatSenderText"]),
             m("sendAiChatStatus", "fun sendAiChatStatus(status: CommandManager.AiChatStatus)",
               [("status", "CommandManager.AiChatStatus", "`GENERATING` か `COMPLETE`")],
               summary="AI 応答の生成状態を送る。`COMPLETE` を送るまでグラスは生成中の表示を続ける。",
@@ -217,7 +245,10 @@ SPEC = [
                       "`GlassClient.addAudioDataEventListener` に届く。"
                       "マイクのチャンネルは接続中のデバイスに合わせて SDK 側で決まる。",
               related=["closeGlassMic"]),
-            m("closeGlassMic", "fun closeGlassMic()", related=["openGlassMic"]),
+            m("closeGlassMic", "fun closeGlassMic()",
+              summary="グラスのマイクを閉じる。openGlassMic と対で呼ぶ。"
+                      "閉じ忘れるとグラスは録音を続けるので、画面を離れるときに必ず呼ぶ。",
+              related=["openGlassMic"]),
             m("startMicStreaming", "fun startMicStreaming()",
               summary="マイクを開いて、届いた音声をデコードしながら micAudio に流す。"
                       "すでに流れているときは開き直す。生の Opus を自分で扱いたい場合は"
@@ -226,12 +257,22 @@ SPEC = [
             m("stopMicStreaming", "fun stopMicStreaming()",
               summary="マイクを閉じて micAudio を止める。デコーダも解放する。",
               related=["micAudio", "startMicStreaming"]),
-            m("sendMessage", "fun sendMessage(sender: String, body: String, timestamp: Long, appName: String)",
-              [("sender", "String"), ("body", "String"), ("timestamp", "Long"), ("appName", "String")],
+            m("sendMessage", "fun sendMessage(name: String, title: String, time: Long, text: String)",
+              [("name", "String", "通知を出したアプリの名前"),
+               ("title", "String", "送信者名など、通知の見出し"),
+               ("time", "Long", "通知が届いた時刻。エポックミリ秒"),
+               ("text", "String", "本文")],
+              summary="スマホに届いた通知をグラスに転送する。件数の表示は syncNotificationCount が別にある。",
               related=["syncNotificationCount"]),
-            m("syncNotificationCount", "fun syncNotificationCount(count: Int)", [("count", "Int")],
-              related=["sendMessage"]),
-            m("sendDebugPhoneName", "fun sendDebugPhoneName(phoneName: String)", [("phoneName", "String")]),
+            m("syncNotificationCount", "fun syncNotificationCount(count: Int)",
+              [("count", "Int", "未読の件数")],
+              summary="未読通知の件数をグラスに知らせる。ホームの通知バッジに反映される。"
+                      "未接続だと捨てられるので connected を見てから送る。",
+              related=["sendMessage", "connected"]),
+            m("sendDebugPhoneName", "fun sendDebugPhoneName(phoneName: String)",
+              [("phoneName", "String", "スマホ本体の Bluetooth 名")],
+              summary="開発用。接続元のスマホ名をグラスに送り、グラス側のデバッグ表示で"
+                      "どの端末とつながっているか分かるようにする。"),
             m("addGlassPowerEventListener", "fun addGlassPowerEventListener(listener: () -> Unit)",
               [("listener", "() -> Unit")], related=["removeGlassPowerEventListener"]),
             m("removeGlassPowerEventListener", "fun removeGlassPowerEventListener(listener: () -> Unit)",
@@ -244,7 +285,12 @@ SPEC = [
               "fun removeRemoteControllerEventListener(listener: CommandManager.RemoteControlListener)",
               [("listener", "CommandManager.RemoteControlListener")],
               related=["addRemoteControllerEventListener"]),
-            m("parseResponse", "fun parseResponse(value: ByteArray)", [("value", "ByteArray")]),
+            m("parseResponse", "fun parseResponse(value: ByteArray)",
+              [("value", "ByteArray", "グラスから届いたパケット")],
+              summary="グラスから届いたパケットを解析する。"
+                      "requestSystemStatus や requestSettingSync の応答を自前で受けるときに使う。"
+                      "ジェスチャーや6DoFのように専用の Flow があるものは、そちらを購読すればよい。",
+              related=["requestSystemStatus", "requestSettingSync"]),
 
             # ここから下は新ファーム向けのコマンド
             m("enterEmptyScreenPage", "fun enterEmptyScreenPage()",

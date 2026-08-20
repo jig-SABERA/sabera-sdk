@@ -31,14 +31,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.jigglass.glass.GlassClient
+import jp.jig.glasses.sample.kmp.audio.PcmResampler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.math.sqrt
 
 private const val TAG = "MicScreen"
 
+/** グラスのマイクのサンプルレート */
+private const val INPUT_SAMPLE_RATE = 16_000
+
+/** リアルタイム音声 API に多い 24kHz。リサンプルの出力レート */
+private const val OUTPUT_SAMPLE_RATE = 24_000
+
 /** PCM16 モノラル 16kHz。1秒ぶんのバイト数 */
-private const val BYTES_PER_SECOND = 16_000 * 2
+private const val BYTES_PER_SECOND = INPUT_SAMPLE_RATE * 2
 
 /** 16bit の最大値。レベルの正規化に使う */
 private const val PCM_FULL_SCALE = 32_768f
@@ -61,13 +68,18 @@ fun MicScreen(client: GlassClient, onBack: () -> Unit) {
     var level by remember { mutableStateOf(0f) }
     var peak by remember { mutableStateOf(0f) }
     var elapsedMs by remember { mutableStateOf(0L) }
+    var resampledBytes by remember { mutableStateOf(0L) }
     var error by remember { mutableStateOf<String?>(null) }
 
     var startedAtMs by remember { mutableStateOf(0L) }
 
+    val resampler = remember { PcmResampler(INPUT_SAMPLE_RATE, OUTPUT_SAMPLE_RATE) }
+
     DisposableEffect(commandManager) {
         val job: Job = scope.launch {
             commandManager.micAudio.collect { pcm ->
+                // 24kHz を要求する送り先にはここで変換した PCM を渡す
+                resampledBytes += resampler.resample(pcm).size
                 totalBytes += pcm.size
                 chunkCount += 1
                 lastChunkBytes = pcm.size
@@ -125,10 +137,20 @@ fun MicScreen(client: GlassClient, onBack: () -> Unit) {
                 style = MaterialTheme.typography.bodySmall,
             )
 
+            HorizontalDivider(Modifier.padding(vertical = 16.dp))
+
+            Text("${OUTPUT_SAMPLE_RATE / 1000}kHz に変換して $resampledBytes バイト")
+            Text(
+                "16kHz のままリアルタイム音声 API に送ると速度とピッチがずれる",
+                style = MaterialTheme.typography.bodySmall,
+            )
+
             Spacer(Modifier.height(24.dp))
             Button(
                 onClick = {
                     totalBytes = 0
+                    resampledBytes = 0
+                    resampler.reset()
                     chunkCount = 0
                     peak = 0f
                     startedAtMs = System.currentTimeMillis()

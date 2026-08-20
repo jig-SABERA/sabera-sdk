@@ -7,16 +7,13 @@ nav_order: 1
 
 # CommandManager.connected
 
-{: .warning }
-> このページは執筆中です。
-
 ```kotlin
 val connected: StateFlow<Boolean>
 ```
 
 ## 概要
 
-<!-- WIP -->
+グラスとつながっている間 true。GlassClient.connected と同じ状態を返す。送信メソッドは未接続だと黙って捨てられるので、通知の転送のように取りこぼしたくないものはこれを見てから送る。
 
 ## 戻り値
 
@@ -25,5 +22,11 @@ val connected: StateFlow<Boolean>
 ## 使用例
 
 <!-- snippet: CommandManager.connected -->
-<!-- WIP -->
+```kotlin
+scope.launch {
+    commandManager.connected.collect { connected ->
+        Log.d("sample", if (connected) "つながった" else "切れた")
+    }
+}
+```
 <!-- /snippet -->

@@ -2,13 +2,10 @@
 title: closeGlassMic
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 22
+nav_order: 19
 ---
 
 # CommandManager.closeGlassMic
-
-{: .warning }
-> このページは執筆中です。
 
 ```kotlin
 fun closeGlassMic()
@@ -16,7 +13,7 @@ fun closeGlassMic()
 
 ## 概要
 
-<!-- WIP -->
+グラスのマイクを閉じる。openGlassMic と対で呼ぶ。閉じ忘れるとグラスは録音を続けるので、画面を離れるときに必ず呼ぶ。
 
 ## 戻り値
 
@@ -25,7 +22,10 @@ fun closeGlassMic()
 ## 使用例
 
 <!-- snippet: CommandManager.closeGlassMic -->
-<!-- WIP -->
+```kotlin
+// 画面を離れるときに必ず閉じる。閉じ忘れるとグラスは録音を続ける
+commandManager.closeGlassMic()
+```
 <!-- /snippet -->
 
 ## 関連

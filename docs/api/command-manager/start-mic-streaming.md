@@ -2,7 +2,7 @@
 title: startMicStreaming
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 23
+nav_order: 20
 ---
 
 # CommandManager.startMicStreaming

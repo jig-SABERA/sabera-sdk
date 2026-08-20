@@ -31,6 +31,61 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
+    fun observeConnected(commandManager: CommandManager, scope: CoroutineScope) {
+        // #snippet CommandManager.connected
+        scope.launch {
+            commandManager.connected.collect { connected ->
+                Log.d("sample", if (connected) "つながった" else "切れた")
+            }
+        }
+        // #endsnippet
+    }
+
+    fun teleprompterPage(commandManager: CommandManager) {
+        // #snippet CommandManager.enterTeleprompterPage
+        // 開いてからでないと原稿は表示されない
+        commandManager.enterTeleprompterPage()
+        commandManager.sendTeleprompterContent("読み上げる原稿")
+        // #endsnippet
+    }
+
+    fun translatePage(commandManager: CommandManager) {
+        // #snippet CommandManager.enterTranslatePage
+        commandManager.enterTranslatePage()
+        commandManager.sendTranslateLanguage(source = "en", target = "ja")
+        commandManager.sendTranslateContent("これは訳文です")
+        // #endsnippet
+    }
+
+    fun translateContent(commandManager: CommandManager) {
+        // #snippet CommandManager.sendTranslateContent
+        // 送るたび表示は置き換わる。消すときは clearInscriptionText
+        commandManager.sendTranslateContent("これは訳文です")
+        // #endsnippet
+    }
+
+    fun closeMic(commandManager: CommandManager) {
+        // #snippet CommandManager.closeGlassMic
+        // 画面を離れるときに必ず閉じる。閉じ忘れるとグラスは録音を続ける
+        commandManager.closeGlassMic()
+        // #endsnippet
+    }
+
+    fun notificationCount(commandManager: CommandManager, unreadCount: Int) {
+        // #snippet CommandManager.syncNotificationCount
+        // 未接続だと捨てられるので、つながっているときだけ送る
+        if (commandManager.connected.value) {
+            commandManager.syncNotificationCount(unreadCount)
+        }
+        // #endsnippet
+    }
+
+    fun debugPhoneName(commandManager: CommandManager, phoneName: String) {
+        // #snippet CommandManager.sendDebugPhoneName
+        commandManager.sendDebugPhoneName(phoneName)
+        // #endsnippet
+    }
+
     fun layout(commandManager: CommandManager) {
         // #snippet CommandManager.sendLayout
         // モードを送ると全領域がクリアされ、同じパケットのテキストが反映される
@@ -77,16 +132,25 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
-    fun canvasImage(commandManager: CommandManager, grayscale: ByteArray) {
+    fun canvasImage(commandManager: CommandManager, left: ByteArray, right: ByteArray) {
         // #snippet CommandManager.sendCanvasImage
         // grayscale は1画素1バイト・左上から行優先。3bitへの量子化とRLE圧縮はSDKが行う
-        commandManager.sendCanvasImage(x = 100, y = 50, width = 192, height = 192, grayscale = grayscale)
+        commandManager.sendCanvasImage(id = 0, x = 16, y = 84, width = 192, height = 192, grayscale = left)
+        // 別の id なら並べて置ける。続けて呼んでもSDKが送信を直列化する
+        commandManager.sendCanvasImage(id = 1, x = 368, y = 84, width = 192, height = 192, grayscale = right)
         // テキストは画像の手前に描かれるので、キャプションを重ねられる
         commandManager.sendCanvasElements(
             listOf(
-                CommandManager.CanvasElement(id = 0, x = 100, y = 250, width = 192, height = 40, text = "キャプション"),
+                CommandManager.CanvasElement(id = 0, x = 16, y = 300, width = 192, height = 40, text = "左"),
             ),
         )
+        // #endsnippet
+    }
+
+    fun canvasImageRemove(commandManager: CommandManager) {
+        // #snippet CommandManager.removeCanvasImage
+        // テキスト要素と他の id の画像は残る
+        commandManager.removeCanvasImage(id = 1)
         // #endsnippet
     }
 
@@ -219,34 +283,6 @@ internal object CommandSnippets {
         // 技適マークの表示にも使っている画像表示ページ
         commandManager.enterImageDisplayPage()
         // #endsnippet
-    }
-
-    fun remoteController(commandManager: CommandManager) {
-        // #snippet CommandManager.addRemoteControllerEventListener
-        val listener = object : CommandManager.RemoteControlListener {
-            override fun onPrev() {
-                Log.d("sample", "prev")
-            }
-
-            override fun onNext() {
-                Log.d("sample", "next")
-            }
-
-            override fun onEsc() {
-                Log.d("sample", "esc")
-            }
-        }
-        commandManager.addRemoteControllerEventListener(listener)
-        // #endsnippet
-        commandManager.removeRemoteControllerEventListener(listener)
-    }
-
-    fun powerEvent(commandManager: CommandManager) {
-        // #snippet CommandManager.addGlassPowerEventListener
-        val listener: () -> Unit = { Log.d("sample", "power button") }
-        commandManager.addGlassPowerEventListener(listener)
-        // #endsnippet
-        commandManager.removeGlassPowerEventListener(listener)
     }
 
     fun deviceInfo(client: GlassClient) {

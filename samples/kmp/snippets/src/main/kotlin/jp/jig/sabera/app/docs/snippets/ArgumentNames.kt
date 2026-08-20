@@ -48,16 +48,12 @@ internal object ArgumentNames {
 
     fun commandManager(commandManager: CommandManager, listener: () -> Unit) {
         commandManager.parseResponse(value = byteArrayOf(0x00))
-        commandManager.addGlassPowerEventListener(listener = listener)
-        commandManager.removeGlassPowerEventListener(listener = listener)
         commandManager.sendTeleprompterContent(content = "content")
-        commandManager.sendAIContent(content = "content")
         commandManager.sendTranslateContent(content = "content")
         commandManager.sendTranslateLanguage(source = "en", target = "ja")
         commandManager.sendDebugPhoneName(phoneName = "Pixel")
         commandManager.sendMessage(name = "app", title = "title", time = 0L, text = "text")
         commandManager.syncNotificationCount(count = 1)
-        commandManager.sendMeeting(meetingType = 0x00, text = "text", percent = 0)
         commandManager.sendAiChatText(text = "text")
         commandManager.sendTeleprompterContent(content = "content", percent = 0)
         commandManager.sendTeleprompterLine(text = "text", percent = 0, scrollUp = false)
@@ -69,12 +65,10 @@ internal object ArgumentNames {
         commandManager.sendSettingPageVisibility(show = true)
         commandManager.sendSetting(name = CommandManager.SettingKey.FONT_SIZE, value = 1)
         commandManager.syncWeather(type = CommandManager.WeatherType.TEMPERATURE, value = 20)
-        commandManager.requestLog(type = CommandManager.GlassLogType.SYSLOG)
         commandManager.sendTeleprompterStatus(
             status = CommandManager.TeleprompterStatus.STARTED,
             mode = CommandManager.TeleprompterMode.TELEPROMPT,
         )
-        commandManager.sendEmptyScreenStatus(status = CommandManager.TeleprompterStatus.READY)
         commandManager.sendAdjust(
             status = CommandManager.AdjustStatus.SHOW,
             imageType = CommandManager.AdjustImageType.HOME,
@@ -89,13 +83,7 @@ internal object ArgumentNames {
             status = CommandManager.AiChatStatus.GENERATING,
             model = CommandManager.AiChatModel.SABERA_AI,
         )
-        commandManager.sendAiChatSender(sender = CommandManager.AiChatSender.USER)
         commandManager.sendAiChatStatus(status = CommandManager.AiChatStatus.COMPLETE)
-    }
-
-    fun remoteControlListener(commandManager: CommandManager, listener: CommandManager.RemoteControlListener) {
-        commandManager.addRemoteControllerEventListener(listener = listener)
-        commandManager.removeRemoteControllerEventListener(listener = listener)
     }
 
     fun ble(context: Context, scope: CoroutineScope, intent: Intent) {

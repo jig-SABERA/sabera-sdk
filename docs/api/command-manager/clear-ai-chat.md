@@ -2,7 +2,7 @@
 title: clearAiChat
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 55
+nav_order: 47
 ---
 
 # CommandManager.clearAiChat

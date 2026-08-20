@@ -2,7 +2,7 @@
 title: sendNaviLargeImage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 52
+nav_order: 53
 ---
 
 # CommandManager.sendNaviLargeImage

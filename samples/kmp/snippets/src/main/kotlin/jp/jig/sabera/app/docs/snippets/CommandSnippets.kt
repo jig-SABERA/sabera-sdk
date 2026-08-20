@@ -132,16 +132,25 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
-    fun canvasImage(commandManager: CommandManager, grayscale: ByteArray) {
+    fun canvasImage(commandManager: CommandManager, left: ByteArray, right: ByteArray) {
         // #snippet CommandManager.sendCanvasImage
         // grayscale は1画素1バイト・左上から行優先。3bitへの量子化とRLE圧縮はSDKが行う
-        commandManager.sendCanvasImage(x = 100, y = 50, width = 192, height = 192, grayscale = grayscale)
+        commandManager.sendCanvasImage(id = 0, x = 16, y = 84, width = 192, height = 192, grayscale = left)
+        // 別の id なら並べて置ける。続けて呼んでもSDKが送信を直列化する
+        commandManager.sendCanvasImage(id = 1, x = 368, y = 84, width = 192, height = 192, grayscale = right)
         // テキストは画像の手前に描かれるので、キャプションを重ねられる
         commandManager.sendCanvasElements(
             listOf(
-                CommandManager.CanvasElement(id = 0, x = 100, y = 250, width = 192, height = 40, text = "キャプション"),
+                CommandManager.CanvasElement(id = 0, x = 16, y = 300, width = 192, height = 40, text = "左"),
             ),
         )
+        // #endsnippet
+    }
+
+    fun canvasImageRemove(commandManager: CommandManager) {
+        // #snippet CommandManager.removeCanvasImage
+        // テキスト要素と他の id の画像は残る
+        commandManager.removeCanvasImage(id = 1)
         // #endsnippet
     }
 

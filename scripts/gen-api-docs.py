@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.5.0 の公開 API に合わせたもの。
+シグネチャは SDK 0.6.0 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -41,13 +41,20 @@ SPEC = [
             m(
                 "setLogger",
                 "fun setLogger(sink: (tag: String, message: String) -> Unit)",
-                [("sink", "(String, String) -> Unit")],
+                [("sink", "(String, String) -> Unit", "タグと本文を受け取って書き出す処理")],
+                summary="SDK 内部のログの出力先を差し替える。渡さないと何も出ない。"
+                        "BLE の送受信を HEX で流すので、通信が疑わしいときはこれを繋いでから再現させる。",
             ),
-            m("setProd", "fun setProd(isProd: Boolean)", [("isProd", "Boolean")]),
+            m("setProd", "fun setProd(isProd: Boolean)",
+              [("isProd", "Boolean", "本番向けなら true")],
+              summary="本番向けかどうかを切り替える。デバッグ用のログ量など、"
+                      "SDK 内部のふるまいがこれで変わる。"),
             m(
                 "setDevicePersistence",
                 "fun setDevicePersistence(persistence: SdkDevicePersistence)",
-                [("persistence", "SdkDevicePersistence")],
+                [("persistence", "SdkDevicePersistence", "デバイスIDの読み書きを担う実装")],
+                summary="最後に接続したデバイスIDの保存先を差し込む。"
+                        "差し込まないと再接続でデバイス選択からやり直しになる。",
             ),
         ],
     },
@@ -60,42 +67,88 @@ SPEC = [
             m(
                 "getGlassManager",
                 "fun getGlassManager(context: Context): GlassManager",
-                [("context", "Context")],
+                [("context", "Context", "Application か Activity のコンテキスト")],
                 "GlassManager",
+                summary="GlassManager を取り出す。同じコンテキストなら同じインスタンスが返る。"
+                        "接続・切断はすべてここを起点にする。",
             ),
-            m("connectedDevice", "val connectedDevice: StateFlow<GlassClient?>", returns="StateFlow<GlassClient?>"),
-            m("lastConnectedDevice", "val lastConnectedDevice: GlassClient?", returns="GlassClient?"),
-            m("hasLastConnectedDevice", "val hasLastConnectedDevice: Boolean", returns="Boolean"),
-            m("selectionDialogPresented", "val selectionDialogPresented: SharedFlow<Unit>", returns="SharedFlow<Unit>"),
+            m("connectedDevice", "val connectedDevice: StateFlow<GlassClient?>", returns="StateFlow<GlassClient?>",
+              summary="今つながっているグラス。つながっていなければ null。"
+                      "コマンドを送るときはここから GlassClient を取る。"),
+            m("lastConnectedDevice", "val lastConnectedDevice: GlassClient?", returns="GlassClient?",
+              summary="最後につないだグラス。今切れていても残る。再接続に使う。"
+                      "保存先は setDevicePersistence で差し込んだ実装。",
+              related=["hasLastConnectedDevice", "connect"]),
+            m("hasLastConnectedDevice", "val hasLastConnectedDevice: Boolean", returns="Boolean",
+              summary="再接続できる相手を覚えているかどうか。"
+                      "初回起動でデバイス選択に進むか、再接続を試すかの分かれ道に使う。",
+              related=["lastConnectedDevice"]),
+            m("selectionDialogPresented", "val selectionDialogPresented: SharedFlow<Unit>", returns="SharedFlow<Unit>",
+              summary="OS のデバイス選択UIが実際に出たことを知らせる。"
+                      "呼んでも出ないことがあるため、UIを出せたかどうかはこれで確かめる。",
+              related=["showAutomaticSelectionDialog"]),
             m(
                 "externalDisplayNameChanged",
                 "val externalDisplayNameChanged: SharedFlow<String?>",
                 returns="SharedFlow<String?>",
+                summary="OS の Bluetooth 設定でデバイス名が変えられたときに、新しい名前が流れる。"
+                        "iOS 専用。Android では何も流れない。",
+                related=["showRenameAccessorySheetIOS"],
             ),
             m(
                 "showAutomaticSelectionDialog",
                 "suspend fun showAutomaticSelectionDialog(context: Context): GlassClient?",
-                [("context", "Context")],
+                [("context", "Context", "ダイアログを出す Activity のコンテキスト")],
                 "GlassClient?",
                 ["connect", "createClientFromDeviceID"],
+                summary="OS のデバイス選択UIを出して、ユーザーが選んだグラスを返す。"
+                        "選ばれなかった・キャンセルされたときは null。返ってきた GlassClient は"
+                        "まだつながっていないので、続けて connect を呼ぶ。",
             ),
-            m("connect", "suspend fun connect(glassClient: GlassClient)", [("glassClient", "GlassClient")],
+            m("connect", "suspend fun connect(glassClient: GlassClient)",
+              [("glassClient", "GlassClient", "showAutomaticSelectionDialog や lastConnectedDevice で得た相手")],
+              summary="グラスにつなぐ。完了すると connectedDevice に載る。"
+                      "つながるまで待つので、UI からはコルーチンで呼ぶ。",
               related=["disconnect", "showAutomaticSelectionDialog"]),
-            m("disconnect", "suspend fun disconnect(glassClient: GlassClient)", [("glassClient", "GlassClient")],
+            m("disconnect", "suspend fun disconnect(glassClient: GlassClient)",
+              [("glassClient", "GlassClient", "切る相手")],
+              summary="接続を切る。ペアリングの記録は残るので、次は再接続から始められる。",
               related=["disconnectAndClearBond"]),
             m("disconnectAndClearBond", "suspend fun disconnectAndClearBond(glassClient: GlassClient)",
-              [("glassClient", "GlassClient")], related=["disconnect"]),
+              [("glassClient", "GlassClient", "切る相手")],
+              summary="接続を切って、OS のペアリングと保存したデバイスIDまで消す。"
+                      "次につなぐときはデバイス選択からやり直しになる。別の端末に渡すときに使う。",
+              related=["disconnect"]),
             m(
                 "createClientFromDeviceID",
                 "fun createClientFromDeviceID(deviceId: String): GlassClient?",
-                [("deviceId", "String")],
+                [("deviceId", "String", "deviceIdentifier で得られる値。Android は MAC アドレス、iOS は UUID")],
                 "GlassClient?",
                 ["connect"],
+                summary="保存しておいたデバイスIDから GlassClient を組み立てる。"
+                        "IDに心当たりがない・OS が知らない相手のときは null。"
+                        "返ってきた時点ではつながっていないので、続けて connect を呼ぶ。",
             ),
-            m("onDeviceDisappear", "fun onDeviceDisappear(address: String)", [("address", "String")]),
-            m("registerDeviceFromIntent", "fun registerDeviceFromIntent(data: Intent)", [("data", "Intent")]),
-            m("showDisconnectSheetIOS", "suspend fun showDisconnectSheetIOS(): Boolean", returns="Boolean"),
-            m("showRenameAccessorySheetIOS", "suspend fun showRenameAccessorySheetIOS(): Boolean", returns="Boolean"),
+            m("onDeviceDisappear", "fun onDeviceDisappear(address: String)",
+              [("address", "String", "いなくなったデバイスのアドレス")],
+              summary="OS からデバイスが見えなくなったことを SDK に知らせる。Android 専用。"
+                      "Companion Device Manager のサービスから呼ばれるので、"
+                      "アプリ側から呼ぶ場面はふつうない。"),
+            m("registerDeviceFromIntent", "fun registerDeviceFromIntent(data: Intent)",
+              [("data", "Intent", "デバイス選択画面から返ってきた Intent")],
+              summary="Android のデバイス選択画面の結果を SDK に渡して、選ばれた相手を覚えさせる。"
+                      "SDK の BleDeviceSelector が内部で呼ぶので、"
+                      "自前で選択画面を出すとき以外は触らなくてよい。",
+              related=["BleDeviceSelector.onActivityResult"]),
+            m("showDisconnectSheetIOS", "suspend fun showDisconnectSheetIOS(): Boolean", returns="Boolean",
+              summary="iOS 専用。OS のアクセサリ登録削除シートを出す。"
+                      "登録がない状態になれば true（削除できた、または元から無かった）。"
+                      "キャンセルや失敗、そして Android では false。",
+              related=["disconnectAndClearBond"]),
+            m("showRenameAccessorySheetIOS", "suspend fun showRenameAccessorySheetIOS(): Boolean", returns="Boolean",
+              summary="iOS 専用。OS のリネームシートを出す。名前が確定されれば true。"
+                      "Android では常に false。付けられた名前は externalDisplayNameChanged に流れる。",
+              related=["externalDisplayNameChanged"]),
         ],
     },
     {
@@ -325,22 +378,32 @@ SPEC = [
                       "サイズごと差し替わる。キャンバスが閉じているときは新しく開く。",
               related=["sendCanvas", "clearCanvas", "closeCanvas"]),
             m("sendCanvasImage",
-              "fun sendCanvasImage(x: Int, y: Int, width: Int, height: Int, grayscale: ByteArray)",
-              [("x", "Int", "画像の左上のx座標。x + width は 576 まで"),
+              "fun sendCanvasImage(id: Int, x: Int, y: Int, width: Int, height: Int, grayscale: ByteArray)",
+              [("id", "Int", "画像の識別子。0..7 の8枚まで。同じ id に送ると座標ごと差し替わる"),
+               ("x", "Int", "画像の左上のx座標。x + width は 576 まで"),
                ("y", "Int", "画像の左上のy座標。y + height は 360 まで"),
                ("width", "Int", "画像の幅"),
                ("height", "Int", "画像の高さ"),
                ("grayscale", "ByteArray",
                 "1画素1バイトのグレースケール。長さは width * height 以上")],
               summary="キャンバスに画像を置く。送るだけで画面が切り替わるので、先にページを開く必要はない。"
-                      "今ある要素は残したまま、画像だけ差し替わる。渡すのはリサイズ済みのグレースケールで、"
-                      "左上から行優先の並び。輝度は 0-255 のまま渡してよく、3bit(0-7)への量子化と"
-                      "RLE圧縮はSDK内で行う。置けるのは1枚だけで、位置をずらして送っても最後の1枚しか残らない。"
-                      "テキスト要素とは共存でき、テキストは画像の手前に描かれる。"
-                      "ナビの全体ルート画像とバッファを共有しているため、"
-                      "ナビ表示中は使えない。数百バイトずつに分けて送るので、大きい画像ほど表示まで時間がかかる。"
+                      "今ある要素は残したまま、同じ id の画像だけ差し替わる。"
+                      "渡すのはリサイズ済みのグレースケールで、左上から行優先の並び。"
+                      "輝度は 0-255 のまま渡してよく、3bit(0-7)への量子化とRLE圧縮はSDK内で行う。"
+                      "画像は id ごとに8枚まで置けるが、グラスのバッファは全画像で共有していて、"
+                      "置いてある画像の width * height * 2 の合計に受信中の圧縮データを足した値が"
+                      "380,000バイトを超えると受け取れない。192角なら5枚が目安。"
+                      "画像はテキスト要素の背面に描かれる。ナビの全体ルート画像とバッファを"
+                      "共有しているため、ナビ表示中は使えない。"
+                      "数百バイトずつに分けて送るので、大きい画像ほど表示まで時間がかかる。"
+                      "転送しきる前に別の id を送るとファームは受信中の画像を捨てるが、"
+                      "SDK が分割送信を直列化するので続けて呼んでも順番に送られる。"
                       "FEATURE_VERSION 2.2.0 以上のファームが対象。",
-              related=["sendCanvas", "sendCanvasElements", "clearCanvas"]),
+              related=["removeCanvasImage", "sendCanvas", "clearCanvas"]),
+            m("removeCanvasImage", "fun removeCanvasImage(id: Int)",
+              [("id", "Int", "消す画像の識別子")],
+              summary="置いた画像を消す。テキスト要素と他の id の画像は残る。",
+              related=["sendCanvasImage", "clearCanvas"]),
             m("clearCanvas", "fun clearCanvas()",
               summary="キャンバスは開いたまま、全ての要素を消す。画像も一緒に消える。",
               related=["sendCanvas", "sendCanvasImage", "closeCanvas"]),
@@ -678,7 +741,7 @@ def api_index():
         "",
         f"# {API_TITLE}",
         "",
-        "Sabera App SDK (Kotlin) の公開 API。バージョン 0.5.0 時点。",
+        "Sabera App SDK (Kotlin) の公開 API。バージョン 0.6.0 時点。",
         "",
         "メソッドごとに使えるようになったバージョンは"
         "[メソッドの追加履歴](../api-history.html)にまとめてある。",

@@ -24,7 +24,7 @@ fun enterTranslatePage()
 <!-- snippet: CommandManager.enterTranslatePage -->
 ```kotlin
 commandManager.enterTranslatePage()
-commandManager.sendTranslateLanguage(source = "en", target = "ja")
+commandManager.sendTranslateLanguage(source = "ENG", target = "JPN")
 commandManager.sendTranslateContent("これは訳文です")
 ```
 <!-- /snippet -->

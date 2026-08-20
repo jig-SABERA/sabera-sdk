@@ -37,7 +37,7 @@ internal object PageSnippets {
     fun translate(commandManager: CommandManager, sentences: List<String>) {
         // #snippet pages.translate
         commandManager.enterTranslatePage()
-        commandManager.sendTranslateLanguage(source = "en", target = "ja")
+        commandManager.sendTranslateLanguage(source = "ENG", target = "JPN")
         sentences.forEach { sentence ->
             // 送るたび全文が置き換わる
             commandManager.sendTranslateContent(sentence)

@@ -52,7 +52,7 @@ internal object CommandSnippets {
     fun translatePage(commandManager: CommandManager) {
         // #snippet CommandManager.enterTranslatePage
         commandManager.enterTranslatePage()
-        commandManager.sendTranslateLanguage(source = "en", target = "ja")
+        commandManager.sendTranslateLanguage(source = "ENG", target = "JPN")
         commandManager.sendTranslateContent("これは訳文です")
         // #endsnippet
     }
@@ -222,7 +222,7 @@ internal object CommandSnippets {
     fun translate(commandManager: CommandManager) {
         // #snippet CommandManager.sendTranslateLanguage
         commandManager.enterTranslatePage()
-        commandManager.sendTranslateLanguage(source = "en", target = "ja")
+        commandManager.sendTranslateLanguage(source = "ENG", target = "JPN")
         commandManager.sendTranslateContent("Hello")
         // #endsnippet
     }

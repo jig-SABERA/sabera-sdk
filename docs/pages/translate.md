@@ -13,7 +13,7 @@ nav_order: 2
 `enterTranslatePage()` を呼ぶ。次に `sendTranslateLanguage()` で言語ラベルを決め、
 `sendTranslateContent()` で本文を送る、の順で使う。
 
-言語コードは `"en"` / `"ja"` のような2文字。ラベルの表示だけを切り替えるコマンドなので、
+言語コードは `"ENG"` / `"JPN"` などの3文字。ラベルの表示だけを切り替えるコマンドなので、
 画面遷移は起こらない。
 
 ## 訳文を送る
@@ -23,7 +23,7 @@ nav_order: 2
 <!-- snippet: pages.translate -->
 ```kotlin
 commandManager.enterTranslatePage()
-commandManager.sendTranslateLanguage(source = "en", target = "ja")
+commandManager.sendTranslateLanguage(source = "ENG", target = "JPN")
 sentences.forEach { sentence ->
     // 送るたび全文が置き換わる
     commandManager.sendTranslateContent(sentence)

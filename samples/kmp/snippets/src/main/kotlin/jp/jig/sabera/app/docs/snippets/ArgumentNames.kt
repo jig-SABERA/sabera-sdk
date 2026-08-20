@@ -50,7 +50,7 @@ internal object ArgumentNames {
         commandManager.parseResponse(value = byteArrayOf(0x00))
         commandManager.sendTeleprompterContent(content = "content")
         commandManager.sendTranslateContent(content = "content")
-        commandManager.sendTranslateLanguage(source = "en", target = "ja")
+        commandManager.sendTranslateLanguage(source = "ENG", target = "JPN")
         commandManager.sendDebugPhoneName(phoneName = "Pixel")
         commandManager.sendMessage(name = "app", title = "title", time = 0L, text = "text")
         commandManager.syncNotificationCount(count = 1)

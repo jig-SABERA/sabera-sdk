@@ -19,8 +19,8 @@ class _CommandPageState extends State<CommandPage> {
   final _teleprompterCtrl = TextEditingController(text: 'Hello from Flutter');
   final _aiCtrl = TextEditingController(text: '質問内容をどうぞ');
   final _translateCtrl = TextEditingController(text: 'Translate this');
-  final _sourceLangCtrl = TextEditingController(text: 'en');
-  final _targetLangCtrl = TextEditingController(text: 'ja');
+  final _sourceLangCtrl = TextEditingController(text: 'ENG');
+  final _targetLangCtrl = TextEditingController(text: 'JPN');
 
   final _gestures = <String>[];
   StreamSubscription<GestureType>? _gestureSub;

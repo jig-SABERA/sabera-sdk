@@ -158,7 +158,7 @@ commandManager.sendTeleprompterContent("Hello")
 | ------------------------------------------------------- | ---------------------------------- |
 | `sendTeleprompterContent(content: String)`              | テレプロンプターに表示する文字列   |
 | `sendTranslateContent(content: String)`                 | 翻訳ページに表示する文字列         |
-| `sendTranslateLanguage(source: String, target: String)` | 翻訳の言語ペア（例: `"en", "ja"`） |
+| `sendTranslateLanguage(source: String, target: String)` | 翻訳の言語ペア（例: `"ENG", "JPN"`） |
 | `sendAiChatText(text: String)`                          | AI チャットに表示する文字列        |
 
 ページを開いてからコンテンツを送る。送信先のページが開いていないと表示されない。

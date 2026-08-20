@@ -52,7 +52,7 @@ internal object CommandSnippets {
     fun translatePage(commandManager: CommandManager) {
         // #snippet CommandManager.enterTranslatePage
         commandManager.enterTranslatePage()
-        commandManager.sendTranslateLanguage(source = "en", target = "ja")
+        commandManager.sendTranslateLanguage(source = "ENG", target = "JPN")
         commandManager.sendTranslateContent("これは訳文です")
         // #endsnippet
     }
@@ -222,7 +222,7 @@ internal object CommandSnippets {
     fun translate(commandManager: CommandManager) {
         // #snippet CommandManager.sendTranslateLanguage
         commandManager.enterTranslatePage()
-        commandManager.sendTranslateLanguage(source = "en", target = "ja")
+        commandManager.sendTranslateLanguage(source = "ENG", target = "JPN")
         commandManager.sendTranslateContent("Hello")
         // #endsnippet
     }
@@ -260,9 +260,6 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
-    // sendAiChatSender / sendAiChatStatus / sendAiChatSenderText / sendAiChatSenderStatus は
-    // 引数の PacketCommandUtils.AiChatSender・AiChatStatus が SDK 内部の型で、外から参照できない。
-    // アプリから使えるのは以下の2つだけ。
     fun aiChat(commandManager: CommandManager) {
         // #snippet CommandManager.sendAiChatText
         commandManager.enterAiChatPage()

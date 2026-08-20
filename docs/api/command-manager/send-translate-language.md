@@ -19,8 +19,8 @@ fun sendTranslateLanguage(source: String, target: String)
 
 | 名前 | 型 | 説明 |
 |---|---|---|
-| `source` | `String` | 翻訳元の言語コード。"en" など |
-| `target` | `String` | 翻訳先の言語コード。"ja" など |
+| `source` | `String` | 翻訳元の言語コード。`"ENG"` などの3文字 |
+| `target` | `String` | 翻訳先の言語コード。`"JPN"` などの3文字 |
 
 ## 戻り値
 
@@ -31,7 +31,7 @@ fun sendTranslateLanguage(source: String, target: String)
 <!-- snippet: CommandManager.sendTranslateLanguage -->
 ```kotlin
 commandManager.enterTranslatePage()
-commandManager.sendTranslateLanguage(source = "en", target = "ja")
+commandManager.sendTranslateLanguage(source = "ENG", target = "JPN")
 commandManager.sendTranslateContent("Hello")
 ```
 <!-- /snippet -->

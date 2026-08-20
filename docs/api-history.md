@@ -1,6 +1,6 @@
 ---
 title: メソッドの追加履歴
-nav_order: 5
+nav_order: 6
 ---
 
 # メソッドの追加履歴

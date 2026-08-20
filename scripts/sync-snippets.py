@@ -22,7 +22,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SNIPPET_SRC = ROOT / "samples/kmp/snippets/src/main/kotlin"
-DOCS_API = ROOT / "docs/api"
+DOCS_DIRS = (ROOT / "docs/api", ROOT / "docs/pages")
 
 SNIPPET_RE = re.compile(
     r"^[ \t]*// #snippet[ \t]+(?P<id>\S+)[ \t]*\n(?P<body>.*?)^[ \t]*// #endsnippet[ \t]*$",
@@ -68,7 +68,8 @@ def main():
     stale = []
     updated = 0
 
-    for path in sorted(DOCS_API.rglob("*.md")):
+    targets = sorted(path for directory in DOCS_DIRS for path in directory.rglob("*.md"))
+    for path in targets:
         before = path.read_text(encoding="utf-8")
         after = rewrite(before, snippets, used)
         if after == before:

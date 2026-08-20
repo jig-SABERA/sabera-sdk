@@ -13,17 +13,13 @@ fun sendAiChatText(text: String)
 
 ## 概要
 
-AI チャットページの本文にテキストを追記する。enterAiChatPage でページを開いてから呼ぶ。
-
-{: .note }
-> 送信者（あなた／AI）を指定して送るには sendAiChatSenderText を使う。
-> このメソッドは直前に指定された吹き出しへの追記になる。
+AI アシスタントページに本文だけを送る。どちらの吹き出しに出すかも指定できる sendAiChatSenderText の方が確実。
 
 ## 引数
 
 | 名前 | 型 | 説明 |
 |---|---|---|
-| `text` | `String` | グラスに表示する本文 |
+| `text` | `String` | 表示する本文 |
 
 ## 戻り値
 
@@ -41,3 +37,4 @@ commandManager.sendAiChatText("今日の天気は？")
 ## 関連
 
 - [enterAiChatPage](enter-ai-chat-page.html)
+- [sendAiChatSenderText](send-ai-chat-sender-text.html)

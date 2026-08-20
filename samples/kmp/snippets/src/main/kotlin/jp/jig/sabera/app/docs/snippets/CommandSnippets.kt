@@ -31,6 +31,61 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
+    fun observeConnected(commandManager: CommandManager, scope: CoroutineScope) {
+        // #snippet CommandManager.connected
+        scope.launch {
+            commandManager.connected.collect { connected ->
+                Log.d("sample", if (connected) "つながった" else "切れた")
+            }
+        }
+        // #endsnippet
+    }
+
+    fun teleprompterPage(commandManager: CommandManager) {
+        // #snippet CommandManager.enterTeleprompterPage
+        // 開いてからでないと原稿は表示されない
+        commandManager.enterTeleprompterPage()
+        commandManager.sendTeleprompterContent("読み上げる原稿")
+        // #endsnippet
+    }
+
+    fun translatePage(commandManager: CommandManager) {
+        // #snippet CommandManager.enterTranslatePage
+        commandManager.enterTranslatePage()
+        commandManager.sendTranslateLanguage(source = "en", target = "ja")
+        commandManager.sendTranslateContent("これは訳文です")
+        // #endsnippet
+    }
+
+    fun translateContent(commandManager: CommandManager) {
+        // #snippet CommandManager.sendTranslateContent
+        // 送るたび表示は置き換わる。消すときは clearInscriptionText
+        commandManager.sendTranslateContent("これは訳文です")
+        // #endsnippet
+    }
+
+    fun closeMic(commandManager: CommandManager) {
+        // #snippet CommandManager.closeGlassMic
+        // 画面を離れるときに必ず閉じる。閉じ忘れるとグラスは録音を続ける
+        commandManager.closeGlassMic()
+        // #endsnippet
+    }
+
+    fun notificationCount(commandManager: CommandManager, unreadCount: Int) {
+        // #snippet CommandManager.syncNotificationCount
+        // 未接続だと捨てられるので、つながっているときだけ送る
+        if (commandManager.connected.value) {
+            commandManager.syncNotificationCount(unreadCount)
+        }
+        // #endsnippet
+    }
+
+    fun debugPhoneName(commandManager: CommandManager, phoneName: String) {
+        // #snippet CommandManager.sendDebugPhoneName
+        commandManager.sendDebugPhoneName(phoneName)
+        // #endsnippet
+    }
+
     fun layout(commandManager: CommandManager) {
         // #snippet CommandManager.sendLayout
         // モードを送ると全領域がクリアされ、同じパケットのテキストが反映される

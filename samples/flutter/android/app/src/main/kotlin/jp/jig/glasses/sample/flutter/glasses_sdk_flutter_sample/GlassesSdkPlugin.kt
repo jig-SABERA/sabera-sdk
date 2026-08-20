@@ -154,7 +154,7 @@ class GlassesSdkPlugin(private val activity: Activity) :
             }
             "sendAIContent" -> {
                 val content = call.argument<String>("content") ?: ""
-                runCommand(result) { it.sendAIContent(content) }
+                runCommand(result) { it.sendAiChatText(content) }
             }
             "sendTranslateContent" -> {
                 val content = call.argument<String>("content") ?: ""

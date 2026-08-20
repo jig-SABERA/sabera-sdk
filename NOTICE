@@ -6,3 +6,7 @@ Copyright 2026 株式会社jig.jp
 サンプルが依存する Sabera App SDK 本体（jp.jig.sabera.app.sdk:*、AAR / XCFramework）は
 このリポジトリには含まれず、Apache License 2.0 の対象外です。
 SDK 本体の利用には別途 SDK 利用規約が適用されます。
+
+SDK 本体の Android 版には Opus (libopus) 1.4 が含まれます。Opus は BSD 3-Clause で
+提供されており、SDK を組み込んだアプリを配布するときは著作権表示と免責の表示が必要です。
+全文と対応の仕方は docs/third-party-notices.md を参照してください。

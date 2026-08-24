@@ -43,6 +43,9 @@ private const val ROWS = 8
 private const val SHIP_ROW = 3
 private const val TICK_MS = 500L
 
+// ぶつかった盤面を見せてからリザルトへ切り替えるまで
+private const val RESULT_DELAY_MS = 1000L
+
 // 端まで首を回す量。IchigoJam の左右キーの代わりにヨーで動かす
 private const val EDGE_YAW_DEGREES = 90f
 
@@ -97,9 +100,12 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
 
             if (rocks.elementAt(SHIP_ROW) == shipX) {
                 gameOver = true
-                playing = false
                 field = render(rocks, trail, shipX, score)
+                commandManager.sendEmptyScreenContent(field)
+                delay(RESULT_DELAY_MS)
                 commandManager.sendEmptyScreenContent("ＧＡＭＥ　ＯＶＥＲ\nＳＣＯＲＥ${toFullWidth(score)}")
+                // playing を倒すとこのコルーチンが消えるので、送り終えてから
+                playing = false
                 return@LaunchedEffect
             }
 
@@ -133,7 +139,7 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
                 onClick = { playing = !playing },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(if (playing) "やめる" else if (gameOver) "もう一度" else "はじめる")
+                Text(if (gameOver) "もう一度" else if (playing) "やめる" else "はじめる")
             }
             Spacer(Modifier.height(8.dp))
             Text(

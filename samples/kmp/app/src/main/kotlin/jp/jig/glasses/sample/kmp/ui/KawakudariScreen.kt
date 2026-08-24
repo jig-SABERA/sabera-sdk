@@ -40,6 +40,7 @@ import kotlin.random.Random
 
 private const val COLUMNS = 20
 private const val ROWS = 8
+private const val ROCKS_PER_ROW = 2
 private const val SHIP_ROW = 3
 private const val TICK_MS = 500L
 
@@ -86,7 +87,7 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
 
         // 遊び始めた向きを中央にする。ヨーは磁力計が無くて絶対値が使えない
         val centerYaw = yaw.filterNotNull().first()
-        val rocks = ArrayDeque(List(ROWS) { NONE })
+        val rocks = ArrayDeque(List(ROWS) { emptyList<Int>() })
         // 自機より上の行に残る軌跡。岩と一緒に上へ流れる
         val trail = ArrayDeque(List(SHIP_ROW) { NONE })
         score = 0
@@ -96,7 +97,7 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
         while (isActive) {
             val shipX = shipColumn(yaw.value ?: centerYaw, centerYaw)
             // 1つ下の岩は次のスクロールで自機に重なる。ぶつかる直前の盤面を見せたいので先に判定する
-            val hit = rocks.elementAt(SHIP_ROW + 1) == shipX
+            val hit = shipX in rocks.elementAt(SHIP_ROW + 1)
 
             field = render(rocks, trail, shipX, score)
             commandManager.sendEmptyScreenContent(field)
@@ -112,7 +113,7 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
 
             score++
             rocks.removeFirst()
-            rocks.addLast(Random.nextInt(COLUMNS))
+            rocks.addLast(List(ROCKS_PER_ROW) { Random.nextInt(COLUMNS) })
             trail.removeFirst()
             trail.addLast(shipX)
             delay(TICK_MS)
@@ -184,10 +185,10 @@ private fun normalizeDegrees(degrees: Float): Float {
     return value
 }
 
-private fun render(rocks: List<Int>, trail: List<Int>, shipX: Int, score: Int): String =
-    rocks.withIndex().joinToString("\n") { (row, rock) ->
+private fun render(rocks: List<List<Int>>, trail: List<Int>, shipX: Int, score: Int): String =
+    rocks.withIndex().joinToString("\n") { (row, rocksInRow) ->
         val line = CharArray(COLUMNS) { WATER }
-        if (rock in 0 until COLUMNS) line[rock] = ROCK
+        rocksInRow.forEach { line[it] = ROCK }
         val ship = if (row == SHIP_ROW) shipX else trail.getOrElse(row) { NONE }
         if (ship in 0 until COLUMNS) line[ship] = SHIP
         // 最上段は上へ流れて消える行なので、岩に重ねてスコアを置く

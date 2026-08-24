@@ -95,13 +95,14 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
 
         while (isActive) {
             val shipX = shipColumn(yaw.value ?: centerYaw, centerYaw)
-            rocks.removeFirst()
-            rocks.addLast(Random.nextInt(COLUMNS))
+            // 1つ下の岩は次のスクロールで自機に重なる。ぶつかる直前の盤面を見せたいので先に判定する
+            val hit = rocks.elementAt(SHIP_ROW + 1) == shipX
 
-            if (rocks.elementAt(SHIP_ROW) == shipX) {
+            field = render(rocks, trail, shipX, score)
+            commandManager.sendEmptyScreenContent(field)
+
+            if (hit) {
                 gameOver = true
-                field = render(rocks, trail, shipX, score)
-                commandManager.sendEmptyScreenContent(field)
                 delay(RESULT_DELAY_MS)
                 commandManager.sendEmptyScreenContent("ＧＡＭＥ　ＯＶＥＲ\nＳＣＯＲＥ${toFullWidth(score)}")
                 // playing を倒すとこのコルーチンが消えるので、送り終えてから
@@ -110,8 +111,8 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
             }
 
             score++
-            field = render(rocks, trail, shipX, score)
-            commandManager.sendEmptyScreenContent(field)
+            rocks.removeFirst()
+            rocks.addLast(Random.nextInt(COLUMNS))
             trail.removeFirst()
             trail.addLast(shipX)
             delay(TICK_MS)

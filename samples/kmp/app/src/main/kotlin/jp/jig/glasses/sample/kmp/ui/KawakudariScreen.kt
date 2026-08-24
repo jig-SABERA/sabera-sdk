@@ -41,7 +41,7 @@ import kotlin.random.Random
 private const val COLUMNS = 20
 private const val ROWS = 8
 private const val SHIP_ROW = 1
-private const val TICK_MS = 200L
+private const val TICK_MS = 400L
 
 // 端まで首を回す量。IchigoJam の左右キーの代わりにヨーで動かす
 private const val EDGE_YAW_DEGREES = 180f

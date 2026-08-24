@@ -19,6 +19,7 @@ private enum class ConnectedScreen {
     MIC,
     LAYOUT,
     CANVAS,
+    KAWAKUDARI,
 }
 
 @Composable
@@ -45,6 +46,7 @@ fun GlassesApp(manager: GlassManager) {
             onOpenMicScreen = { screen = ConnectedScreen.MIC },
             onOpenLayoutScreen = { screen = ConnectedScreen.LAYOUT },
             onOpenCanvasScreen = { screen = ConnectedScreen.CANVAS },
+            onOpenKawakudariScreen = { screen = ConnectedScreen.KAWAKUDARI },
         )
 
         ConnectedScreen.TELEPROMPTER -> TeleprompterScreen(
@@ -88,6 +90,11 @@ fun GlassesApp(manager: GlassManager) {
         )
 
         ConnectedScreen.CANVAS -> CanvasScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.KAWAKUDARI -> KawakudariScreen(
             client = currentClient,
             onBack = { screen = ConnectedScreen.COMMAND },
         )

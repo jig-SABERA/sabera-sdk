@@ -53,6 +53,7 @@ fun CommandScreen(
     onOpenMicScreen: () -> Unit,
     onOpenLayoutScreen: () -> Unit,
     onOpenCanvasScreen: () -> Unit,
+    onOpenKawakudariScreen: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val commandManager = remember(client) { client.createCommandManager() }
@@ -112,6 +113,7 @@ fun CommandScreen(
             SectionTitle("その他")
             CommandButton("6DoF を受け取る画面へ", onClick = onOpenImuScreen)
             CommandButton("マイクを受け取る画面へ", onClick = onOpenMicScreen)
+            CommandButton("かわくだりで遊ぶ画面へ", onClick = onOpenKawakudariScreen)
             CommandButton("Home に戻す") { safeRun("enterHomePage") { commandManager.enterHomePage() } }
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))

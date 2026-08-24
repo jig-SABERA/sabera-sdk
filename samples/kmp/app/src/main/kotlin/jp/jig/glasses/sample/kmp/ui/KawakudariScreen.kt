@@ -98,13 +98,13 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
             if (rocks.elementAt(SHIP_ROW) == shipX) {
                 gameOver = true
                 playing = false
-                field = render(rocks, trail, shipX)
+                field = render(rocks, trail, shipX, score)
                 commandManager.sendEmptyScreenContent("ＧＡＭＥ　ＯＶＥＲ\nＳＣＯＲＥ${toFullWidth(score)}")
                 return@LaunchedEffect
             }
 
             score++
-            field = render(rocks, trail, shipX)
+            field = render(rocks, trail, shipX, score)
             commandManager.sendEmptyScreenContent(field)
             trail.removeFirst()
             trail.addLast(shipX)
@@ -177,11 +177,13 @@ private fun normalizeDegrees(degrees: Float): Float {
     return value
 }
 
-private fun render(rocks: List<Int>, trail: List<Int>, shipX: Int): String =
+private fun render(rocks: List<Int>, trail: List<Int>, shipX: Int, score: Int): String =
     rocks.withIndex().joinToString("\n") { (row, rock) ->
         val line = CharArray(COLUMNS) { WATER }
         if (rock in 0 until COLUMNS) line[rock] = ROCK
         val ship = if (row == SHIP_ROW) shipX else trail.getOrElse(row) { NONE }
         if (ship in 0 until COLUMNS) line[ship] = SHIP
+        // 最上段は上へ流れて消える行なので、岩に重ねてスコアを置く
+        if (row == 0) toFullWidth(score).forEachIndexed { i, digit -> line[i] = digit }
         String(line).trimEnd()
     }

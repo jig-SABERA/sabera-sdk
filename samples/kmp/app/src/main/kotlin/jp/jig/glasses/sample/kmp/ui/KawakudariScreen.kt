@@ -41,13 +41,14 @@ import kotlin.random.Random
 private const val COLUMNS = 20
 private const val ROWS = 8
 private const val SHIP_ROW = 1
-private const val TICK_MS = 400L
+private const val TICK_MS = 500L
 
 // 端まで首を回す量。IchigoJam の左右キーの代わりにヨーで動かす
 private const val EDGE_YAW_DEGREES = 90f
 
-private const val SHIP = 'O'
-private const val ROCK = '*'
+private const val SHIP = 'Ｏ'
+private const val ROCK = '＊'
+private const val WATER = '\u3000'
 
 /**
  * IchigoJam のかわくだりを 6DoF で遊ぶ画面。
@@ -96,7 +97,7 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
                 gameOver = true
                 playing = false
                 field = render(rocks, shipX)
-                commandManager.sendEmptyScreenContent("GAME OVER\nSCORE $score")
+                commandManager.sendEmptyScreenContent("ＧＡＭＥ　ＯＶＥＲ\nＳＣＯＲＥ${toFullWidth(score)}")
                 return@LaunchedEffect
             }
 
@@ -157,9 +158,13 @@ private const val NO_ROCK = -1
 
 private fun shipColumn(currentYaw: Float, centerYaw: Float): Int {
     val half = (COLUMNS - 1) / 2f
-    val offset = normalizeDegrees(currentYaw - centerYaw) / EDGE_YAW_DEGREES * half
+    // ヨーは右を向くと減る向きなので反転させる
+    val offset = -normalizeDegrees(currentYaw - centerYaw) / EDGE_YAW_DEGREES * half
     return (half + offset).roundToInt().coerceIn(0, COLUMNS - 1)
 }
+
+private fun toFullWidth(value: Int): String =
+    value.toString().map { (it.code + 0xFEE0).toChar() }.joinToString("")
 
 private fun normalizeDegrees(degrees: Float): Float {
     var value = degrees
@@ -170,7 +175,7 @@ private fun normalizeDegrees(degrees: Float): Float {
 
 private fun render(rocks: List<Int>, shipX: Int): String =
     rocks.withIndex().joinToString("\n") { (row, rock) ->
-        val line = CharArray(COLUMNS) { ' ' }
+        val line = CharArray(COLUMNS) { WATER }
         if (rock in 0 until COLUMNS) line[rock] = ROCK
         if (row == SHIP_ROW) line[shipX] = SHIP
         String(line).trimEnd()

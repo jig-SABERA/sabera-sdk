@@ -44,7 +44,7 @@ private const val SHIP_ROW = 1
 private const val TICK_MS = 400L
 
 // 端まで首を回す量。IchigoJam の左右キーの代わりにヨーで動かす
-private const val EDGE_YAW_DEGREES = 180f
+private const val EDGE_YAW_DEGREES = 90f
 
 private const val SHIP = 'O'
 private const val ROCK = '*'

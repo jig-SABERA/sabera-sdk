@@ -129,7 +129,7 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
                 gameOver = true
                 delay(RESULT_DELAY_MS)
                 commandManager.sendEmptyScreenContent(
-                    "ＧＡＭＥ　ＯＶＥＲ\nＳＣＯＲＥ${toFullWidth(score)}\n" + GUIDE_TEXT,
+                    "ＧＡＭＥ　ＯＶＥＲ\nＳＣＯＲＥ${toFullWidth(score)}\n\n" + GUIDE_TEXT,
                 )
                 // playing を倒すとこのコルーチンが消えるので、送り終えてから
                 playing = false

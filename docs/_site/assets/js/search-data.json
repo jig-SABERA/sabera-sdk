@@ -1814,14 +1814,14 @@
   },"259": {
     "doc": "ホーム",
     "title": "Sabera App SDK",
-    "content": "スマートグラスと通信するアプリを作るための SDK。Android / iOS で同じ API を使う。 . | Getting Started — セットアップと基本的な使い方 | GitHub PAT の作り方 — SDK 取得に必要なトークンの発行手順 | ページごとの使い方 — グラスの画面ごとに、開き方と送るもの | API リファレンス — 公開 API の一覧 | メソッドの追加履歴 — どのメソッドがどのバージョンから使えるか | サードパーティ表記 — SDK に含まれる OSS と、アプリ側に必要な表示 | . ",
+    "content": "SABERAグラスと通信するアプリを作るための SDK。Android / iOS で同じ API を使う。 . | Getting Started — セットアップと基本的な使い方 | GitHub PAT の作り方 — SDK 取得に必要なトークンの発行手順 | ページごとの使い方 — グラスに用意された画面ごとの呼び出しフロー | API リファレンス — 公開 API の一覧 | 更新履歴 — リファレンスとSDKの更新履歴 | サードパーティ表記 — SDKで利用しているサードパーティ | . ",
     "url": "/#sabera-app-sdk",
     
     "relUrl": "/#sabera-app-sdk"
   },"260": {
     "doc": "ホーム",
     "title": "サンプル",
-    "content": "| サンプル | プラットフォーム | 説明 | . | Flutter | Android | MethodChannel / EventChannel 経由で Dart から操作 | . | KMP | Android / iOS | Kotlin Multiplatform から直接利用 | . ",
+    "content": "| サンプル | プラットフォーム | . | Flutter | Android | . | KMP | Android / iOS | . ",
     "url": "/#%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB",
     
     "relUrl": "/#サンプル"

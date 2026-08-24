@@ -40,7 +40,7 @@ import kotlin.random.Random
 
 private const val COLUMNS = 20
 private const val ROWS = 8
-private const val SHIP_ROW = 1
+private const val SHIP_ROW = 3
 private const val TICK_MS = 500L
 
 // 端まで首を回す量。IchigoJam の左右キーの代わりにヨーで動かす
@@ -83,7 +83,9 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
 
         // 遊び始めた向きを中央にする。ヨーは磁力計が無くて絶対値が使えない
         val centerYaw = yaw.filterNotNull().first()
-        val rocks = ArrayDeque(List(ROWS) { NO_ROCK })
+        val rocks = ArrayDeque(List(ROWS) { NONE })
+        // 自機より上の行に残る軌跡。岩と一緒に上へ流れる
+        val trail = ArrayDeque(List(SHIP_ROW) { NONE })
         score = 0
         gameOver = false
         commandManager.enterEmptyScreenPage()
@@ -96,14 +98,16 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
             if (rocks.elementAt(SHIP_ROW) == shipX) {
                 gameOver = true
                 playing = false
-                field = render(rocks, shipX)
+                field = render(rocks, trail, shipX)
                 commandManager.sendEmptyScreenContent("ＧＡＭＥ　ＯＶＥＲ\nＳＣＯＲＥ${toFullWidth(score)}")
                 return@LaunchedEffect
             }
 
             score++
-            field = render(rocks, shipX)
+            field = render(rocks, trail, shipX)
             commandManager.sendEmptyScreenContent(field)
+            trail.removeFirst()
+            trail.addLast(shipX)
             delay(TICK_MS)
         }
     }
@@ -154,7 +158,7 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
     }
 }
 
-private const val NO_ROCK = -1
+private const val NONE = -1
 
 private fun shipColumn(currentYaw: Float, centerYaw: Float): Int {
     val half = (COLUMNS - 1) / 2f
@@ -173,10 +177,11 @@ private fun normalizeDegrees(degrees: Float): Float {
     return value
 }
 
-private fun render(rocks: List<Int>, shipX: Int): String =
+private fun render(rocks: List<Int>, trail: List<Int>, shipX: Int): String =
     rocks.withIndex().joinToString("\n") { (row, rock) ->
         val line = CharArray(COLUMNS) { WATER }
         if (rock in 0 until COLUMNS) line[rock] = ROCK
-        if (row == SHIP_ROW) line[shipX] = SHIP
+        val ship = if (row == SHIP_ROW) shipX else trail.getOrElse(row) { NONE }
+        if (ship in 0 until COLUMNS) line[ship] = SHIP
         String(line).trimEnd()
     }

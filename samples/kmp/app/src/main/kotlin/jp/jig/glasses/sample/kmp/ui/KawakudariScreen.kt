@@ -53,7 +53,8 @@ private const val SHIP = 'Ｏ'
 private const val ROCK = '＊'
 private const val WATER = '\u3000'
 
-private const val WAITING_TEXT = "ＫＡＷＡＫＵＤＡＲＩ\nタップ　ノーマル\n長押し　ハード"
+private const val GUIDE_TEXT = "ＴＡＰ：ＮＯＲＭＡＬ\nＨＯＬＤ：ＨＡＲＤ"
+private const val WAITING_TEXT = "ＫＡＷＡＫＵＤＡＲＩ\n" + GUIDE_TEXT
 
 private enum class Mode(val label: String, val rocksPerRow: Int) {
     NORMAL("ノーマル", 1),
@@ -127,7 +128,9 @@ fun KawakudariScreen(client: GlassClient, onBack: () -> Unit) {
             if (hit) {
                 gameOver = true
                 delay(RESULT_DELAY_MS)
-                commandManager.sendEmptyScreenContent("ＧＡＭＥ　ＯＶＥＲ\nＳＣＯＲＥ${toFullWidth(score)}")
+                commandManager.sendEmptyScreenContent(
+                    "ＧＡＭＥ　ＯＶＥＲ\nＳＣＯＲＥ${toFullWidth(score)}\n" + GUIDE_TEXT,
+                )
                 // playing を倒すとこのコルーチンが消えるので、送り終えてから
                 playing = false
                 return@LaunchedEffect

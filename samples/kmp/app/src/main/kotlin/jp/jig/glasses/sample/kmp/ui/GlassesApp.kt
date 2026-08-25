@@ -108,6 +108,9 @@ fun GlassesApp(manager: GlassManager) {
                     LauncherItem.KAWAKUDARI -> ConnectedScreen.KAWAKUDARI
                     LauncherItem.TELEPROMPTER -> ConnectedScreen.TELEPROMPTER
                     LauncherItem.TRANSLATE -> ConnectedScreen.TRANSLATE
+                    LauncherItem.AI_CHAT -> ConnectedScreen.AI_CHAT
+                    LauncherItem.IMAGE -> ConnectedScreen.IMAGE
+                    LauncherItem.IMU -> ConnectedScreen.IMU
                 }
             },
             onBack = { screen = ConnectedScreen.COMMAND },

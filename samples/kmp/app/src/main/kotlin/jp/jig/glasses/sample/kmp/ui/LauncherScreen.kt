@@ -46,30 +46,40 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-/** アイコンの一辺。96角3枚ならグラスの画像バッファに余裕がある */
+/** アイコンの一辺。96角6枚でもグラスの画像バッファに収まる */
 private const val ICON_SIZE = 96
 private const val ICON_GAP = 48
-private const val ICON_Y = 40
+private const val ICON_ROW_GAP = 16
+private const val ICON_TOP_Y = 16
 
-/** 説明テキストの矩形。アイコンの下に置く */
+/** 3列2段。画像は id 0..7 なので6枚まで置ける */
+private const val GRID_COLUMNS = 3
+private const val GRID_ROWS = 2
+
+/** 説明テキストの矩形。アイコンの下の余りに置く */
 private const val TEXT_X = 48
-private const val TEXT_Y = 184
 private const val TEXT_WIDTH = 480
-private const val TEXT_HEIGHT = 140
+private const val TEXT_HEIGHT = 112
 
 private const val CANVAS_WIDTH = 576
 
-/** 隣のアイコンへ移るまでの振り向き量 */
+/** 隣の列へ移るまでの振り向き量 */
 private const val STEP_DEGREES = 20f
 
-/** ヨーを見に行く間隔。変わったときだけ送るので短くても送信は増えない */
+/** 下の段へ移るまでのうなずき量。ピッチは上向きが負 */
+private const val ROW_STEP_DEGREES = 15f
+
+/** ヨーとピッチを見に行く間隔。変わったときだけ送るので短くても送信は増えない */
 private const val CURSOR_POLL_MS = 100L
 
 /** ランチャーに並べる機能。アイコンは絵柄の代わりに漢字1字で描く */
 enum class LauncherItem(val label: String, val glyph: String, val description: String) {
-    KAWAKUDARI("かわくだり", "川", "首を振って岩をよけるゲーム。タップでノーマル、長押しでハードが始まる。"),
+    KAWAKUDARI("かわくだり", "川", "首を振って岩をよけるゲーム。タップでノーマル、長押しでハード。"),
     TELEPROMPTER("テレプロンプター", "読", "原稿を送って、行を進めながら読み上げる。"),
     TRANSLATE("翻訳", "訳", "話した言葉をその場で訳して出す。"),
+    AI_CHAT("AI アシスタント", "問", "聞いたことに答えを返す。"),
+    IMAGE("画像を送る", "絵", "選んだ写真をグレースケールにして出す。"),
+    IMU("6DoF を見る", "角", "加速度・角速度・ピッチ・ヨーの生の値を並べる。"),
 }
 
 /**
@@ -81,7 +91,7 @@ enum class LauncherItem(val label: String, val glyph: String, val description: S
 fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val commandManager = remember(client) { client.createCommandManager() }
-    val yaw = remember { MutableStateFlow<Float?>(null) }
+    val imu = remember { MutableStateFlow<CommandManager.ImuData?>(null) }
 
     val items = remember { LauncherItem.entries }
     // フォーカスの有無で差し替えるので、2状態とも先に作っておく
@@ -92,7 +102,7 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
     DisposableEffect(commandManager) {
         val jobs = listOf(
             scope.launch {
-                commandManager.imuData.collect { yaw.value = it.yawDegrees }
+                commandManager.imuData.collect { imu.value = it }
             },
             scope.launch {
                 commandManager.gestureEvents.collect { gesture ->
@@ -109,15 +119,15 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
     }
 
     LaunchedEffect(Unit) {
-        // 画面に入った向きを中央のアイコンに合わせる
-        val centerYaw = yaw.filterNotNull().first()
+        // 画面に入った向きを上段の中央に合わせる
+        val center = imu.filterNotNull().first()
 
         commandManager.sendCanvas(listOf(descriptionElement(items[focused])))
-        items.forEachIndexed { index, _ ->
+        items.indices.forEach { index ->
             commandManager.sendCanvasImage(
                 id = index,
-                x = iconX(index, items.size),
-                y = ICON_Y,
+                x = iconX(index),
+                y = iconY(index),
                 width = ICON_SIZE,
                 height = ICON_SIZE,
                 grayscale = icons[index].let { if (index == focused) it.second else it.first }.pixels,
@@ -126,23 +136,23 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
 
         while (isActive) {
             delay(CURSOR_POLL_MS)
-            val next = cursorIndex(yaw.value ?: centerYaw, centerYaw, items.size)
+            val next = cursorIndex(imu.value ?: center, center, items.size)
             if (next == focused) continue
 
             val previous = focused
             focused = next
             commandManager.sendCanvasImage(
                 id = previous,
-                x = iconX(previous, items.size),
-                y = ICON_Y,
+                x = iconX(previous),
+                y = iconY(previous),
                 width = ICON_SIZE,
                 height = ICON_SIZE,
                 grayscale = icons[previous].first.pixels,
             )
             commandManager.sendCanvasImage(
                 id = next,
-                x = iconX(next, items.size),
-                y = ICON_Y,
+                x = iconX(next),
+                y = iconY(next),
                 width = ICON_SIZE,
                 height = ICON_SIZE,
                 grayscale = icons[next].second.pixels,
@@ -163,26 +173,32 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
         ) {
             Text(
                 "首を振ってカーソルを動かし、グラスのシングルタップで選ぶ。" +
-                    "隣に移るまで${STEP_DEGREES.toInt()}度。",
+                    "隣の列まで${STEP_DEGREES.toInt()}度、下の段までうなずき${ROW_STEP_DEGREES.toInt()}度。",
                 style = MaterialTheme.typography.bodySmall,
             )
             Spacer(Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                items.forEachIndexed { index, item ->
-                    val icon = icons[index].let { if (index == focused) it.second else it.first }
-                    Image(
-                        bitmap = icon.toBitmap().asImageBitmap(),
-                        contentDescription = item.label,
-                        modifier = Modifier.size(72.dp),
-                    )
+            (0 until GRID_ROWS).forEach { row ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    (0 until GRID_COLUMNS).forEach { column ->
+                        val index = row * GRID_COLUMNS + column
+                        val item = items.getOrNull(index) ?: return@forEach
+                        val icon = icons[index].let { if (index == focused) it.second else it.first }
+                        Image(
+                            bitmap = icon.toBitmap().asImageBitmap(),
+                            contentDescription = item.label,
+                            modifier = Modifier.size(72.dp),
+                        )
+                    }
                 }
+                Spacer(Modifier.height(8.dp))
             }
-            Spacer(Modifier.height(16.dp))
+
+            Spacer(Modifier.height(8.dp))
             Text(items[focused].label, style = MaterialTheme.typography.titleMedium)
             Text(items[focused].description, style = MaterialTheme.typography.bodyMedium)
 
@@ -195,10 +211,7 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
                 Text("${items[focused].label}をひらく")
             }
             Spacer(Modifier.height(8.dp))
-            OutlinedButton(
-                onClick = onBack,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
+            OutlinedButton(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
                 Text("戻る")
             }
             Spacer(Modifier.height(24.dp))
@@ -209,25 +222,30 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
 private fun descriptionElement(item: LauncherItem) = CommandManager.CanvasElement(
     id = 0,
     x = TEXT_X,
-    y = TEXT_Y,
+    y = ICON_TOP_Y + GRID_ROWS * (ICON_SIZE + ICON_ROW_GAP),
     width = TEXT_WIDTH,
     height = TEXT_HEIGHT,
     text = "${item.label}\n${item.description}",
 )
 
-private fun iconX(index: Int, count: Int): Int {
-    val row = count * ICON_SIZE + (count - 1) * ICON_GAP
-    return (CANVAS_WIDTH - row) / 2 + index * (ICON_SIZE + ICON_GAP)
+private fun iconX(index: Int): Int {
+    val row = GRID_COLUMNS * ICON_SIZE + (GRID_COLUMNS - 1) * ICON_GAP
+    return (CANVAS_WIDTH - row) / 2 + (index % GRID_COLUMNS) * (ICON_SIZE + ICON_GAP)
 }
 
-private fun cursorIndex(currentYaw: Float, centerYaw: Float, count: Int): Int {
-    val steps = (-normalizeDegrees(currentYaw - centerYaw) / STEP_DEGREES).roundToInt()
-    return (count / 2 + steps).coerceIn(0, count - 1)
+private fun iconY(index: Int): Int =
+    ICON_TOP_Y + (index / GRID_COLUMNS) * (ICON_SIZE + ICON_ROW_GAP)
+
+private fun cursorIndex(current: CommandManager.ImuData, center: CommandManager.ImuData, count: Int): Int {
+    val steps = (-normalizeDegrees(current.yawDegrees - center.yawDegrees) / STEP_DEGREES).roundToInt()
+    val column = (GRID_COLUMNS / 2 + steps).coerceIn(0, GRID_COLUMNS - 1)
+    val row = if (current.pitchDegrees - center.pitchDegrees > ROW_STEP_DEGREES) 1 else 0
+    return (row * GRID_COLUMNS + column).coerceAtMost(count - 1)
 }
 
 /**
  * アイコンを2値で描く。グラスは3bitに量子化するので、中間の階調は残さない。
- * フォーカスは白地に黒抜きの太枠で、絵柄そのものに含める。
+ * フォーカスは枠の太さと白黒反転で、絵柄そのものに含める。
  */
 private fun iconImage(glyph: String, focused: Boolean, size: Int = ICON_SIZE): GrayscaleImage {
     val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)

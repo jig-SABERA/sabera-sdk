@@ -116,67 +116,25 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-`showAutomaticSelectionDialog()` に渡すのは Activity。Application Context
-を渡すとダイアログが出ない。
+ノート:
 
-ここまでで、グラスがつながってホーム画面が出る。あとは `commandManager`
-から各ページを開き、中身を送る。送信系は同期メソッドだが内部でキューに積むため、
-呼び出しスレッドは止まらない。
+- [`SdkActivityHost.showBleDeviceSelectionDialog`](api/sdk-activity-host/show-ble-device-selection-dialog.html)
+  — プロセスに1つとする。`onDestroy()`で破棄すること。
+- [`showAutomaticSelectionDialog()`](api/glass-manager/show-automatic-selection-dialog.html)
+  — 選択ダイアログ表示したあと、接続まで処理する。別途`connect()`
+  を呼ぶ必要はない。
+- [`createCommandManager()`](api/glass-client/create-command-manager.html) —
+  コマンドは内部キューに積まれて順番に送信される。
+- [`enterHomePage()`](api/command-manager/enter-home-page.html) —
+  グラス側の画面を切り替える。コンテンツ送信は、対応するページを開いていないと表示されない
 
-```kotlin
-commandManager.enterTeleprompterPage()
-commandManager.sendTeleprompterContent("Hello")
-```
+## 次のステップ
 
-### ページ遷移
-
-| メソッド                  | 遷移先           |
-| ------------------------- | ---------------- |
-| `enterHomePage()`         | ホーム           |
-| `enterTeleprompterPage()` | テレプロンプター |
-| `enterAiChatPage()`       | AI アシスタント  |
-| `enterTranslatePage()`    | 翻訳             |
-
-### コンテンツ送信
-
-| メソッド                                                | 内容                                 |
-| ------------------------------------------------------- | ------------------------------------ |
-| `sendTeleprompterContent(content: String)`              | テレプロンプターに表示する文字列     |
-| `sendTranslateContent(content: String)`                 | 翻訳ページに表示する文字列           |
-| `sendTranslateLanguage(source: String, target: String)` | 翻訳の言語ペア（例: `"ENG", "JPN"`） |
-| `sendAiChatText(text: String)`                          | AI チャットに表示する文字列          |
-
-ページを開いてからコンテンツを送る。送信先のページが開いていないと表示されない。
-
-### そのほかのコマンド
-
-汎用テキスト表示・画像表示（技適マークに使っている画面）・設定の書き換えと同期・
-時刻や天気の同期なども `CommandManager` から送れる。一覧は
-[API リファレンス](api/command-manager/) を見る。
-
-## 3. ジェスチャーを受け取る
-
-```kotlin
-scope.launch {
-    commandManager.gestureEvents.collect { gesture ->
-        when (gesture) {
-            GestureType.SINGLE_TAP -> {}
-            GestureType.DOUBLE_TAP -> {}
-            GestureType.HOLD -> {}
-        }
-    }
-}
-```
-
-`gestureEvents` は
-`SharedFlow<GestureType>`。購読を始める前に発生したジェスチャーは受け取れない。
-
-## 4. 切断する
-
-```kotlin
-manager.disconnect(client)
-```
-
-`GlassClient` に `disconnect()` は無い。型の上で `GlassClientInternal`
-に隔離してあり、 必ず `GlassManager` を経由する。UI
-層が接続状態を持たないようにするための制約。
+| やりたいこと           | 参照先                                                            |
+| ---------------------- | ----------------------------------------------------------------- |
+| 既存のページを開く     | [ページごとの使い方](pages/)                                      |
+| 画像を表示する         | [画像表示](pages/image.html)                                      |
+| UIを自由に配置する     | [自由配置キャンバス](pages/canvas.html)                           |
+| ジェスチャーを受け取る | [gestureEvents](api/command-manager/gesture-events.html)          |
+| マイクを使う           | [startMicStreaming](api/command-manager/start-mic-streaming.html) |
+| IMUを使う              | [startImuData](api/command-manager/start-imu-data.html)           |

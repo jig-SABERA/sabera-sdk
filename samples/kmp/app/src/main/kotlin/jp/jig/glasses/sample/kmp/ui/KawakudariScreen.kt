@@ -219,7 +219,7 @@ private fun shipColumn(currentYaw: Float, centerYaw: Float): Int {
 private fun toFullWidth(value: Int): String =
     value.toString().map { (it.code + 0xFEE0).toChar() }.joinToString("")
 
-private fun normalizeDegrees(degrees: Float): Float {
+internal fun normalizeDegrees(degrees: Float): Float {
     var value = degrees
     while (value > 180f) value -= 360f
     while (value < -180f) value += 360f

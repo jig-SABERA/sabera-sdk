@@ -26,6 +26,10 @@ search:
   # Cmd+K / Ctrl+K で検索窓にフォーカスする
   focus_shortcut_key: 'k'
 
+# 指定しないとテーマが mermaid.js を読み込まず、図がコードブロックのまま出る
+mermaid:
+  version: '11.17.1'
+
 aux_links:
   GitHub: https://github.com/jig-SABERA/sabera-sdk
 

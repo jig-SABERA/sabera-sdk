@@ -10,25 +10,15 @@ SDKはネイティブAPIとして提供している。
 
 ## SDK の取得設定
 
-SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。private
-パッケージなので、取得には `read:packages` スコープを持つ Personal Access Token
-が必要。発行手順は [GitHub PAT の作り方](github-pat.html) を参照。
+SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。  
+取得には `read:packages` スコープを持つ Personal Access Token が必要。
+発行手順は [GitHub PAT の作り方](github-pat.html) を参照。
 
-`~/.gradle/gradle.properties` に認証情報を書く。全プロジェクトで共有される。
+`~/.gradle/gradle.properties` に認証情報を書く。
 
 ```properties
 GitHubPackagesUsername=<GitHubのユーザー名>
 GitHubPackagesPassword=<read:packages を持つ PAT>
-```
-
-プロパティ名は `settings.gradle.kts` でリポジトリに付けた名前（`GitHubPackages`）から
-決まる。Gradle の credentials provider が探す名前なので、変えると認証されない。
-
-CI では環境変数で渡す。プロパティ名の前に `ORG_GRADLE_PROJECT_` を付ける。
-
-```bash
-ORG_GRADLE_PROJECT_GitHubPackagesUsername=<GitHubのユーザー名>
-ORG_GRADLE_PROJECT_GitHubPackagesPassword=<read:packages を持つ PAT>
 ```
 
 ## 全体の流れ

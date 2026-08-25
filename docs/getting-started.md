@@ -64,87 +64,69 @@ flowchart TD
 </service>
 ```
 
-## 2. BlueTooth接続ダイアログの表示
+## 2. 接続してホーム画面を出す
 
-Bluetooth接続のダイアログは SDK 側で用意している。
-ダイアログ表示にはコンテキストが必要なため、`Activity.onCreate()` 内で設定する。
-
-```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    SdkActivityHost.showBleDeviceSelectionDialog = { scope, callback ->
-        BleDeviceSelector(this).showDialog(scope, singleTarget = false, callback)
-    }
-    BleCompanionDeviceService.connectToLastDevice(this)
-}
-
-override fun onDestroy() {
-    SdkActivityHost.showBleDeviceSelectionDialog = null
-    super.onDestroy()
-}
-```
-
-`connectToLastDevice()`
-は前回接続したデバイスがあれば自動で接続を試みる。これを呼んでおくと
-2回目以降の起動でユーザーにダイアログを見せずに済む。
-
-Bluetoothの許可ダイアログを表示する。
+`MainActivity.kt`に、SABERAに接続してホーム画面を出すまでのコードを書く。
 
 ```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    ...
-    requestPermissions(
-        arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT),
-        1001,
-    )
-}
-```
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-## 3. 接続状態を購読する
+        // Bluetoothスキャンと接続の許可
+        requestPermissions(
+            arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT),
+            1001,
+        )
 
-`GlassManager` を取得したら、まず `connectedDevice`
-の購読を始める。接続の成立も切断も この Flow ひとつで観測する。
+        // デバイス選択ダイアログは SDK 側が持っている。表示に Activity が必要。
+        SdkActivityHost.showBleDeviceSelectionDialog = { scope, callback ->
+            BleDeviceSelector(this).showDialog(scope, singleTarget = false, callback)
+        }
 
-```kotlin
-val manager = getGlassManager(context)
+        // 前回接続したデバイスに自動で接続する。
+        BleCompanionDeviceService.connectToLastDevice(this)
 
-scope.launch {
-    manager.connectedDevice.collect { client ->
-        if (client != null) {
-            // 接続済み。ここで CommandManager を作る
-        } else {
-            // 未接続
+        val manager = getGlassManager(this)
+
+        // 接続・切断の通知を受け取る
+        lifecycleScope.launch {
+            manager.connectedDevice.collect { client ->
+                if (client == null) return@collect
+
+                // 接続したSABERAにBluetoothコマンドを送信する。
+                val commandManager = client.createCommandManager()
+
+                // ホーム画面を開く
+                commandManager.enterHomePage()
+            }
+        }
+
+        // 接続するSABERAを選択するダイアログを出す。前回接続したデバイスがあれば自動で接続する。
+        lifecycleScope.launch {
+            manager.showAutomaticSelectionDialog(this@MainActivity)
         }
     }
+
+    override fun onDestroy() {
+        // 破棄した Activity を SDK が掴んだままにしない
+        SdkActivityHost.showBleDeviceSelectionDialog = null
+        super.onDestroy()
+    }
 }
 ```
 
-`connectedDevice` は `StateFlow<GlassClient?>`。`GlassClient` にも
-`connected: StateFlow<Boolean>` があるが、接続の有無を知るだけなら
-`connectedDevice` が `null` かどうかで足りる。
+`showAutomaticSelectionDialog()` に渡すのは Activity。Application Context
+を渡すとダイアログが出ない。
 
-## 4. デバイスを選んで接続する
-
-```kotlin
-val client: GlassClient? = manager.showAutomaticSelectionDialog(activity)
-```
-
-OS のデバイス選択 UI が出て、選ばれたデバイスの `GlassClient` が返る。
-**この呼び出しは接続まで済ませる。** 返り値を受け取ったあとに別途 `connect()`
-を呼ぶ必要はない。
-
-第1引数は Activity。Application Context を渡すとダイアログが出ないので注意。
-
-## 5. コマンドを送る
+ここまでで、グラスがつながってホーム画面が出る。あとは `commandManager`
+から各ページを開き、中身を送る。送信系は同期メソッドだが内部でキューに積むため、
+呼び出しスレッドは止まらない。
 
 ```kotlin
-val commandManager = client.createCommandManager()
-
 commandManager.enterTeleprompterPage()
 commandManager.sendTeleprompterContent("Hello")
 ```
-
-送信系は同期メソッドだが内部でキューイングされるため、呼び出しスレッドはブロックしない。
 
 ### ページ遷移
 
@@ -172,7 +154,7 @@ commandManager.sendTeleprompterContent("Hello")
 時刻や天気の同期なども `CommandManager` から送れる。一覧は
 [API リファレンス](api/command-manager/) を見る。
 
-## 6. ジェスチャーを受け取る
+## 3. ジェスチャーを受け取る
 
 ```kotlin
 scope.launch {
@@ -189,7 +171,7 @@ scope.launch {
 `gestureEvents` は
 `SharedFlow<GestureType>`。購読を始める前に発生したジェスチャーは受け取れない。
 
-## 7. 切断する
+## 4. 切断する
 
 ```kotlin
 manager.disconnect(client)

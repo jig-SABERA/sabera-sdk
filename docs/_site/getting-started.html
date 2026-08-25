@@ -310,6 +310,9 @@ SDKはネイティブAPIとして提供している。</p>
 </h2>
     
 
+<p>このページは Android 向けに書いている。iOS も API の並びは同じだが、
+マニフェストの設定と権限の要求は要らない。</p>
+
 <pre><code class="language-mermaid">flowchart TD
     subgraph init["初期化"]
         B["Activity.onCreate()"] --&gt; C["getGlassManager(context)"]
@@ -327,18 +330,41 @@ SDKはネイティブAPIとして提供している。</p>
     C --&gt; D
     F --&gt; G
 </code></pre>
-<h2 id="1-activity-側のフックandroid-のみ">
+<h2 id="1-マニフェストと権限">
   
   
-    <a href="#1-activity-側のフックandroid-のみ" class="anchor-heading" aria-labelledby="1-activity-側のフックandroid-のみ"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Activity 側のフック（Android のみ）
+    <a href="#1-マニフェストと権限" class="anchor-heading" aria-labelledby="1-マニフェストと権限"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. マニフェストと権限
   
   
 </h2>
     
 
-<p>Companion Device Manager のダイアログは Activity
-を必要とするため、<a href="/api/sdk-activity-host/"><code class="language-plaintext highlighter-rouge">SdkActivityHost</code></a> に 表示処理を差し込む。iOS
-では不要（CoreBluetooth は Activity を要求しない）。</p>
+<p><code class="language-plaintext highlighter-rouge">AndroidManifest.xml</code> に権限と、SDK 内蔵のサービスを書く。</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">"android.permission.BLUETOOTH_SCAN"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">"android.permission.BLUETOOTH_CONNECT"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">"android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE"</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;service</span>
+    <span class="na">android:name=</span><span class="s">"app.jigglass.ble.BleCompanionDeviceService"</span>
+    <span class="na">android:exported=</span><span class="s">"true"</span>
+    <span class="na">android:permission=</span><span class="s">"android.permission.BIND_COMPANION_DEVICE_SERVICE"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;intent-filter&gt;</span>
+        <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">"android.companion.CompanionDeviceService"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/intent-filter&gt;</span>
+<span class="nt">&lt;/service&gt;</span>
+</code></pre></div></div>
+<h2 id="2-bluetooth接続ダイアログの表示">
+  
+  
+    <a href="#2-bluetooth接続ダイアログの表示" class="anchor-heading" aria-labelledby="2-bluetooth接続ダイアログの表示"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. BlueTooth接続ダイアログの表示
+  
+  
+</h2>
+    
+
+<p>Bluetooth接続のダイアログは SDK 側で用意している。
+ダイアログ表示にはコンテキストが必要なため、<code class="language-plaintext highlighter-rouge">Activity.onCreate()</code> 内で設定する。</p>
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="nc">Bundle</span><span class="p">?)</span> <span class="p">{</span>
     <span class="k">super</span><span class="p">.</span><span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
@@ -357,10 +383,21 @@ SDKはネイティブAPIとして提供している。</p>
 <p><a href="/api/ble/connect-to-last-device.html"><code class="language-plaintext highlighter-rouge">connectToLastDevice()</code></a>
 は前回接続したデバイスがあれば自動で接続を試みる。これを呼んでおくと
 2回目以降の起動でユーザーにダイアログを見せずに済む。</p>
-<h2 id="2-接続状態を購読する">
+
+<p>Bluetoothの許可ダイアログを表示する。</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="nc">Bundle</span><span class="p">?)</span> <span class="p">{</span>
+    <span class="o">..</span><span class="p">.</span>
+    <span class="nf">requestPermissions</span><span class="p">(</span>
+        <span class="nf">arrayOf</span><span class="p">(</span><span class="nc">Manifest</span><span class="p">.</span><span class="n">permission</span><span class="p">.</span><span class="nc">BLUETOOTH_SCAN</span><span class="p">,</span> <span class="nc">Manifest</span><span class="p">.</span><span class="n">permission</span><span class="p">.</span><span class="nc">BLUETOOTH_CONNECT</span><span class="p">),</span>
+        <span class="mi">1001</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<h2 id="3-接続状態を購読する">
   
   
-    <a href="#2-接続状態を購読する" class="anchor-heading" aria-labelledby="2-接続状態を購読する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. 接続状態を購読する
+    <a href="#3-接続状態を購読する" class="anchor-heading" aria-labelledby="3-接続状態を購読する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. 接続状態を購読する
   
   
 </h2>
@@ -385,10 +422,10 @@ SDKはネイティブAPIとして提供している。</p>
 <p><a href="/api/glass-manager/connected-device.html"><code class="language-plaintext highlighter-rouge">connectedDevice</code></a> は <code class="language-plaintext highlighter-rouge">StateFlow&lt;GlassClient?&gt;</code>。<a href="/api/glass-client/"><code class="language-plaintext highlighter-rouge">GlassClient</code></a> にも
 <code class="language-plaintext highlighter-rouge">connected: StateFlow&lt;Boolean&gt;</code> があるが、接続の有無を知るだけなら
 <a href="/api/glass-manager/connected-device.html"><code class="language-plaintext highlighter-rouge">connectedDevice</code></a> が <code class="language-plaintext highlighter-rouge">null</code> かどうかで足りる。</p>
-<h2 id="3-デバイスを選んで接続する">
+<h2 id="4-デバイスを選んで接続する">
   
   
-    <a href="#3-デバイスを選んで接続する" class="anchor-heading" aria-labelledby="3-デバイスを選んで接続する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. デバイスを選んで接続する
+    <a href="#4-デバイスを選んで接続する" class="anchor-heading" aria-labelledby="4-デバイスを選んで接続する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. デバイスを選んで接続する
   
   
 </h2>
@@ -402,10 +439,10 @@ SDKはネイティブAPIとして提供している。</p>
 を呼ぶ必要はない。</p>
 
 <p>第1引数は Activity。Application Context を渡すとダイアログが出ないので注意。</p>
-<h2 id="4-コマンドを送る">
+<h2 id="5-コマンドを送る">
   
   
-    <a href="#4-コマンドを送る" class="anchor-heading" aria-labelledby="4-コマンドを送る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. コマンドを送る
+    <a href="#5-コマンドを送る" class="anchor-heading" aria-labelledby="5-コマンドを送る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. コマンドを送る
   
   
 </h2>
@@ -502,10 +539,10 @@ SDKはネイティブAPIとして提供している。</p>
 <p>汎用テキスト表示・画像表示（技適マークに使っている画面）・設定の書き換えと同期・
 時刻や天気の同期なども <a href="/api/command-manager/"><code class="language-plaintext highlighter-rouge">CommandManager</code></a> から送れる。一覧は
 <a href="api/command-manager/">API リファレンス</a> を見る。</p>
-<h2 id="5-ジェスチャーを受け取る">
+<h2 id="6-ジェスチャーを受け取る">
   
   
-    <a href="#5-ジェスチャーを受け取る" class="anchor-heading" aria-labelledby="5-ジェスチャーを受け取る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. ジェスチャーを受け取る
+    <a href="#6-ジェスチャーを受け取る" class="anchor-heading" aria-labelledby="6-ジェスチャーを受け取る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. ジェスチャーを受け取る
   
   
 </h2>
@@ -524,10 +561,10 @@ SDKはネイティブAPIとして提供している。</p>
 
 <p><a href="/api/command-manager/gesture-events.html"><code class="language-plaintext highlighter-rouge">gestureEvents</code></a> は
 <code class="language-plaintext highlighter-rouge">SharedFlow&lt;GestureType&gt;</code>。購読を始める前に発生したジェスチャーは受け取れない。</p>
-<h2 id="6-切断する">
+<h2 id="7-切断する">
   
   
-    <a href="#6-切断する" class="anchor-heading" aria-labelledby="6-切断する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. 切断する
+    <a href="#7-切断する" class="anchor-heading" aria-labelledby="7-切断する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. 切断する
   
   
 </h2>

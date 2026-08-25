@@ -354,107 +354,74 @@ SDKはネイティブAPIとして提供している。</p>
     <span class="nt">&lt;/intent-filter&gt;</span>
 <span class="nt">&lt;/service&gt;</span>
 </code></pre></div></div>
-<h2 id="2-bluetooth接続ダイアログの表示">
+<h2 id="2-接続してホーム画面を出す">
   
   
-    <a href="#2-bluetooth接続ダイアログの表示" class="anchor-heading" aria-labelledby="2-bluetooth接続ダイアログの表示"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. BlueTooth接続ダイアログの表示
-  
-  
-</h2>
-    
-
-<p>Bluetooth接続のダイアログは SDK 側で用意している。
-ダイアログ表示にはコンテキストが必要なため、<code class="language-plaintext highlighter-rouge">Activity.onCreate()</code> 内で設定する。</p>
-
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="nc">Bundle</span><span class="p">?)</span> <span class="p">{</span>
-    <span class="k">super</span><span class="p">.</span><span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
-    <span class="nc">SdkActivityHost</span><span class="p">.</span><span class="n">showBleDeviceSelectionDialog</span> <span class="p">=</span> <span class="p">{</span> <span class="n">scope</span><span class="p">,</span> <span class="n">callback</span> <span class="p">-&gt;</span>
-        <span class="nc">BleDeviceSelector</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nf">showDialog</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">singleTarget</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
-    <span class="p">}</span>
-    <span class="nc">BleCompanionDeviceService</span><span class="p">.</span><span class="nf">connectToLastDevice</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="k">override</span> <span class="k">fun</span> <span class="nf">onDestroy</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nc">SdkActivityHost</span><span class="p">.</span><span class="n">showBleDeviceSelectionDialog</span> <span class="p">=</span> <span class="k">null</span>
-    <span class="k">super</span><span class="p">.</span><span class="nf">onDestroy</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p><a href="/api/ble/connect-to-last-device.html"><code class="language-plaintext highlighter-rouge">connectToLastDevice()</code></a>
-は前回接続したデバイスがあれば自動で接続を試みる。これを呼んでおくと
-2回目以降の起動でユーザーにダイアログを見せずに済む。</p>
-
-<p>Bluetoothの許可ダイアログを表示する。</p>
-
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="nc">Bundle</span><span class="p">?)</span> <span class="p">{</span>
-    <span class="o">..</span><span class="p">.</span>
-    <span class="nf">requestPermissions</span><span class="p">(</span>
-        <span class="nf">arrayOf</span><span class="p">(</span><span class="nc">Manifest</span><span class="p">.</span><span class="n">permission</span><span class="p">.</span><span class="nc">BLUETOOTH_SCAN</span><span class="p">,</span> <span class="nc">Manifest</span><span class="p">.</span><span class="n">permission</span><span class="p">.</span><span class="nc">BLUETOOTH_CONNECT</span><span class="p">),</span>
-        <span class="mi">1001</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="p">}</span>
-</code></pre></div></div>
-<h2 id="3-接続状態を購読する">
-  
-  
-    <a href="#3-接続状態を購読する" class="anchor-heading" aria-labelledby="3-接続状態を購読する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. 接続状態を購読する
+    <a href="#2-接続してホーム画面を出す" class="anchor-heading" aria-labelledby="2-接続してホーム画面を出す"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. 接続してホーム画面を出す
   
   
 </h2>
     
 
-<p><a href="/api/glass-manager/"><code class="language-plaintext highlighter-rouge">GlassManager</code></a> を取得したら、まず <a href="/api/glass-manager/connected-device.html"><code class="language-plaintext highlighter-rouge">connectedDevice</code></a>
-の購読を始める。接続の成立も切断も この Flow ひとつで観測する。</p>
+<p><code class="language-plaintext highlighter-rouge">MainActivity.kt</code>に、SABERAに接続してホーム画面を出すまでのコードを書く。</p>
 
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">manager</span> <span class="p">=</span> <span class="nf">getGlassManager</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">MainActivity</span> <span class="p">:</span> <span class="nc">AppCompatActivity</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="nc">Bundle</span><span class="p">?)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">.</span><span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
 
-<span class="n">scope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
-    <span class="n">manager</span><span class="p">.</span><span class="n">connectedDevice</span><span class="p">.</span><span class="nf">collect</span> <span class="p">{</span> <span class="n">client</span> <span class="p">-&gt;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">client</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// 接続済み。ここで CommandManager を作る</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="c1">// 未接続</span>
+        <span class="c1">// Bluetoothスキャンと接続の許可</span>
+        <span class="nf">requestPermissions</span><span class="p">(</span>
+            <span class="nf">arrayOf</span><span class="p">(</span><span class="nc">Manifest</span><span class="p">.</span><span class="n">permission</span><span class="p">.</span><span class="nc">BLUETOOTH_SCAN</span><span class="p">,</span> <span class="nc">Manifest</span><span class="p">.</span><span class="n">permission</span><span class="p">.</span><span class="nc">BLUETOOTH_CONNECT</span><span class="p">),</span>
+            <span class="mi">1001</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1">// デバイス選択ダイアログは SDK 側が持っている。表示に Activity が必要。</span>
+        <span class="nc">SdkActivityHost</span><span class="p">.</span><span class="n">showBleDeviceSelectionDialog</span> <span class="p">=</span> <span class="p">{</span> <span class="n">scope</span><span class="p">,</span> <span class="n">callback</span> <span class="p">-&gt;</span>
+            <span class="nc">BleDeviceSelector</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nf">showDialog</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">singleTarget</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="c1">// 前回接続したデバイスに自動で接続する。</span>
+        <span class="nc">BleCompanionDeviceService</span><span class="p">.</span><span class="nf">connectToLastDevice</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+
+        <span class="kd">val</span> <span class="py">manager</span> <span class="p">=</span> <span class="nf">getGlassManager</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+
+        <span class="c1">// 接続・切断の通知を受け取る</span>
+        <span class="n">lifecycleScope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+            <span class="n">manager</span><span class="p">.</span><span class="n">connectedDevice</span><span class="p">.</span><span class="nf">collect</span> <span class="p">{</span> <span class="n">client</span> <span class="p">-&gt;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">client</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span> <span class="k">return</span><span class="nd">@collect</span>
+
+                <span class="c1">// 接続したSABERAにBluetoothコマンドを送信する。</span>
+                <span class="kd">val</span> <span class="py">commandManager</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">createCommandManager</span><span class="p">()</span>
+
+                <span class="c1">// ホーム画面を開く</span>
+                <span class="n">commandManager</span><span class="p">.</span><span class="nf">enterHomePage</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// 接続するSABERAを選択するダイアログを出す。前回接続したデバイスがあれば自動で接続する。</span>
+        <span class="n">lifecycleScope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+            <span class="n">manager</span><span class="p">.</span><span class="nf">showAutomaticSelectionDialog</span><span class="p">(</span><span class="k">this</span><span class="nd">@MainActivity</span><span class="p">)</span>
         <span class="p">}</span>
     <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onDestroy</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 破棄した Activity を SDK が掴んだままにしない</span>
+        <span class="nc">SdkActivityHost</span><span class="p">.</span><span class="n">showBleDeviceSelectionDialog</span> <span class="p">=</span> <span class="k">null</span>
+        <span class="k">super</span><span class="p">.</span><span class="nf">onDestroy</span><span class="p">()</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><a href="/api/glass-manager/connected-device.html"><code class="language-plaintext highlighter-rouge">connectedDevice</code></a> は <code class="language-plaintext highlighter-rouge">StateFlow&lt;GlassClient?&gt;</code>。<a href="/api/glass-client/"><code class="language-plaintext highlighter-rouge">GlassClient</code></a> にも
-<code class="language-plaintext highlighter-rouge">connected: StateFlow&lt;Boolean&gt;</code> があるが、接続の有無を知るだけなら
-<a href="/api/glass-manager/connected-device.html"><code class="language-plaintext highlighter-rouge">connectedDevice</code></a> が <code class="language-plaintext highlighter-rouge">null</code> かどうかで足りる。</p>
-<h2 id="4-デバイスを選んで接続する">
-  
-  
-    <a href="#4-デバイスを選んで接続する" class="anchor-heading" aria-labelledby="4-デバイスを選んで接続する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. デバイスを選んで接続する
-  
-  
-</h2>
-    
+<p><a href="/api/glass-manager/show-automatic-selection-dialog.html"><code class="language-plaintext highlighter-rouge">showAutomaticSelectionDialog()</code></a> に渡すのは Activity。Application Context
+を渡すとダイアログが出ない。</p>
 
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">client</span><span class="p">:</span> <span class="nc">GlassClient</span><span class="p">?</span> <span class="p">=</span> <span class="n">manager</span><span class="p">.</span><span class="nf">showAutomaticSelectionDialog</span><span class="p">(</span><span class="n">activity</span><span class="p">)</span>
-</code></pre></div></div>
+<p>ここまでで、グラスがつながってホーム画面が出る。あとは <code class="language-plaintext highlighter-rouge">commandManager</code>
+から各ページを開き、中身を送る。送信系は同期メソッドだが内部でキューに積むため、
+呼び出しスレッドは止まらない。</p>
 
-<p>OS のデバイス選択 UI が出て、選ばれたデバイスの <a href="/api/glass-client/"><code class="language-plaintext highlighter-rouge">GlassClient</code></a> が返る。
-<strong>この呼び出しは接続まで済ませる。</strong> 返り値を受け取ったあとに別途 <a href="/api/glass-manager/connect.html"><code class="language-plaintext highlighter-rouge">connect()</code></a>
-を呼ぶ必要はない。</p>
-
-<p>第1引数は Activity。Application Context を渡すとダイアログが出ないので注意。</p>
-<h2 id="5-コマンドを送る">
-  
-  
-    <a href="#5-コマンドを送る" class="anchor-heading" aria-labelledby="5-コマンドを送る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. コマンドを送る
-  
-  
-</h2>
-    
-
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">commandManager</span> <span class="p">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">createCommandManager</span><span class="p">()</span>
-
-<span class="n">commandManager</span><span class="p">.</span><span class="nf">enterTeleprompterPage</span><span class="p">()</span>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">commandManager</span><span class="p">.</span><span class="nf">enterTeleprompterPage</span><span class="p">()</span>
 <span class="n">commandManager</span><span class="p">.</span><span class="nf">sendTeleprompterContent</span><span class="p">(</span><span class="s">"Hello"</span><span class="p">)</span>
 </code></pre></div></div>
-
-<p>送信系は同期メソッドだが内部でキューイングされるため、呼び出しスレッドはブロックしない。</p>
 <h3 id="ページ遷移">
   
   
@@ -539,10 +506,10 @@ SDKはネイティブAPIとして提供している。</p>
 <p>汎用テキスト表示・画像表示（技適マークに使っている画面）・設定の書き換えと同期・
 時刻や天気の同期なども <a href="/api/command-manager/"><code class="language-plaintext highlighter-rouge">CommandManager</code></a> から送れる。一覧は
 <a href="api/command-manager/">API リファレンス</a> を見る。</p>
-<h2 id="6-ジェスチャーを受け取る">
+<h2 id="3-ジェスチャーを受け取る">
   
   
-    <a href="#6-ジェスチャーを受け取る" class="anchor-heading" aria-labelledby="6-ジェスチャーを受け取る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. ジェスチャーを受け取る
+    <a href="#3-ジェスチャーを受け取る" class="anchor-heading" aria-labelledby="3-ジェスチャーを受け取る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. ジェスチャーを受け取る
   
   
 </h2>
@@ -561,10 +528,10 @@ SDKはネイティブAPIとして提供している。</p>
 
 <p><a href="/api/command-manager/gesture-events.html"><code class="language-plaintext highlighter-rouge">gestureEvents</code></a> は
 <code class="language-plaintext highlighter-rouge">SharedFlow&lt;GestureType&gt;</code>。購読を始める前に発生したジェスチャーは受け取れない。</p>
-<h2 id="7-切断する">
+<h2 id="4-切断する">
   
   
-    <a href="#7-切断する" class="anchor-heading" aria-labelledby="7-切断する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. 切断する
+    <a href="#4-切断する" class="anchor-heading" aria-labelledby="4-切断する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. 切断する
   
   
 </h2>

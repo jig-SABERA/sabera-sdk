@@ -1561,3351 +1561,3330 @@
     "relUrl": "/getting-started.html#1-マニフェストと権限"
   },"223": {
     "doc": "Getting Started",
-    "title": "2. BlueTooth接続ダイアログの表示",
-    "content": "Bluetooth接続のダイアログは SDK 側で用意している。 ダイアログ表示にはコンテキストが必要なため、Activity.onCreate() 内で設定する。 . override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState) SdkActivityHost.showBleDeviceSelectionDialog = { scope, callback -&gt; BleDeviceSelector(this).showDialog(scope, singleTarget = false, callback) } BleCompanionDeviceService.connectToLastDevice(this) } override fun onDestroy() { SdkActivityHost.showBleDeviceSelectionDialog = null super.onDestroy() } . connectToLastDevice() は前回接続したデバイスがあれば自動で接続を試みる。これを呼んでおくと 2回目以降の起動でユーザーにダイアログを見せずに済む。 . Bluetoothの許可ダイアログを表示する。 . override fun onCreate(savedInstanceState: Bundle?) { ... requestPermissions( arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT), 1001, ) } . ",
-    "url": "/getting-started.html#2-bluetooth%E6%8E%A5%E7%B6%9A%E3%83%80%E3%82%A4%E3%82%A2%E3%83%AD%E3%82%B0%E3%81%AE%E8%A1%A8%E7%A4%BA",
+    "title": "2. 接続してホーム画面を出す",
+    "content": "MainActivity.ktに、SABERAに接続してホーム画面を出すまでのコードを書く。 . class MainActivity : AppCompatActivity() { override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState) // Bluetoothスキャンと接続の許可 requestPermissions( arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT), 1001, ) // デバイス選択ダイアログは SDK 側が持っている。表示に Activity が必要。 SdkActivityHost.showBleDeviceSelectionDialog = { scope, callback -&gt; BleDeviceSelector(this).showDialog(scope, singleTarget = false, callback) } // 前回接続したデバイスに自動で接続する。 BleCompanionDeviceService.connectToLastDevice(this) val manager = getGlassManager(this) // 接続・切断の通知を受け取る lifecycleScope.launch { manager.connectedDevice.collect { client -&gt; if (client == null) return@collect // 接続したSABERAにBluetoothコマンドを送信する。 val commandManager = client.createCommandManager() // ホーム画面を開く commandManager.enterHomePage() } } // 接続するSABERAを選択するダイアログを出す。前回接続したデバイスがあれば自動で接続する。 lifecycleScope.launch { manager.showAutomaticSelectionDialog(this@MainActivity) } } override fun onDestroy() { // 破棄した Activity を SDK が掴んだままにしない SdkActivityHost.showBleDeviceSelectionDialog = null super.onDestroy() } } . showAutomaticSelectionDialog() に渡すのは Activity。Application Context を渡すとダイアログが出ない。 . ここまでで、グラスがつながってホーム画面が出る。あとは commandManager から各ページを開き、中身を送る。送信系は同期メソッドだが内部でキューに積むため、 呼び出しスレッドは止まらない。 . commandManager.enterTeleprompterPage() commandManager.sendTeleprompterContent(\"Hello\") . ページ遷移 . | メソッド | 遷移先 | . | enterHomePage() | ホーム | . | enterTeleprompterPage() | テレプロンプター | . | enterAiChatPage() | AI アシスタント | . | enterTranslatePage() | 翻訳 | . コンテンツ送信 . | メソッド | 内容 | . | sendTeleprompterContent(content: String) | テレプロンプターに表示する文字列 | . | sendTranslateContent(content: String) | 翻訳ページに表示する文字列 | . | sendTranslateLanguage(source: String, target: String) | 翻訳の言語ペア（例: \"ENG\", \"JPN\"） | . | sendAiChatText(text: String) | AI チャットに表示する文字列 | . ページを開いてからコンテンツを送る。送信先のページが開いていないと表示されない。 . そのほかのコマンド . 汎用テキスト表示・画像表示（技適マークに使っている画面）・設定の書き換えと同期・ 時刻や天気の同期なども CommandManager から送れる。一覧は API リファレンス を見る。 . ",
+    "url": "/getting-started.html#2-%E6%8E%A5%E7%B6%9A%E3%81%97%E3%81%A6%E3%83%9B%E3%83%BC%E3%83%A0%E7%94%BB%E9%9D%A2%E3%82%92%E5%87%BA%E3%81%99",
     
-    "relUrl": "/getting-started.html#2-bluetooth接続ダイアログの表示"
+    "relUrl": "/getting-started.html#2-接続してホーム画面を出す"
   },"224": {
     "doc": "Getting Started",
-    "title": "3. 接続状態を購読する",
-    "content": "GlassManager を取得したら、まず connectedDevice の購読を始める。接続の成立も切断も この Flow ひとつで観測する。 . val manager = getGlassManager(context) scope.launch { manager.connectedDevice.collect { client -&gt; if (client != null) { // 接続済み。ここで CommandManager を作る } else { // 未接続 } } } . connectedDevice は StateFlow&lt;GlassClient?&gt;。GlassClient にも connected: StateFlow&lt;Boolean&gt; があるが、接続の有無を知るだけなら connectedDevice が null かどうかで足りる。 . ",
-    "url": "/getting-started.html#3-%E6%8E%A5%E7%B6%9A%E7%8A%B6%E6%85%8B%E3%82%92%E8%B3%BC%E8%AA%AD%E3%81%99%E3%82%8B",
+    "title": "3. ジェスチャーを受け取る",
+    "content": "scope.launch { commandManager.gestureEvents.collect { gesture -&gt; when (gesture) { GestureType.SINGLE_TAP -&gt; {} GestureType.DOUBLE_TAP -&gt; {} GestureType.HOLD -&gt; {} } } } . gestureEvents は SharedFlow&lt;GestureType&gt;。購読を始める前に発生したジェスチャーは受け取れない。 . ",
+    "url": "/getting-started.html#3-%E3%82%B8%E3%82%A7%E3%82%B9%E3%83%81%E3%83%A3%E3%83%BC%E3%82%92%E5%8F%97%E3%81%91%E5%8F%96%E3%82%8B",
     
-    "relUrl": "/getting-started.html#3-接続状態を購読する"
+    "relUrl": "/getting-started.html#3-ジェスチャーを受け取る"
   },"225": {
     "doc": "Getting Started",
-    "title": "4. デバイスを選んで接続する",
-    "content": "val client: GlassClient? = manager.showAutomaticSelectionDialog(activity) . OS のデバイス選択 UI が出て、選ばれたデバイスの GlassClient が返る。 この呼び出しは接続まで済ませる。 返り値を受け取ったあとに別途 connect() を呼ぶ必要はない。 . 第1引数は Activity。Application Context を渡すとダイアログが出ないので注意。 . ",
-    "url": "/getting-started.html#4-%E3%83%87%E3%83%90%E3%82%A4%E3%82%B9%E3%82%92%E9%81%B8%E3%82%93%E3%81%A7%E6%8E%A5%E7%B6%9A%E3%81%99%E3%82%8B",
-    
-    "relUrl": "/getting-started.html#4-デバイスを選んで接続する"
-  },"226": {
-    "doc": "Getting Started",
-    "title": "5. コマンドを送る",
-    "content": "val commandManager = client.createCommandManager() commandManager.enterTeleprompterPage() commandManager.sendTeleprompterContent(\"Hello\") . 送信系は同期メソッドだが内部でキューイングされるため、呼び出しスレッドはブロックしない。 . ページ遷移 . | メソッド | 遷移先 | . | enterHomePage() | ホーム | . | enterTeleprompterPage() | テレプロンプター | . | enterAiChatPage() | AI アシスタント | . | enterTranslatePage() | 翻訳 | . コンテンツ送信 . | メソッド | 内容 | . | sendTeleprompterContent(content: String) | テレプロンプターに表示する文字列 | . | sendTranslateContent(content: String) | 翻訳ページに表示する文字列 | . | sendTranslateLanguage(source: String, target: String) | 翻訳の言語ペア（例: \"ENG\", \"JPN\"） | . | sendAiChatText(text: String) | AI チャットに表示する文字列 | . ページを開いてからコンテンツを送る。送信先のページが開いていないと表示されない。 . そのほかのコマンド . 汎用テキスト表示・画像表示（技適マークに使っている画面）・設定の書き換えと同期・ 時刻や天気の同期なども CommandManager から送れる。一覧は API リファレンス を見る。 . ",
-    "url": "/getting-started.html#5-%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E3%82%92%E9%80%81%E3%82%8B",
-    
-    "relUrl": "/getting-started.html#5-コマンドを送る"
-  },"227": {
-    "doc": "Getting Started",
-    "title": "6. ジェスチャーを受け取る",
-    "content": "scope.launch { commandManager.gestureEvents.collect { gesture -&gt; when (gesture) { GestureType.SINGLE_TAP -&gt; {} GestureType.DOUBLE_TAP -&gt; {} GestureType.HOLD -&gt; {} } } } . gestureEvents は SharedFlow&lt;GestureType&gt;。購読を始める前に発生したジェスチャーは受け取れない。 . ",
-    "url": "/getting-started.html#6-%E3%82%B8%E3%82%A7%E3%82%B9%E3%83%81%E3%83%A3%E3%83%BC%E3%82%92%E5%8F%97%E3%81%91%E5%8F%96%E3%82%8B",
-    
-    "relUrl": "/getting-started.html#6-ジェスチャーを受け取る"
-  },"228": {
-    "doc": "Getting Started",
-    "title": "7. 切断する",
+    "title": "4. 切断する",
     "content": "manager.disconnect(client) . GlassClient に disconnect() は無い。型の上で GlassClientInternal に隔離してあり、 必ず GlassManager を経由する。UI 層が接続状態を持たないようにするための制約。 . ",
-    "url": "/getting-started.html#7-%E5%88%87%E6%96%AD%E3%81%99%E3%82%8B",
+    "url": "/getting-started.html#4-%E5%88%87%E6%96%AD%E3%81%99%E3%82%8B",
     
-    "relUrl": "/getting-started.html#7-切断する"
-  },"229": {
+    "relUrl": "/getting-started.html#4-切断する"
+  },"226": {
     "doc": "GitHub PAT の作り方",
     "title": "GitHub PAT の作り方",
     "content": "SDK は private な GitHub Packages で配布しているため、取得には Personal Access Token (PAT) が必要になる。ここではその発行手順をまとめる。 . ",
     "url": "/github-pat.html",
     
     "relUrl": "/github-pat.html"
-  },"230": {
+  },"227": {
     "doc": "GitHub PAT の作り方",
     "title": "1. トークンを発行する",
     "content": "GitHub にログインした状態で Settings &gt; Developer settings &gt; Personal access tokens &gt; Tokens (classic) を開き、Generate new token (classic) を選ぶ。 . 入力する項目は次の3つ。 . | 項目 | 値 | . | Note | 用途がわかる名前（例: sabera-sdk packages） | . | Expiration | 任意。期限切れ後は再発行が必要 | . | Scopes | read:packages のみにチェック | . repo などほかのスコープは SDK の取得には不要。付けるとトークンが漏れたときの影響が 大きくなるので、read:packages だけにする。 . Generate token を押すと画面にトークンが表示される。この画面を離れると二度と 表示されないので、その場でコピーしておく。 . ",
     "url": "/github-pat.html#1-%E3%83%88%E3%83%BC%E3%82%AF%E3%83%B3%E3%82%92%E7%99%BA%E8%A1%8C%E3%81%99%E3%82%8B",
     
     "relUrl": "/github-pat.html#1-トークンを発行する"
-  },"231": {
+  },"228": {
     "doc": "GitHub PAT の作り方",
     "title": "2. SSO を認可する（表示されている場合のみ）",
     "content": "トークン一覧に Configure SSO ボタンが出ている場合、Organization が SAML SSO を 使っている。発行しただけではパッケージを取得できないので、ボタンを押して jig-SABERA を Authorize する。これを忘れると 401 Unauthorized になる。 . ",
     "url": "/github-pat.html#2-sso-%E3%82%92%E8%AA%8D%E5%8F%AF%E3%81%99%E3%82%8B%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%81%A6%E3%81%84%E3%82%8B%E5%A0%B4%E5%90%88%E3%81%AE%E3%81%BF",
     
     "relUrl": "/github-pat.html#2-sso-を認可する表示されている場合のみ"
-  },"232": {
+  },"229": {
     "doc": "GitHub PAT の作り方",
     "title": "3. Gradle に設定する",
     "content": "~/.gradle/gradle.properties に書く。プロジェクト直下ではなくホーム配下に置くのは、 リポジトリにコミットしてしまう事故を防ぐため。 . GitHubPackagesUsername=&lt;GitHubのユーザー名&gt; GitHubPackagesPassword=&lt;発行した PAT&gt; . 環境変数でも代用できる。CI ではこちらを使う。 . export ORG_GRADLE_PROJECT_GitHubPackagesUsername=&lt;GitHubのユーザー名&gt; export ORG_GRADLE_PROJECT_GitHubPackagesPassword=&lt;発行した PAT&gt; . ",
     "url": "/github-pat.html#3-gradle-%E3%81%AB%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B",
     
     "relUrl": "/github-pat.html#3-gradle-に設定する"
-  },"233": {
+  },"230": {
     "doc": "GitHub PAT の作り方",
     "title": "4. 確認する",
     "content": "サンプルの Android プロジェクトをビルドし、SDK の依存が解決できれば設定は完了。 . ",
     "url": "/github-pat.html#4-%E7%A2%BA%E8%AA%8D%E3%81%99%E3%82%8B",
     
     "relUrl": "/github-pat.html#4-確認する"
-  },"234": {
+  },"231": {
     "doc": "GitHub PAT の作り方",
     "title": "うまくいかないとき",
     "content": ". | 401 Unauthorized — SSO の認可漏れ、またはトークンの期限切れ。手順 2 を確認する | 403 Forbidden — スコープに read:packages が入っていない | 依存が見つからない — gradle.properties の場所が違う。 ~/.gradle/gradle.properties に置く | 認証情報が空のまま — GitHubPackagesUsername は GitHub のユーザー名。メールアドレスではない | . ",
     "url": "/github-pat.html#%E3%81%86%E3%81%BE%E3%81%8F%E3%81%84%E3%81%8B%E3%81%AA%E3%81%84%E3%81%A8%E3%81%8D",
     
     "relUrl": "/github-pat.html#うまくいかないとき"
-  },"235": {
+  },"232": {
     "doc": "GitHub PAT の作り方",
     "title": "Fine-grained token について",
     "content": "新しい Fine-grained personal access token でもパッケージの読み取りはできるが、 Organization 側で許可設定が必要になる。特に理由がなければ classic を使う。 . ",
     "url": "/github-pat.html#fine-grained-token-%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6",
     
     "relUrl": "/github-pat.html#fine-grained-token-について"
-  },"236": {
+  },"233": {
     "doc": "GitHub PAT の作り方",
     "title": "取り扱い",
     "content": "PAT はパスワードと同じ扱いにする。リポジトリにコミットしない、Slack や Issue に貼らない。漏れた場合はトークン一覧から Delete して再発行する。 . ",
     "url": "/github-pat.html#%E5%8F%96%E3%82%8A%E6%89%B1%E3%81%84",
     
     "relUrl": "/github-pat.html#取り扱い"
-  },"237": {
+  },"234": {
     "doc": "hasLastConnectedDevice",
     "title": "GlassManager.hasLastConnectedDevice",
     "content": "このページは執筆中です。 . val hasLastConnectedDevice: Boolean . ",
     "url": "/api/glass-manager/has-last-connected-device.html#glassmanagerhaslastconnecteddevice",
     
     "relUrl": "/api/glass-manager/has-last-connected-device.html#glassmanagerhaslastconnecteddevice"
-  },"238": {
+  },"235": {
     "doc": "hasLastConnectedDevice",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-manager/has-last-connected-device.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-manager/has-last-connected-device.html#概要"
-  },"239": {
+  },"236": {
     "doc": "hasLastConnectedDevice",
     "title": "戻り値",
     "content": "Boolean . ",
     "url": "/api/glass-manager/has-last-connected-device.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-manager/has-last-connected-device.html#戻り値"
-  },"240": {
+  },"237": {
     "doc": "hasLastConnectedDevice",
     "title": "使用例",
     "content": "val canReconnect = manager.hasLastConnectedDevice . ",
     "url": "/api/glass-manager/has-last-connected-device.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-manager/has-last-connected-device.html#使用例"
-  },"241": {
+  },"238": {
     "doc": "hasLastConnectedDevice",
     "title": "hasLastConnectedDevice",
     "content": " ",
     "url": "/api/glass-manager/has-last-connected-device.html",
     
     "relUrl": "/api/glass-manager/has-last-connected-device.html"
-  },"242": {
+  },"239": {
     "doc": "画像表示",
     "title": "画像表示",
     "content": "1枚の画像を全画面で出す画面。技適マークの表示に使っている。 . ",
     "url": "/pages/image.html",
     
     "relUrl": "/pages/image.html"
-  },"243": {
+  },"240": {
     "doc": "画像表示",
     "title": "開いて送る",
     "content": "enterImageDisplayPage() で開き、sendImage() で画像を送る。 . commandManager.enterImageDisplayPage() // 196x196 を超えるとファームが弾いて何も出ない commandManager.sendImage(width = 196, height = 196, grayscale = grayscale) . 渡すのはリサイズ済みのグレースケール。1画素1バイトで、左上から行優先に並べる。輝度は 0-255 のまま渡してよく、グラスが読む3bitへの量子化と RLE 圧縮は SDK が行う。 . グラス側のバッファは静的なので、196x196 を超えるサイズはファームが弾いて何も表示されない。 渡す前にアプリ側で縮小しておく。 . ",
     "url": "/pages/image.html#%E9%96%8B%E3%81%84%E3%81%A6%E9%80%81%E3%82%8B",
     
     "relUrl": "/pages/image.html#開いて送る"
-  },"244": {
+  },"241": {
     "doc": "画像表示",
     "title": "使い分け",
     "content": "| したいこと | 使うもの | . | 1枚を全画面で出す | このページ | . | 複数枚を座標指定で並べる | 自由配置キャンバス の sendCanvasImage() | . | 地図を出す | ナビ の sendNavi() / sendNaviLargeImage() | . ",
     "url": "/pages/image.html#%E4%BD%BF%E3%81%84%E5%88%86%E3%81%91",
     
     "relUrl": "/pages/image.html#使い分け"
-  },"245": {
+  },"242": {
     "doc": "画像表示",
     "title": "関連 API",
     "content": ". | enterImageDisplayPage() | sendImage(width: Int, height: Int, grayscale: ByteArray) | . ",
     "url": "/pages/image.html#%E9%96%A2%E9%80%A3-api",
     
     "relUrl": "/pages/image.html#関連-api"
-  },"246": {
+  },"243": {
     "doc": "imuDataStarted",
     "title": "CommandManager.imuDataStarted",
     "content": "val imuDataStarted: StateFlow&lt;Boolean&gt; . ",
     "url": "/api/command-manager/imu-data-started.html#commandmanagerimudatastarted",
     
     "relUrl": "/api/command-manager/imu-data-started.html#commandmanagerimudatastarted"
-  },"247": {
+  },"244": {
     "doc": "imuDataStarted",
     "title": "概要",
     "content": "6DoF が流れている間 true。開始・停止の応答で切り替わる。 . ",
     "url": "/api/command-manager/imu-data-started.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/imu-data-started.html#概要"
-  },"248": {
+  },"245": {
     "doc": "imuDataStarted",
     "title": "戻り値",
     "content": "StateFlow&lt;Boolean&gt; . ",
     "url": "/api/command-manager/imu-data-started.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/imu-data-started.html#戻り値"
-  },"249": {
+  },"246": {
     "doc": "imuDataStarted",
     "title": "使用例",
     "content": "scope.launch { commandManager.imuDataStarted.collect { started -&gt; Log.d(\"sample\", if (started) \"6DoF 受信中\" else \"6DoF 停止中\") } } . ",
     "url": "/api/command-manager/imu-data-started.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/imu-data-started.html#使用例"
-  },"250": {
+  },"247": {
     "doc": "imuDataStarted",
     "title": "関連",
     "content": ". | startImuData | . ",
     "url": "/api/command-manager/imu-data-started.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/imu-data-started.html#関連"
-  },"251": {
+  },"248": {
     "doc": "imuDataStarted",
     "title": "imuDataStarted",
     "content": " ",
     "url": "/api/command-manager/imu-data-started.html",
     
     "relUrl": "/api/command-manager/imu-data-started.html"
-  },"252": {
+  },"249": {
     "doc": "imuData",
     "title": "CommandManager.imuData",
     "content": "val imuData: SharedFlow&lt;CommandManager.ImuData&gt; . ",
     "url": "/api/command-manager/imu-data.html#commandmanagerimudata",
     
     "relUrl": "/api/command-manager/imu-data.html#commandmanagerimudata"
-  },"253": {
+  },"250": {
     "doc": "imuData",
     "title": "概要",
     "content": "6DoF のセンサー値。startImuData を呼ぶまで何も流れない。1サンプルは加速度[mg]・角速度[dps]・ピッチとヨー[度]と、AR起動からの経過時間[ms]を持つ。並べ替えや間隔の計算は受信時刻ではなくこの経過時間を使う。送信キューが詰まるとグラス側がサンプルを捨てるため、指定した周期どおりには届かない。 . ",
     "url": "/api/command-manager/imu-data.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/imu-data.html#概要"
-  },"254": {
+  },"251": {
     "doc": "imuData",
     "title": "戻り値",
     "content": "SharedFlow&lt;CommandManager.ImuData&gt; . ",
     "url": "/api/command-manager/imu-data.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/imu-data.html#戻り値"
-  },"255": {
+  },"252": {
     "doc": "imuData",
     "title": "使用例",
     "content": "scope.launch { commandManager.imuData.collect { data -&gt; // 並べ替えや間隔の計算は受信時刻ではなく timestampMs を使う Log.d(\"sample\", \"${data.timestampMs}ms pitch=${data.pitchDegrees}\") } } commandManager.startImuData() . ",
     "url": "/api/command-manager/imu-data.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/imu-data.html#使用例"
-  },"256": {
+  },"253": {
     "doc": "imuData",
     "title": "関連",
     "content": ". | startImuData | stopImuData | . ",
     "url": "/api/command-manager/imu-data.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/imu-data.html#関連"
-  },"257": {
+  },"254": {
     "doc": "imuData",
     "title": "imuData",
     "content": " ",
     "url": "/api/command-manager/imu-data.html",
     
     "relUrl": "/api/command-manager/imu-data.html"
-  },"258": {
+  },"255": {
     "doc": "GlassManager",
     "title": "GlassManager",
     "content": "デバイスの探索・接続・切断を担う。getGlassManager(context) で取得する。 . | メソッド | シグネチャ | . | getGlassManager | fun getGlassManager(context: Context): GlassManager | . | connectedDevice | val connectedDevice: StateFlow&lt;GlassClient?&gt; | . | lastConnectedDevice | val lastConnectedDevice: GlassClient? | . | hasLastConnectedDevice | val hasLastConnectedDevice: Boolean | . | selectionDialogPresented | val selectionDialogPresented: SharedFlow&lt;Unit&gt; | . | externalDisplayNameChanged | val externalDisplayNameChanged: SharedFlow&lt;String?&gt; | . | showAutomaticSelectionDialog | suspend fun showAutomaticSelectionDialog(context: Context): GlassClient? | . | connect | suspend fun connect(glassClient: GlassClient) | . | disconnect | suspend fun disconnect(glassClient: GlassClient) | . | disconnectAndClearBond | suspend fun disconnectAndClearBond(glassClient: GlassClient) | . | createClientFromDeviceID | fun createClientFromDeviceID(deviceId: String): GlassClient? | . | onDeviceDisappear | fun onDeviceDisappear(address: String) | . | registerDeviceFromIntent | fun registerDeviceFromIntent(data: Intent) | . | showDisconnectSheetIOS | suspend fun showDisconnectSheetIOS(): Boolean | . | showRenameAccessorySheetIOS | suspend fun showRenameAccessorySheetIOS(): Boolean | . ",
     "url": "/api/glass-manager/",
     
     "relUrl": "/api/glass-manager/"
-  },"259": {
+  },"256": {
     "doc": "ホーム",
     "title": "Sabera App SDK",
     "content": "SABERAグラスと通信するアプリを作るための SDK。Android / iOS で同じ API を使う。 . | Getting Started — セットアップと基本的な使い方 | GitHub PAT の作り方 — SDK 取得に必要なトークンの発行手順 | ページごとの使い方 — グラスに用意された画面ごとの呼び出しフロー | API リファレンス — 公開 API の一覧 | 更新履歴 — リファレンスとSDKの更新履歴 | サードパーティ表記 — SDKで利用しているサードパーティ | . ",
     "url": "/#sabera-app-sdk",
     
     "relUrl": "/#sabera-app-sdk"
-  },"260": {
+  },"257": {
     "doc": "ホーム",
     "title": "サンプル",
     "content": "| サンプル | プラットフォーム | . | Flutter | Android | . | KMP | Android / iOS | . ",
     "url": "/#%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB",
     
     "relUrl": "/#サンプル"
-  },"261": {
+  },"258": {
     "doc": "ホーム",
     "title": "ホーム",
     "content": " ",
     "url": "/",
     
     "relUrl": "/"
-  },"262": {
+  },"259": {
     "doc": "SdkDevicePersistence",
     "title": "SdkDevicePersistence",
     "content": "最後に接続したデバイスの保存先。アプリ側が実装する SPI。 . | メソッド | シグネチャ | . | lastDeviceId | var lastDeviceId: String? | . ",
     "url": "/api/sdk-device-persistence/",
     
     "relUrl": "/api/sdk-device-persistence/"
-  },"263": {
+  },"260": {
     "doc": "GlassClient",
     "title": "GlassClient",
     "content": "接続済みの1台を表す。GlassManager.connectedDevice から得る。 . | メソッド | シグネチャ | . | connected | val connected: StateFlow&lt;Boolean&gt; | . | deviceName | val deviceName: String? | . | deviceIdentifier | val deviceIdentifier: String? | . | isConnectionValid | fun isConnectionValid(): Boolean | . | createCommandManager | fun createCommandManager(): CommandManager | . | micChannel | val micChannel: StateFlow&lt;Int?&gt;fun setMicChannel(channel: Int?) | . | sendCommand | suspend fun sendCommand(command: ByteArray) | . | sendCommandList | suspend fun sendCommandList(command: List&lt;ByteArray&gt;) | . | sendText | suspend fun sendText(page: Byte, content: String) | . | cancelPendingPackets | suspend fun cancelPendingPackets() | . | reboot | suspend fun reboot() | . ",
     "url": "/api/glass-client/",
     
     "relUrl": "/api/glass-client/"
-  },"264": {
+  },"261": {
     "doc": "BLE (Android)",
     "title": "BLE (Android)",
     "content": "Companion Device Manager 周り。Android 固有。 . | メソッド | シグネチャ | . | BleCompanionDeviceService.connectToLastDevice | fun BleCompanionDeviceService.Companion.connectToLastDevice(context: Context) | . | BleDeviceSelector.showDialog | fun showDialog(scope: CoroutineScope, singleTarget: Boolean, callback: (String?) -&gt; Unit) | . | BleDeviceSelector.onActivityResult | fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?, scope: CoroutineScope): Boolean | . ",
     "url": "/api/ble/",
     
     "relUrl": "/api/ble/"
-  },"265": {
+  },"262": {
     "doc": "GlassesSDK",
     "title": "GlassesSDK",
     "content": "SDK 全体の初期設定を行うシングルトン。Application.onCreate() で呼ぶ。 . | メソッド | シグネチャ | . | setLogger | fun setLogger(sink: (tag: String, message: String) -&gt; Unit) | . | setProd | fun setProd(isProd: Boolean) | . | setDevicePersistence | fun setDevicePersistence(persistence: SdkDevicePersistence) | . ",
     "url": "/api/glasses-sdk/",
     
     "relUrl": "/api/glasses-sdk/"
-  },"266": {
+  },"263": {
     "doc": "SdkActivityHost",
     "title": "SdkActivityHost",
     "content": "Activity を必要とする処理を差し込むシングルトン（Android のみ）。 . | メソッド | シグネチャ | . | showBleDeviceSelectionDialog | var showBleDeviceSelectionDialog: ((Context, (String?) -&gt; Unit) -&gt; Unit)? | . ",
     "url": "/api/sdk-activity-host/",
     
     "relUrl": "/api/sdk-activity-host/"
-  },"267": {
+  },"264": {
     "doc": "ページごとの使い方",
     "title": "ページごとの使い方",
     "content": "グラスは画面（ページ）ごとに使えるコマンドが決まっている。ここではページ単位に、開き方・ 送るもの・後片付けをまとめる。接続は済んでいて CommandManager を作ってある前提で書く。 接続の手順は Getting Started を参照。 . val commandManager = client.createCommandManager() . ",
     "url": "/pages/",
     
     "relUrl": "/pages/"
-  },"268": {
+  },"265": {
     "doc": "ページごとの使い方",
     "title": "ページ一覧",
     "content": "| ページ | 開き方 | 主に送るもの | 必要ファーム | . | テレプロンプター | enterTeleprompterPage() | 原稿・再生状態・経過時間 | — | . | 翻訳 | enterTranslatePage() | 言語ペア・訳文 | — | . | AI アシスタント | enterAiChatPage() | 吹き出しの本文・生成状態 | — | . | 汎用テキスト表示 | enterEmptyScreenPage() | 本文 | — | . | 画像表示 | enterImageDisplayPage() | 196x196 までの画像 | — | . | 分割レイアウト | sendLayout() | 分割と領域ごとのテキスト | 2.0.0 | . | 自由配置キャンバス | sendCanvas() | 座標指定のテキストと画像 | 2.1.0 / 画像は 2.2.0 | . | ナビ | enterNavigationPage() | 案内情報・進行方向・地図画像 | — | . | 調整・デバッグ | enterGlassAngleAdjustmentPage() など | 傾き閾値・調整画像 | — | . 「必要ファーム」は FEATURE_VERSION。満たさないファームはコマンドを読み捨てるので、 アプリ側からは送れたように見えて何も起こらない。 . ",
     "url": "/pages/#%E3%83%9A%E3%83%BC%E3%82%B8%E4%B8%80%E8%A6%A7",
     
     "relUrl": "/pages/#ページ一覧"
-  },"269": {
+  },"266": {
     "doc": "ページごとの使い方",
     "title": "共通の約束",
     "content": "開いてから送る。 ほとんどのページはコンテンツだけ送っても表示されない。例外は 分割レイアウトとキャンバスで、こちらは送ると同時に画面が切り替わる。 . 送信は投げっぱなし。 送信系は同期メソッドだが内部でキューに積むだけで、呼び出しスレッドは ブロックしない。グラス側が受け取れたかどうかは返ってこない。 . 未接続だと捨てられる。 送る前に CommandManager.connected を見る。 . やめるときはホームに戻す。 enterHomePage() で開いていたページを閉じ、表示内容も捨てる。 . // 開いていたページを閉じて表示内容を捨てる commandManager.enterHomePage() . 1パケットの上限がある。 原稿や本文のように分割送信に対応しているものは長文を渡してよいが、 分割レイアウトとキャンバスのテキストは分割できず、合計190バイト程度で切られる。 . ",
     "url": "/pages/#%E5%85%B1%E9%80%9A%E3%81%AE%E7%B4%84%E6%9D%9F",
     
     "relUrl": "/pages/#共通の約束"
-  },"270": {
+  },"267": {
     "doc": "API リファレンス",
     "title": "API リファレンス",
     "content": "Sabera App SDK (Kotlin) の公開 API。バージョン 0.6.0 時点。 . メソッドごとに使えるようになったバージョンはメソッドの追加履歴にまとめてある。 . | 型 | 説明 | . | GlassesSDK | SDK 全体の初期設定を行うシングルトン。Application.onCreate() で呼ぶ。 | . | GlassManager | デバイスの探索・接続・切断を担う。getGlassManager(context) で取得する。 | . | GlassClient | 接続済みの1台を表す。GlassManager.connectedDevice から得る。 | . | CommandManager | グラス側の画面遷移・コンテンツ送信・イベント購読。GlassClient.createCommandManager() で作る。 | . | SdkActivityHost | Activity を必要とする処理を差し込むシングルトン（Android のみ）。 | . | SdkDevicePersistence | 最後に接続したデバイスの保存先。アプリ側が実装する SPI。 | . | BLE (Android) | Companion Device Manager 周り。Android 固有。 | . ",
     "url": "/api/",
     
     "relUrl": "/api/"
-  },"271": {
+  },"268": {
     "doc": "CommandManager",
     "title": "CommandManager",
     "content": "グラス側の画面遷移・コンテンツ送信・イベント購読。GlassClient.createCommandManager() で作る。 . | メソッド | シグネチャ | . | connected | val connected: StateFlow&lt;Boolean&gt; | . | gestureEvents | val gestureEvents: SharedFlow&lt;GestureType&gt; | . | imuData | val imuData: SharedFlow&lt;CommandManager.ImuData&gt; | . | imuDataStarted | val imuDataStarted: StateFlow&lt;Boolean&gt; | . | micAudio | val micAudio: SharedFlow&lt;ByteArray&gt; | . | micStreaming | val micStreaming: StateFlow&lt;Boolean&gt; | . | enterHomePage | fun enterHomePage() | . | enterTeleprompterPage | fun enterTeleprompterPage() | . | sendTeleprompterContent | fun sendTeleprompterContent(content: String)fun sendTeleprompterContent(content: String, percent: Int) | . | enterTranslatePage | fun enterTranslatePage() | . | sendTranslateContent | fun sendTranslateContent(content: String) | . | sendTranslateLanguage | fun sendTranslateLanguage(source: String, target: String) | . | enterAiChatPage | fun enterAiChatPage() | . | sendAiChatText | fun sendAiChatText(text: String) | . | sendAiChatStatus | fun sendAiChatStatus(status: CommandManager.AiChatStatus) | . | sendAiChatSenderText | fun sendAiChatSenderText(sender: CommandManager.AiChatSender, text: String, model: CommandManager.AiChatModel? = null) | . | sendAiChatSenderStatus | fun sendAiChatSenderStatus(sender: CommandManager.AiChatSender, status: CommandManager.AiChatStatus, model: CommandManager.AiChatModel? = null) | . | openGlassMic | fun openGlassMic() | . | closeGlassMic | fun closeGlassMic() | . | startMicStreaming | fun startMicStreaming() | . | stopMicStreaming | fun stopMicStreaming() | . | sendMessage | fun sendMessage(name: String, title: String, time: Long, text: String) | . | syncNotificationCount | fun syncNotificationCount(count: Int) | . | sendDebugPhoneName | fun sendDebugPhoneName(phoneName: String) | . | parseResponse | fun parseResponse(value: ByteArray) | . | enterEmptyScreenPage | fun enterEmptyScreenPage() | . | enterImageDisplayPage | fun enterImageDisplayPage() | . | sendLayout | fun sendLayout(mode: CommandManager.LayoutMode, texts: Map&lt;Int, String&gt; = emptyMap()) | . | sendLayoutTexts | fun sendLayoutTexts(texts: Map&lt;Int, String&gt;) | . | closeLayout | fun closeLayout() | . | sendCanvas | fun sendCanvas(elements: List&lt;CommandManager.CanvasElement&gt;) | . | sendCanvasElements | fun sendCanvasElements(elements: List&lt;CommandManager.CanvasElement&gt;) | . | sendCanvasImage | fun sendCanvasImage(id: Int, x: Int, y: Int, width: Int, height: Int, grayscale: ByteArray) | . | removeCanvasImage | fun removeCanvasImage(id: Int) | . | clearCanvas | fun clearCanvas() | . | closeCanvas | fun closeCanvas() | . | enterNavigationPage | fun enterNavigationPage() | . | enterGlassAngleAdjustmentPage | fun enterGlassAngleAdjustmentPage() | . | enterImuDebugPage | fun enterImuDebugPage() | . | sendTeleprompterLine | fun sendTeleprompterLine(text: String, percent: Int, scrollUp: Boolean = false) | . | sendTeleprompterStatus | fun sendTeleprompterStatus(status: CommandManager.TeleprompterStatus, mode: CommandManager.TeleprompterMode) | . | sendTeleprompterTime | fun sendTeleprompterTime(time: String) | . | clearInscriptionText | fun clearInscriptionText() | . | sendEmptyScreenContent | fun sendEmptyScreenContent(content: String) | . | sendImage | fun sendImage(width: Int, height: Int, grayscale: ByteArray) | . | sendAiChatLanguage | fun sendAiChatLanguage(languageCode: String) | . | clearAiChat | fun clearAiChat() | . | clearAiChatLegacy | fun clearAiChatLegacy() | . | sendNaviStatus | fun sendNaviStatus(status: CommandManager.NaviStatus) | . | sendNaviCourse | fun sendNaviCourse(courseDegrees: Double) | . | sendNaviLanguage | fun sendNaviLanguage(languageCode: String) | . | sendNavi | fun sendNavi(maneuverIcon: CommandManager.ManeuverIcon, instructionText: String, distanceText: String, estimatedArrivalText: String, timeAndDistanceText: String, bitmapWidth: Int? = null, bitmapHeight: Int? = null, grayscale: ByteArray? = null) | . | sendNaviLargeImage | fun sendNaviLargeImage(width: Int, height: Int, grayscale: ByteArray) | . | sendAdjust | fun sendAdjust(status: CommandManager.AdjustStatus, imageType: CommandManager.AdjustImageType) | . | sendWakeupTiltThreshold | fun sendWakeupTiltThreshold(degrees: Int) | . | sendSettingPageVisibility | fun sendSettingPageVisibility(show: Boolean) | . | sendSetting | fun sendSetting(name: String, value: Int)fun sendSetting(name: String, value: Boolean)fun sendSetting(name: String, value: String)fun sendSetting(name: String, value: ByteArray) | . | requestSettingSync | fun requestSettingSync() | . | startImuData | fun startImuData() | . | stopImuData | fun stopImuData() | . | syncTime | fun syncTime() | . | syncWeather | fun syncWeather(type: CommandManager.WeatherType, value: Int) | . | requestSystemStatus | fun requestSystemStatus() | . ",
     "url": "/api/command-manager/",
     
     "relUrl": "/api/command-manager/"
-  },"272": {
+  },"269": {
     "doc": "isConnectionValid",
     "title": "GlassClient.isConnectionValid",
     "content": "このページは執筆中です。 . fun isConnectionValid(): Boolean . ",
     "url": "/api/glass-client/is-connection-valid.html#glassclientisconnectionvalid",
     
     "relUrl": "/api/glass-client/is-connection-valid.html#glassclientisconnectionvalid"
-  },"273": {
+  },"270": {
     "doc": "isConnectionValid",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-client/is-connection-valid.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-client/is-connection-valid.html#概要"
-  },"274": {
+  },"271": {
     "doc": "isConnectionValid",
     "title": "戻り値",
     "content": "Boolean . ",
     "url": "/api/glass-client/is-connection-valid.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-client/is-connection-valid.html#戻り値"
-  },"275": {
+  },"272": {
     "doc": "isConnectionValid",
     "title": "使用例",
     "content": " ",
     "url": "/api/glass-client/is-connection-valid.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-client/is-connection-valid.html#使用例"
-  },"276": {
+  },"273": {
     "doc": "isConnectionValid",
     "title": "isConnectionValid",
     "content": " ",
     "url": "/api/glass-client/is-connection-valid.html",
     
     "relUrl": "/api/glass-client/is-connection-valid.html"
-  },"277": {
+  },"274": {
     "doc": "lastConnectedDevice",
     "title": "GlassManager.lastConnectedDevice",
     "content": "このページは執筆中です。 . val lastConnectedDevice: GlassClient? . ",
     "url": "/api/glass-manager/last-connected-device.html#glassmanagerlastconnecteddevice",
     
     "relUrl": "/api/glass-manager/last-connected-device.html#glassmanagerlastconnecteddevice"
-  },"278": {
+  },"275": {
     "doc": "lastConnectedDevice",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-manager/last-connected-device.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-manager/last-connected-device.html#概要"
-  },"279": {
+  },"276": {
     "doc": "lastConnectedDevice",
     "title": "戻り値",
     "content": "GlassClient? . ",
     "url": "/api/glass-manager/last-connected-device.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-manager/last-connected-device.html#戻り値"
-  },"280": {
+  },"277": {
     "doc": "lastConnectedDevice",
     "title": "使用例",
     "content": "val last = manager.lastConnectedDevice if (last != null) { scope.launch { manager.connect(last) } } . ",
     "url": "/api/glass-manager/last-connected-device.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-manager/last-connected-device.html#使用例"
-  },"281": {
+  },"278": {
     "doc": "lastConnectedDevice",
     "title": "lastConnectedDevice",
     "content": " ",
     "url": "/api/glass-manager/last-connected-device.html",
     
     "relUrl": "/api/glass-manager/last-connected-device.html"
-  },"282": {
+  },"279": {
     "doc": "lastDeviceId",
     "title": "SdkDevicePersistence.lastDeviceId",
     "content": "このページは執筆中です。 . var lastDeviceId: String? . ",
     "url": "/api/sdk-device-persistence/last-device-id.html#sdkdevicepersistencelastdeviceid",
     
     "relUrl": "/api/sdk-device-persistence/last-device-id.html#sdkdevicepersistencelastdeviceid"
-  },"283": {
+  },"280": {
     "doc": "lastDeviceId",
     "title": "概要",
     "content": " ",
     "url": "/api/sdk-device-persistence/last-device-id.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/sdk-device-persistence/last-device-id.html#概要"
-  },"284": {
+  },"281": {
     "doc": "lastDeviceId",
     "title": "戻り値",
     "content": "String? . ",
     "url": "/api/sdk-device-persistence/last-device-id.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/sdk-device-persistence/last-device-id.html#戻り値"
-  },"285": {
+  },"282": {
     "doc": "lastDeviceId",
     "title": "使用例",
     "content": "override var lastDeviceId: String? get() = prefs.getString(\"last_device_id\", null) set(value) { prefs.edit().putString(\"last_device_id\", value).apply() } . ",
     "url": "/api/sdk-device-persistence/last-device-id.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/sdk-device-persistence/last-device-id.html#使用例"
-  },"286": {
+  },"283": {
     "doc": "lastDeviceId",
     "title": "lastDeviceId",
     "content": " ",
     "url": "/api/sdk-device-persistence/last-device-id.html",
     
     "relUrl": "/api/sdk-device-persistence/last-device-id.html"
-  },"287": {
+  },"284": {
     "doc": "分割レイアウト",
     "title": "分割レイアウト",
     "content": "画面を等分して、領域ごとにテキストを出す画面。FEATURE_VERSION 2.0.0 以上のファームが対象。 . ",
     "url": "/pages/layout.html",
     
     "relUrl": "/pages/layout.html"
-  },"288": {
+  },"285": {
     "doc": "分割レイアウト",
     "title": "開いて送る",
     "content": "sendLayout() を送るだけで画面が切り替わる。先にページを開く必要はない。モードを送ると レイアウトは作り直され、全領域のテキストが消えたうえで texts が反映される。 . // 開く操作は要らない。モードを送るとその場で切り替わる commandManager.sendLayout( mode = CommandManager.LayoutMode.QUAD, texts = mapOf(0 to \"左上\", 1 to \"右上\", 2 to \"左下\", 3 to \"右下\"), ) // 分割はそのまま、右下だけ書き換える commandManager.sendLayoutTexts(mapOf(3 to \"書き換え\")) // 空文字でその領域を消す commandManager.sendLayoutTexts(mapOf(3 to \"\")) commandManager.closeLayout() . 領域番号の意味は分割ごとに変わる。 . | mode | 領域番号 | . | FULL | 0=全画面 | . | TOP_BOTTOM | 0=上、1=下 | . | LEFT_RIGHT | 0=左、1=右 | . | QUAD | 0=左上、1=右上、2=左下、3=右下 | . 渡さなかった領域は空のまま。テキストは領域内で折り返し、あふれた分は切られる。 . ",
     "url": "/pages/layout.html#%E9%96%8B%E3%81%84%E3%81%A6%E9%80%81%E3%82%8B",
     
     "relUrl": "/pages/layout.html#開いて送る"
-  },"289": {
+  },"286": {
     "doc": "分割レイアウト",
     "title": "一部だけ書き換える",
     "content": "sendLayoutTexts() は分割を保ったまま、指定した領域のテキストだけ差し替える。空文字を 渡すとその領域が消える。レイアウトが閉じているときに呼ぶと、全画面1領域として開く。 . ",
     "url": "/pages/layout.html#%E4%B8%80%E9%83%A8%E3%81%A0%E3%81%91%E6%9B%B8%E3%81%8D%E6%8F%9B%E3%81%88%E3%82%8B",
     
     "relUrl": "/pages/layout.html#一部だけ書き換える"
-  },"290": {
+  },"287": {
     "doc": "分割レイアウト",
     "title": "やめる",
     "content": "closeLayout() で閉じ、表示していたテキストは破棄される。リモコンの戻る操作や ホームへの遷移でも閉じる。 . ",
     "url": "/pages/layout.html#%E3%82%84%E3%82%81%E3%82%8B",
     
     "relUrl": "/pages/layout.html#やめる"
-  },"291": {
+  },"288": {
     "doc": "分割レイアウト",
     "title": "制限",
     "content": "分割して送れないコマンドなので、テキストの合計は190バイト程度まで。超えた分は届かない。 それより多くの文字を出したいなら領域を分けるのではなく テレプロンプター を使う。 . ",
     "url": "/pages/layout.html#%E5%88%B6%E9%99%90",
     
     "relUrl": "/pages/layout.html#制限"
-  },"292": {
+  },"289": {
     "doc": "分割レイアウト",
     "title": "関連 API",
     "content": ". | sendLayout(mode: CommandManager.LayoutMode, texts: Map&lt;Int, String&gt;) | sendLayoutTexts(texts: Map&lt;Int, String&gt;) | closeLayout() | . ",
     "url": "/pages/layout.html#%E9%96%A2%E9%80%A3-api",
     
     "relUrl": "/pages/layout.html#関連-api"
-  },"293": {
+  },"290": {
     "doc": "micAudio",
     "title": "CommandManager.micAudio",
     "content": "val micAudio: SharedFlow&lt;ByteArray&gt; . ",
     "url": "/api/command-manager/mic-audio.html#commandmanagermicaudio",
     
     "relUrl": "/api/command-manager/mic-audio.html#commandmanagermicaudio"
-  },"294": {
+  },"291": {
     "doc": "micAudio",
     "title": "概要",
     "content": "グラスのマイク音声。PCM16 のリトルエンディアン、16kHz モノラル。startMicStreaming を呼ぶまで何も流れない。デバイスの世代で音声の形式が変わる（Ogg Opus か record stream）が、判別とデコードは SDK 側で行うため利用側は PCM だけ受け取ればよい。グラスの録音は小さいため、SDK が3倍に持ち上げてから流す。購読が遅れると古いデータから捨てるので、録音として貯めるなら受け取り側でバッファする。 . 1チャンクは 640 バイト（20ms 分）で届く。毎秒 32000 バイトに満たないときは BLE の取りこぼしを疑う。 . ",
     "url": "/api/command-manager/mic-audio.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/mic-audio.html#概要"
-  },"295": {
+  },"292": {
     "doc": "micAudio",
     "title": "音声認識に渡すとき",
     "content": "そのまま投げられる形ではないので、送り先に合わせて包み直す。 . | 送り先 | 必要な変換 | . | ファイルを受け取る文字起こし API | WAV ヘッダ（44バイト）を付けてファイルにする。サンプルレートはヘッダに書けばよく、変換は要らない | . | 24kHz を要求するリアルタイム API | 16kHz から 24kHz へリサンプルしてから送る。そのまま送ると速度とピッチがずれる | . ",
     "url": "/api/command-manager/mic-audio.html#%E9%9F%B3%E5%A3%B0%E8%AA%8D%E8%AD%98%E3%81%AB%E6%B8%A1%E3%81%99%E3%81%A8%E3%81%8D",
     
     "relUrl": "/api/command-manager/mic-audio.html#音声認識に渡すとき"
-  },"296": {
+  },"293": {
     "doc": "micAudio",
     "title": "戻り値",
     "content": "SharedFlow&lt;ByteArray&gt; . ",
     "url": "/api/command-manager/mic-audio.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/mic-audio.html#戻り値"
-  },"297": {
+  },"294": {
     "doc": "micAudio",
     "title": "使用例",
     "content": "scope.launch { commandManager.micAudio.collect { pcm -&gt; // PCM16 リトルエンディアン、16kHz モノラル Log.d(\"sample\", \"${pcm.size} bytes\") } } commandManager.startMicStreaming() . ",
     "url": "/api/command-manager/mic-audio.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/mic-audio.html#使用例"
-  },"298": {
+  },"295": {
     "doc": "micAudio",
     "title": "関連",
     "content": ". | startMicStreaming | stopMicStreaming | micStreaming | . ",
     "url": "/api/command-manager/mic-audio.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/mic-audio.html#関連"
-  },"299": {
+  },"296": {
     "doc": "micAudio",
     "title": "micAudio",
     "content": " ",
     "url": "/api/command-manager/mic-audio.html",
     
     "relUrl": "/api/command-manager/mic-audio.html"
-  },"300": {
+  },"297": {
     "doc": "micChannel",
     "title": "GlassClient.micChannel",
     "content": "このページは執筆中です。 . val micChannel: StateFlow&lt;Int?&gt; fun setMicChannel(channel: Int?) . ",
     "url": "/api/glass-client/mic-channel.html#glassclientmicchannel",
     
     "relUrl": "/api/glass-client/mic-channel.html#glassclientmicchannel"
-  },"301": {
+  },"298": {
     "doc": "micChannel",
     "title": "概要",
     "content": "getter と setter で型が揃っていないため、Kotlin からは読みが val、書きが setMicChannel() に見える。 . ",
     "url": "/api/glass-client/mic-channel.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-client/mic-channel.html#概要"
-  },"302": {
+  },"299": {
     "doc": "micChannel",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | channel | Int? | | . ",
     "url": "/api/glass-client/mic-channel.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/glass-client/mic-channel.html#引数"
-  },"303": {
+  },"300": {
     "doc": "micChannel",
     "title": "戻り値",
     "content": "StateFlow&lt;Int?&gt; . ",
     "url": "/api/glass-client/mic-channel.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-client/mic-channel.html#戻り値"
-  },"304": {
+  },"301": {
     "doc": "micChannel",
     "title": "使用例",
     "content": " ",
     "url": "/api/glass-client/mic-channel.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-client/mic-channel.html#使用例"
-  },"305": {
+  },"302": {
     "doc": "micChannel",
     "title": "micChannel",
     "content": " ",
     "url": "/api/glass-client/mic-channel.html",
     
     "relUrl": "/api/glass-client/mic-channel.html"
-  },"306": {
+  },"303": {
     "doc": "micStreaming",
     "title": "CommandManager.micStreaming",
     "content": "val micStreaming: StateFlow&lt;Boolean&gt; . ",
     "url": "/api/command-manager/mic-streaming.html#commandmanagermicstreaming",
     
     "relUrl": "/api/command-manager/mic-streaming.html#commandmanagermicstreaming"
-  },"307": {
+  },"304": {
     "doc": "micStreaming",
     "title": "概要",
     "content": "マイクが流れている間 true。 . ",
     "url": "/api/command-manager/mic-streaming.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/mic-streaming.html#概要"
-  },"308": {
+  },"305": {
     "doc": "micStreaming",
     "title": "戻り値",
     "content": "StateFlow&lt;Boolean&gt; . ",
     "url": "/api/command-manager/mic-streaming.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/mic-streaming.html#戻り値"
-  },"309": {
+  },"306": {
     "doc": "micStreaming",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/mic-streaming.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/mic-streaming.html#使用例"
-  },"310": {
+  },"307": {
     "doc": "micStreaming",
     "title": "関連",
     "content": ". | startMicStreaming | . ",
     "url": "/api/command-manager/mic-streaming.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/mic-streaming.html#関連"
-  },"311": {
+  },"308": {
     "doc": "micStreaming",
     "title": "micStreaming",
     "content": " ",
     "url": "/api/command-manager/mic-streaming.html",
     
     "relUrl": "/api/command-manager/mic-streaming.html"
-  },"312": {
+  },"309": {
     "doc": "ナビ",
     "title": "ナビ",
     "content": "次の曲がり角・距離・到着時刻と地図を出す画面。経路の計算はアプリ側で行い、表示内容だけを送る。 . ",
     "url": "/pages/navigation.html",
     
     "relUrl": "/pages/navigation.html"
-  },"313": {
+  },"310": {
     "doc": "ナビ",
     "title": "開いて送る",
     "content": "enterNavigationPage() で開き、sendNaviLanguage() で言語を決め、sendNaviStatus() で 状態を送ってから sendNavi() で案内を送る。 . commandManager.enterNavigationPage() commandManager.sendNaviLanguage(\"JPN\") commandManager.sendNaviStatus(CommandManager.NaviStatus.START) commandManager.sendNavi( maneuverIcon = CommandManager.ManeuverIcon.TURN_LEFT, instructionText = \"交差点を左折\", distanceText = \"300m\", estimatedArrivalText = \"12:34\", timeAndDistanceText = \"10分 / 1.2km\", bitmapWidth = 128, bitmapHeight = 128, grayscale = map, ) // 方位のドリフト補正。案内中は数秒おきに送る commandManager.sendNaviCourse(courseDegrees) // 着いたら到着画面に切り替える commandManager.sendNaviStatus(CommandManager.NaviStatus.ARRIVED) . | status | 画面 | . | READY | 案内前の待機 | . | START | 案内中。sendNavi() の内容が出るのはこの状態のときだけ | . | ARRIVED | 到着 | . sendNavi() の地図は省略できる。渡すときは bitmapWidth と bitmapHeight も必須で、 どちらも255まで。全体ルートのように大きい画像は sendNaviLargeImage() で送る。こちらは キャンバスの画像とグラス側のバッファを共有している。 . 言語コードは \"JPN\" / \"ENG\" などの3文字。到着時刻ラベルの切り替えに使われ、画面遷移や 表示状態には影響しない。 . ",
     "url": "/pages/navigation.html#%E9%96%8B%E3%81%84%E3%81%A6%E9%80%81%E3%82%8B",
     
     "relUrl": "/pages/navigation.html#開いて送る"
-  },"314": {
+  },"311": {
     "doc": "ナビ",
     "title": "方位を送り続ける",
     "content": "グラスは磁力計を持たず、方位を単体で保てない。案内中は数秒おきに sendNaviCourse() で 端末の GPS 進行方向を送り、ジャイロのドリフトを補正する。北を0とした時計回りの度数で、 0以上360未満。 . ",
     "url": "/pages/navigation.html#%E6%96%B9%E4%BD%8D%E3%82%92%E9%80%81%E3%82%8A%E7%B6%9A%E3%81%91%E3%82%8B",
     
     "relUrl": "/pages/navigation.html#方位を送り続ける"
-  },"315": {
+  },"312": {
     "doc": "ナビ",
     "title": "やめる",
     "content": "enterHomePage() で閉じる。 . ",
     "url": "/pages/navigation.html#%E3%82%84%E3%82%81%E3%82%8B",
     
     "relUrl": "/pages/navigation.html#やめる"
-  },"316": {
+  },"313": {
     "doc": "ナビ",
     "title": "関連 API",
     "content": ". | enterNavigationPage() | sendNaviLanguage(languageCode: String) | sendNaviStatus(status: CommandManager.NaviStatus) | sendNavi(maneuverIcon: CommandManager.ManeuverIcon, instructionText: String, distanceText: String, estimatedArrivalText: String, timeAndDistanceText: String, bitmapWidth: Int?, bitmapHeight: Int?, grayscale: ByteArray?) | sendNaviLargeImage(width: Int, height: Int, grayscale: ByteArray) | sendNaviCourse(courseDegrees: Double) | . ",
     "url": "/pages/navigation.html#%E9%96%A2%E9%80%A3-api",
     
     "relUrl": "/pages/navigation.html#関連-api"
-  },"317": {
+  },"314": {
     "doc": "BleDeviceSelector.onActivityResult",
     "title": "BleDeviceSelector.onActivityResult",
     "content": "このページは執筆中です。 . fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?, scope: CoroutineScope): Boolean . ",
     "url": "/api/ble/on-activity-result.html",
     
     "relUrl": "/api/ble/on-activity-result.html"
-  },"318": {
+  },"315": {
     "doc": "BleDeviceSelector.onActivityResult",
     "title": "概要",
     "content": " ",
     "url": "/api/ble/on-activity-result.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/ble/on-activity-result.html#概要"
-  },"319": {
+  },"316": {
     "doc": "BleDeviceSelector.onActivityResult",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | requestCode | Int | | . | resultCode | Int | | . | data | Intent? | | . | scope | CoroutineScope | | . ",
     "url": "/api/ble/on-activity-result.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/ble/on-activity-result.html#引数"
-  },"320": {
+  },"317": {
     "doc": "BleDeviceSelector.onActivityResult",
     "title": "戻り値",
     "content": "Boolean . ",
     "url": "/api/ble/on-activity-result.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/ble/on-activity-result.html#戻り値"
-  },"321": {
+  },"318": {
     "doc": "BleDeviceSelector.onActivityResult",
     "title": "使用例",
     "content": "if (selector.onActivityResult(requestCode, resultCode, data, scope)) { // SDK が処理した。Activity 側の処理は不要 return true } . ",
     "url": "/api/ble/on-activity-result.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/ble/on-activity-result.html#使用例"
-  },"322": {
+  },"319": {
     "doc": "BleDeviceSelector.onActivityResult",
     "title": "関連",
     "content": ". | BleDeviceSelector.showDialog | . ",
     "url": "/api/ble/on-activity-result.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/ble/on-activity-result.html#関連"
-  },"323": {
+  },"320": {
     "doc": "onDeviceDisappear",
     "title": "GlassManager.onDeviceDisappear",
     "content": "このページは執筆中です。 . fun onDeviceDisappear(address: String) . ",
     "url": "/api/glass-manager/on-device-disappear.html#glassmanagerondevicedisappear",
     
     "relUrl": "/api/glass-manager/on-device-disappear.html#glassmanagerondevicedisappear"
-  },"324": {
+  },"321": {
     "doc": "onDeviceDisappear",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-manager/on-device-disappear.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-manager/on-device-disappear.html#概要"
-  },"325": {
+  },"322": {
     "doc": "onDeviceDisappear",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | address | String | | . ",
     "url": "/api/glass-manager/on-device-disappear.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/glass-manager/on-device-disappear.html#引数"
-  },"326": {
+  },"323": {
     "doc": "onDeviceDisappear",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/glass-manager/on-device-disappear.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-manager/on-device-disappear.html#戻り値"
-  },"327": {
+  },"324": {
     "doc": "onDeviceDisappear",
     "title": "使用例",
     "content": "manager.onDeviceDisappear(deviceId) . ",
     "url": "/api/glass-manager/on-device-disappear.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-manager/on-device-disappear.html#使用例"
-  },"328": {
+  },"325": {
     "doc": "onDeviceDisappear",
     "title": "onDeviceDisappear",
     "content": " ",
     "url": "/api/glass-manager/on-device-disappear.html",
     
     "relUrl": "/api/glass-manager/on-device-disappear.html"
-  },"329": {
+  },"326": {
     "doc": "openGlassMic",
     "title": "CommandManager.openGlassMic",
     "content": "fun openGlassMic() . ",
     "url": "/api/command-manager/open-glass-mic.html#commandmanageropenglassmic",
     
     "relUrl": "/api/command-manager/open-glass-mic.html#commandmanageropenglassmic"
-  },"330": {
+  },"327": {
     "doc": "openGlassMic",
     "title": "概要",
     "content": "グラスのマイクを開く。開いている間、音声は GlassClient.addAudioDataEventListener に届く。マイクのチャンネルは接続中のデバイスに合わせて SDK 側で決まる。 . ",
     "url": "/api/command-manager/open-glass-mic.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/open-glass-mic.html#概要"
-  },"331": {
+  },"328": {
     "doc": "openGlassMic",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/open-glass-mic.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/open-glass-mic.html#戻り値"
-  },"332": {
+  },"329": {
     "doc": "openGlassMic",
     "title": "使用例",
     "content": "commandManager.openGlassMic() // … 録音が終わったら閉じる commandManager.closeGlassMic() . ",
     "url": "/api/command-manager/open-glass-mic.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/open-glass-mic.html#使用例"
-  },"333": {
+  },"330": {
     "doc": "openGlassMic",
     "title": "関連",
     "content": ". | closeGlassMic | . ",
     "url": "/api/command-manager/open-glass-mic.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/open-glass-mic.html#関連"
-  },"334": {
+  },"331": {
     "doc": "openGlassMic",
     "title": "openGlassMic",
     "content": " ",
     "url": "/api/command-manager/open-glass-mic.html",
     
     "relUrl": "/api/command-manager/open-glass-mic.html"
-  },"335": {
+  },"332": {
     "doc": "parseResponse",
     "title": "CommandManager.parseResponse",
     "content": "fun parseResponse(value: ByteArray) . ",
     "url": "/api/command-manager/parse-response.html#commandmanagerparseresponse",
     
     "relUrl": "/api/command-manager/parse-response.html#commandmanagerparseresponse"
-  },"336": {
+  },"333": {
     "doc": "parseResponse",
     "title": "概要",
     "content": "グラスから届いたパケットを解析する。requestSystemStatus や requestSettingSync の応答を自前で受けるときに使う。ジェスチャーや6DoFのように専用の Flow があるものは、そちらを購読すればよい。 . ",
     "url": "/api/command-manager/parse-response.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/parse-response.html#概要"
-  },"337": {
+  },"334": {
     "doc": "parseResponse",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | value | ByteArray | グラスから届いたパケット | . ",
     "url": "/api/command-manager/parse-response.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/parse-response.html#引数"
-  },"338": {
+  },"335": {
     "doc": "parseResponse",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/parse-response.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/parse-response.html#戻り値"
-  },"339": {
+  },"336": {
     "doc": "parseResponse",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/parse-response.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/parse-response.html#使用例"
-  },"340": {
+  },"337": {
     "doc": "parseResponse",
     "title": "関連",
     "content": ". | requestSystemStatus | requestSettingSync | . ",
     "url": "/api/command-manager/parse-response.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/parse-response.html#関連"
-  },"341": {
+  },"338": {
     "doc": "parseResponse",
     "title": "parseResponse",
     "content": " ",
     "url": "/api/command-manager/parse-response.html",
     
     "relUrl": "/api/command-manager/parse-response.html"
-  },"342": {
+  },"339": {
     "doc": "reboot",
     "title": "GlassClient.reboot",
     "content": "このページは執筆中です。 . suspend fun reboot() . ",
     "url": "/api/glass-client/reboot.html#glassclientreboot",
     
     "relUrl": "/api/glass-client/reboot.html#glassclientreboot"
-  },"343": {
+  },"340": {
     "doc": "reboot",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-client/reboot.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-client/reboot.html#概要"
-  },"344": {
+  },"341": {
     "doc": "reboot",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/glass-client/reboot.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-client/reboot.html#戻り値"
-  },"345": {
+  },"342": {
     "doc": "reboot",
     "title": "使用例",
     "content": "client.reboot() . ",
     "url": "/api/glass-client/reboot.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-client/reboot.html#使用例"
-  },"346": {
+  },"343": {
     "doc": "reboot",
     "title": "reboot",
     "content": " ",
     "url": "/api/glass-client/reboot.html",
     
     "relUrl": "/api/glass-client/reboot.html"
-  },"347": {
+  },"344": {
     "doc": "registerDeviceFromIntent",
     "title": "GlassManager.registerDeviceFromIntent",
     "content": "このページは執筆中です。 . fun registerDeviceFromIntent(data: Intent) . ",
     "url": "/api/glass-manager/register-device-from-intent.html#glassmanagerregisterdevicefromintent",
     
     "relUrl": "/api/glass-manager/register-device-from-intent.html#glassmanagerregisterdevicefromintent"
-  },"348": {
+  },"345": {
     "doc": "registerDeviceFromIntent",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-manager/register-device-from-intent.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-manager/register-device-from-intent.html#概要"
-  },"349": {
+  },"346": {
     "doc": "registerDeviceFromIntent",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | data | Intent | | . ",
     "url": "/api/glass-manager/register-device-from-intent.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/glass-manager/register-device-from-intent.html#引数"
-  },"350": {
+  },"347": {
     "doc": "registerDeviceFromIntent",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/glass-manager/register-device-from-intent.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-manager/register-device-from-intent.html#戻り値"
-  },"351": {
+  },"348": {
     "doc": "registerDeviceFromIntent",
     "title": "使用例",
     "content": "manager.registerDeviceFromIntent(intent) . ",
     "url": "/api/glass-manager/register-device-from-intent.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-manager/register-device-from-intent.html#使用例"
-  },"352": {
+  },"349": {
     "doc": "registerDeviceFromIntent",
     "title": "registerDeviceFromIntent",
     "content": " ",
     "url": "/api/glass-manager/register-device-from-intent.html",
     
     "relUrl": "/api/glass-manager/register-device-from-intent.html"
-  },"353": {
+  },"350": {
     "doc": "removeCanvasImage",
     "title": "CommandManager.removeCanvasImage",
     "content": "fun removeCanvasImage(id: Int) . ",
     "url": "/api/command-manager/remove-canvas-image.html#commandmanagerremovecanvasimage",
     
     "relUrl": "/api/command-manager/remove-canvas-image.html#commandmanagerremovecanvasimage"
-  },"354": {
+  },"351": {
     "doc": "removeCanvasImage",
     "title": "概要",
     "content": "置いた画像を消す。テキスト要素と他の id の画像は残る。 . ",
     "url": "/api/command-manager/remove-canvas-image.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/remove-canvas-image.html#概要"
-  },"355": {
+  },"352": {
     "doc": "removeCanvasImage",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | id | Int | 消す画像の識別子 | . ",
     "url": "/api/command-manager/remove-canvas-image.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/remove-canvas-image.html#引数"
-  },"356": {
+  },"353": {
     "doc": "removeCanvasImage",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/remove-canvas-image.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/remove-canvas-image.html#戻り値"
-  },"357": {
+  },"354": {
     "doc": "removeCanvasImage",
     "title": "使用例",
     "content": "// テキスト要素と他の id の画像は残る commandManager.removeCanvasImage(id = 1) . ",
     "url": "/api/command-manager/remove-canvas-image.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/remove-canvas-image.html#使用例"
-  },"358": {
+  },"355": {
     "doc": "removeCanvasImage",
     "title": "関連",
     "content": ". | sendCanvasImage | clearCanvas | . ",
     "url": "/api/command-manager/remove-canvas-image.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/remove-canvas-image.html#関連"
-  },"359": {
+  },"356": {
     "doc": "removeCanvasImage",
     "title": "removeCanvasImage",
     "content": " ",
     "url": "/api/command-manager/remove-canvas-image.html",
     
     "relUrl": "/api/command-manager/remove-canvas-image.html"
-  },"360": {
+  },"357": {
     "doc": "requestSettingSync",
     "title": "CommandManager.requestSettingSync",
     "content": "fun requestSettingSync() . ",
     "url": "/api/command-manager/request-setting-sync.html#commandmanagerrequestsettingsync",
     
     "relUrl": "/api/command-manager/request-setting-sync.html#commandmanagerrequestsettingsync"
-  },"361": {
+  },"358": {
     "doc": "requestSettingSync",
     "title": "概要",
     "content": "全設定値の送信をグラスに要求する。応答は parseResponse で受ける。 . ",
     "url": "/api/command-manager/request-setting-sync.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/request-setting-sync.html#概要"
-  },"362": {
+  },"359": {
     "doc": "requestSettingSync",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/request-setting-sync.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/request-setting-sync.html#戻り値"
-  },"363": {
+  },"360": {
     "doc": "requestSettingSync",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/request-setting-sync.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/request-setting-sync.html#使用例"
-  },"364": {
+  },"361": {
     "doc": "requestSettingSync",
     "title": "関連",
     "content": ". | sendSetting | parseResponse | . ",
     "url": "/api/command-manager/request-setting-sync.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/request-setting-sync.html#関連"
-  },"365": {
+  },"362": {
     "doc": "requestSettingSync",
     "title": "requestSettingSync",
     "content": " ",
     "url": "/api/command-manager/request-setting-sync.html",
     
     "relUrl": "/api/command-manager/request-setting-sync.html"
-  },"366": {
+  },"363": {
     "doc": "requestSystemStatus",
     "title": "CommandManager.requestSystemStatus",
     "content": "fun requestSystemStatus() . ",
     "url": "/api/command-manager/request-system-status.html#commandmanagerrequestsystemstatus",
     
     "relUrl": "/api/command-manager/request-system-status.html#commandmanagerrequestsystemstatus"
-  },"367": {
+  },"364": {
     "doc": "requestSystemStatus",
     "title": "概要",
     "content": "バッテリー残量・装着状態・充電状態の通知をグラスに要求する。応答は parseResponse で受ける。 . ",
     "url": "/api/command-manager/request-system-status.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/request-system-status.html#概要"
-  },"368": {
+  },"365": {
     "doc": "requestSystemStatus",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/request-system-status.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/request-system-status.html#戻り値"
-  },"369": {
+  },"366": {
     "doc": "requestSystemStatus",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/request-system-status.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/request-system-status.html#使用例"
-  },"370": {
+  },"367": {
     "doc": "requestSystemStatus",
     "title": "関連",
     "content": ". | parseResponse | . ",
     "url": "/api/command-manager/request-system-status.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/request-system-status.html#関連"
-  },"371": {
+  },"368": {
     "doc": "requestSystemStatus",
     "title": "requestSystemStatus",
     "content": " ",
     "url": "/api/command-manager/request-system-status.html",
     
     "relUrl": "/api/command-manager/request-system-status.html"
-  },"372": {
+  },"369": {
     "doc": "selectionDialogPresented",
     "title": "GlassManager.selectionDialogPresented",
     "content": "このページは執筆中です。 . val selectionDialogPresented: SharedFlow&lt;Unit&gt; . ",
     "url": "/api/glass-manager/selection-dialog-presented.html#glassmanagerselectiondialogpresented",
     
     "relUrl": "/api/glass-manager/selection-dialog-presented.html#glassmanagerselectiondialogpresented"
-  },"373": {
+  },"370": {
     "doc": "selectionDialogPresented",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-manager/selection-dialog-presented.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-manager/selection-dialog-presented.html#概要"
-  },"374": {
+  },"371": {
     "doc": "selectionDialogPresented",
     "title": "戻り値",
     "content": "SharedFlow&lt;Unit&gt; . ",
     "url": "/api/glass-manager/selection-dialog-presented.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-manager/selection-dialog-presented.html#戻り値"
-  },"375": {
+  },"372": {
     "doc": "selectionDialogPresented",
     "title": "使用例",
     "content": "scope.launch { manager.selectionDialogPresented.collect { // OS のデバイス選択ダイアログが表示された } } . ",
     "url": "/api/glass-manager/selection-dialog-presented.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-manager/selection-dialog-presented.html#使用例"
-  },"376": {
+  },"373": {
     "doc": "selectionDialogPresented",
     "title": "selectionDialogPresented",
     "content": " ",
     "url": "/api/glass-manager/selection-dialog-presented.html",
     
     "relUrl": "/api/glass-manager/selection-dialog-presented.html"
-  },"377": {
+  },"374": {
     "doc": "sendAdjust",
     "title": "CommandManager.sendAdjust",
     "content": "fun sendAdjust( status: CommandManager.AdjustStatus, imageType: CommandManager.AdjustImageType, ) . ",
     "url": "/api/command-manager/send-adjust.html#commandmanagersendadjust",
     
     "relUrl": "/api/command-manager/send-adjust.html#commandmanagersendadjust"
-  },"378": {
+  },"375": {
     "doc": "sendAdjust",
     "title": "概要",
     "content": "画面位置調整用の画像の表示を制御する。 . ",
     "url": "/api/command-manager/send-adjust.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-adjust.html#概要"
-  },"379": {
+  },"376": {
     "doc": "sendAdjust",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | status | CommandManager.AdjustStatus | SHOW / CLOSE | . | imageType | CommandManager.AdjustImageType | HOME / NAVIGATE / TELEPROMPT | . ",
     "url": "/api/command-manager/send-adjust.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-adjust.html#引数"
-  },"380": {
+  },"377": {
     "doc": "sendAdjust",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-adjust.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-adjust.html#戻り値"
-  },"381": {
+  },"378": {
     "doc": "sendAdjust",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-adjust.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-adjust.html#使用例"
-  },"382": {
+  },"379": {
     "doc": "sendAdjust",
     "title": "sendAdjust",
     "content": " ",
     "url": "/api/command-manager/send-adjust.html",
     
     "relUrl": "/api/command-manager/send-adjust.html"
-  },"383": {
+  },"380": {
     "doc": "sendAiChatLanguage",
     "title": "CommandManager.sendAiChatLanguage",
     "content": "fun sendAiChatLanguage(languageCode: String) . ",
     "url": "/api/command-manager/send-ai-chat-language.html#commandmanagersendaichatlanguage",
     
     "relUrl": "/api/command-manager/send-ai-chat-language.html#commandmanagersendaichatlanguage"
-  },"384": {
+  },"381": {
     "doc": "sendAiChatLanguage",
     "title": "概要",
     "content": "AI チャットの表示言語を通知する。グラス側の本文フォントの選択に使われ、画面遷移は起こさない。フォントを先に確定させるため enterAiChatPage の前に送る。 . ",
     "url": "/api/command-manager/send-ai-chat-language.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-ai-chat-language.html#概要"
-  },"385": {
+  },"382": {
     "doc": "sendAiChatLanguage",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | languageCode | String | \"JPN\" / \"ENG\" / \"CHS\" / \"CHT\" 等の3文字 | . ",
     "url": "/api/command-manager/send-ai-chat-language.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-ai-chat-language.html#引数"
-  },"386": {
+  },"383": {
     "doc": "sendAiChatLanguage",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-ai-chat-language.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-ai-chat-language.html#戻り値"
-  },"387": {
+  },"384": {
     "doc": "sendAiChatLanguage",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-ai-chat-language.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-ai-chat-language.html#使用例"
-  },"388": {
+  },"385": {
     "doc": "sendAiChatLanguage",
     "title": "関連",
     "content": ". | enterAiChatPage | . ",
     "url": "/api/command-manager/send-ai-chat-language.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-ai-chat-language.html#関連"
-  },"389": {
+  },"386": {
     "doc": "sendAiChatLanguage",
     "title": "sendAiChatLanguage",
     "content": " ",
     "url": "/api/command-manager/send-ai-chat-language.html",
     
     "relUrl": "/api/command-manager/send-ai-chat-language.html"
-  },"390": {
+  },"387": {
     "doc": "sendAiChatSenderStatus",
     "title": "CommandManager.sendAiChatSenderStatus",
     "content": "fun sendAiChatSenderStatus( sender: CommandManager.AiChatSender, status: CommandManager.AiChatStatus, model: CommandManager.AiChatModel? = null, ) . ",
     "url": "/api/command-manager/send-ai-chat-sender-status.html#commandmanagersendaichatsenderstatus",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-status.html#commandmanagersendaichatsenderstatus"
-  },"391": {
+  },"388": {
     "doc": "sendAiChatSenderStatus",
     "title": "概要",
     "content": "吹き出しの主体と生成状態をまとめて送る。回答を流し始める前に AI と GENERATING を送る。 . ",
     "url": "/api/command-manager/send-ai-chat-sender-status.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-status.html#概要"
-  },"392": {
+  },"389": {
     "doc": "sendAiChatSenderStatus",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | sender | CommandManager.AiChatSender | 吹き出しの主体 | . | status | CommandManager.AiChatStatus | 生成中か完了か | . | model | CommandManager.AiChatModel? | AI のときに表示する生成モデル | . ",
     "url": "/api/command-manager/send-ai-chat-sender-status.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-status.html#引数"
-  },"393": {
+  },"390": {
     "doc": "sendAiChatSenderStatus",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-ai-chat-sender-status.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-status.html#戻り値"
-  },"394": {
+  },"391": {
     "doc": "sendAiChatSenderStatus",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-ai-chat-sender-status.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-status.html#使用例"
-  },"395": {
+  },"392": {
     "doc": "sendAiChatSenderStatus",
     "title": "関連",
     "content": ". | sendAiChatText | . ",
     "url": "/api/command-manager/send-ai-chat-sender-status.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-status.html#関連"
-  },"396": {
+  },"393": {
     "doc": "sendAiChatSenderStatus",
     "title": "sendAiChatSenderStatus",
     "content": " ",
     "url": "/api/command-manager/send-ai-chat-sender-status.html",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-status.html"
-  },"397": {
+  },"394": {
     "doc": "sendAiChatSenderText",
     "title": "CommandManager.sendAiChatSenderText",
     "content": "fun sendAiChatSenderText( sender: CommandManager.AiChatSender, text: String, model: CommandManager.AiChatModel? = null, ) . ",
     "url": "/api/command-manager/send-ai-chat-sender-text.html#commandmanagersendaichatsendertext",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-text.html#commandmanagersendaichatsendertext"
-  },"398": {
+  },"395": {
     "doc": "sendAiChatSenderText",
     "title": "概要",
     "content": "吹き出しの主体と本文をまとめて送る。質問は USER、回答は AI で送る。1パケットに収まらない長文は sendAiChatText で続きを流す。 . ",
     "url": "/api/command-manager/send-ai-chat-sender-text.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-text.html#概要"
-  },"399": {
+  },"396": {
     "doc": "sendAiChatSenderText",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | sender | CommandManager.AiChatSender | 吹き出しの主体 | . | text | String | 表示する本文 | . | model | CommandManager.AiChatModel? | AI のときに表示する生成モデル | . ",
     "url": "/api/command-manager/send-ai-chat-sender-text.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-text.html#引数"
-  },"400": {
+  },"397": {
     "doc": "sendAiChatSenderText",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-ai-chat-sender-text.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-text.html#戻り値"
-  },"401": {
+  },"398": {
     "doc": "sendAiChatSenderText",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-ai-chat-sender-text.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-text.html#使用例"
-  },"402": {
+  },"399": {
     "doc": "sendAiChatSenderText",
     "title": "関連",
     "content": ". | sendAiChatText | . ",
     "url": "/api/command-manager/send-ai-chat-sender-text.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-text.html#関連"
-  },"403": {
+  },"400": {
     "doc": "sendAiChatSenderText",
     "title": "sendAiChatSenderText",
     "content": " ",
     "url": "/api/command-manager/send-ai-chat-sender-text.html",
     
     "relUrl": "/api/command-manager/send-ai-chat-sender-text.html"
-  },"404": {
+  },"401": {
     "doc": "sendAiChatStatus",
     "title": "CommandManager.sendAiChatStatus",
     "content": "fun sendAiChatStatus(status: CommandManager.AiChatStatus) . ",
     "url": "/api/command-manager/send-ai-chat-status.html#commandmanagersendaichatstatus",
     
     "relUrl": "/api/command-manager/send-ai-chat-status.html#commandmanagersendaichatstatus"
-  },"405": {
+  },"402": {
     "doc": "sendAiChatStatus",
     "title": "概要",
     "content": "AI 応答の生成状態を送る。COMPLETE を送るまでグラスは生成中の表示を続ける。 . ",
     "url": "/api/command-manager/send-ai-chat-status.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-ai-chat-status.html#概要"
-  },"406": {
+  },"403": {
     "doc": "sendAiChatStatus",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | status | CommandManager.AiChatStatus | GENERATING か COMPLETE | . ",
     "url": "/api/command-manager/send-ai-chat-status.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-ai-chat-status.html#引数"
-  },"407": {
+  },"404": {
     "doc": "sendAiChatStatus",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-ai-chat-status.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-ai-chat-status.html#戻り値"
-  },"408": {
+  },"405": {
     "doc": "sendAiChatStatus",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-ai-chat-status.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-ai-chat-status.html#使用例"
-  },"409": {
+  },"406": {
     "doc": "sendAiChatStatus",
     "title": "関連",
     "content": ". | sendAiChatSenderStatus | . ",
     "url": "/api/command-manager/send-ai-chat-status.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-ai-chat-status.html#関連"
-  },"410": {
+  },"407": {
     "doc": "sendAiChatStatus",
     "title": "sendAiChatStatus",
     "content": " ",
     "url": "/api/command-manager/send-ai-chat-status.html",
     
     "relUrl": "/api/command-manager/send-ai-chat-status.html"
-  },"411": {
+  },"408": {
     "doc": "sendAiChatText",
     "title": "CommandManager.sendAiChatText",
     "content": "fun sendAiChatText(text: String) . ",
     "url": "/api/command-manager/send-ai-chat-text.html#commandmanagersendaichattext",
     
     "relUrl": "/api/command-manager/send-ai-chat-text.html#commandmanagersendaichattext"
-  },"412": {
+  },"409": {
     "doc": "sendAiChatText",
     "title": "概要",
     "content": "AI アシスタントページに本文だけを送る。どちらの吹き出しに出すかも指定できる sendAiChatSenderText の方が確実。 . ",
     "url": "/api/command-manager/send-ai-chat-text.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-ai-chat-text.html#概要"
-  },"413": {
+  },"410": {
     "doc": "sendAiChatText",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | text | String | 表示する本文 | . ",
     "url": "/api/command-manager/send-ai-chat-text.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-ai-chat-text.html#引数"
-  },"414": {
+  },"411": {
     "doc": "sendAiChatText",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-ai-chat-text.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-ai-chat-text.html#戻り値"
-  },"415": {
+  },"412": {
     "doc": "sendAiChatText",
     "title": "使用例",
     "content": "commandManager.enterAiChatPage() commandManager.sendAiChatText(\"今日の天気は？\") . ",
     "url": "/api/command-manager/send-ai-chat-text.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-ai-chat-text.html#使用例"
-  },"416": {
+  },"413": {
     "doc": "sendAiChatText",
     "title": "関連",
     "content": ". | enterAiChatPage | sendAiChatSenderText | . ",
     "url": "/api/command-manager/send-ai-chat-text.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-ai-chat-text.html#関連"
-  },"417": {
+  },"414": {
     "doc": "sendAiChatText",
     "title": "sendAiChatText",
     "content": " ",
     "url": "/api/command-manager/send-ai-chat-text.html",
     
     "relUrl": "/api/command-manager/send-ai-chat-text.html"
-  },"418": {
+  },"415": {
     "doc": "sendCanvasElements",
     "title": "CommandManager.sendCanvasElements",
     "content": "fun sendCanvasElements(elements: List&lt;CommandManager.CanvasElement&gt;) . ",
     "url": "/api/command-manager/send-canvas-elements.html#commandmanagersendcanvaselements",
     
     "relUrl": "/api/command-manager/send-canvas-elements.html#commandmanagersendcanvaselements"
-  },"419": {
+  },"416": {
     "doc": "sendCanvasElements",
     "title": "概要",
     "content": "今ある要素を残したまま、渡した要素だけ置き直す。既にある id に送ると座標とサイズごと差し替わる。キャンバスが閉じているときは新しく開く。 . ",
     "url": "/api/command-manager/send-canvas-elements.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-canvas-elements.html#概要"
-  },"420": {
+  },"417": {
     "doc": "sendCanvasElements",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | elements | List&lt;CommandManager.CanvasElement&gt; | 配置する要素。テキストが空の要素はその id を消す | . ",
     "url": "/api/command-manager/send-canvas-elements.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-canvas-elements.html#引数"
-  },"421": {
+  },"418": {
     "doc": "sendCanvasElements",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-canvas-elements.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-canvas-elements.html#戻り値"
-  },"422": {
+  },"419": {
     "doc": "sendCanvasElements",
     "title": "使用例",
     "content": "// 他の要素は残したまま id 1 だけ差し替える。テキストを空にすると消える commandManager.sendCanvasElements( listOf( CommandManager.CanvasElement(id = 1, x = 16, y = 300, width = 240, height = 40, text = \"書き換え\"), ), ) . ",
     "url": "/api/command-manager/send-canvas-elements.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-canvas-elements.html#使用例"
-  },"423": {
+  },"420": {
     "doc": "sendCanvasElements",
     "title": "関連",
     "content": ". | sendCanvas | clearCanvas | closeCanvas | . ",
     "url": "/api/command-manager/send-canvas-elements.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-canvas-elements.html#関連"
-  },"424": {
+  },"421": {
     "doc": "sendCanvasElements",
     "title": "sendCanvasElements",
     "content": " ",
     "url": "/api/command-manager/send-canvas-elements.html",
     
     "relUrl": "/api/command-manager/send-canvas-elements.html"
-  },"425": {
+  },"422": {
     "doc": "sendCanvasImage",
     "title": "CommandManager.sendCanvasImage",
     "content": "fun sendCanvasImage(id: Int, x: Int, y: Int, width: Int, height: Int, grayscale: ByteArray) . ",
     "url": "/api/command-manager/send-canvas-image.html#commandmanagersendcanvasimage",
     
     "relUrl": "/api/command-manager/send-canvas-image.html#commandmanagersendcanvasimage"
-  },"426": {
+  },"423": {
     "doc": "sendCanvasImage",
     "title": "概要",
     "content": "キャンバスに画像を置く。送るだけで画面が切り替わるので、先にページを開く必要はない。今ある要素は残したまま、同じ id の画像だけ差し替わる。渡すのはリサイズ済みのグレースケールで、左上から行優先の並び。輝度は 0-255 のまま渡してよく、3bit(0-7)への量子化とRLE圧縮はSDK内で行う。画像は id ごとに8枚まで置けるが、グラスのバッファは全画像で共有していて、置いてある画像の width * height * 2 の合計に受信中の圧縮データを足した値が380,000バイトを超えると受け取れない。192角なら5枚が目安。画像はテキスト要素の背面に描かれる。ナビの全体ルート画像とバッファを共有しているため、ナビ表示中は使えない。数百バイトずつに分けて送るので、大きい画像ほど表示まで時間がかかる。転送しきる前に別の id を送るとファームは受信中の画像を捨てるが、SDK が分割送信を直列化するので続けて呼んでも順番に送られる。FEATURE_VERSION 2.2.0 以上のファームが対象。 . ",
     "url": "/api/command-manager/send-canvas-image.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-canvas-image.html#概要"
-  },"427": {
+  },"424": {
     "doc": "sendCanvasImage",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | id | Int | 画像の識別子。0..7 の8枚まで。同じ id に送ると座標ごと差し替わる | . | x | Int | 画像の左上のx座標。x + width は 576 まで | . | y | Int | 画像の左上のy座標。y + height は 360 まで | . | width | Int | 画像の幅 | . | height | Int | 画像の高さ | . | grayscale | ByteArray | 1画素1バイトのグレースケール。長さは width * height 以上 | . ",
     "url": "/api/command-manager/send-canvas-image.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-canvas-image.html#引数"
-  },"428": {
+  },"425": {
     "doc": "sendCanvasImage",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-canvas-image.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-canvas-image.html#戻り値"
-  },"429": {
+  },"426": {
     "doc": "sendCanvasImage",
     "title": "使用例",
     "content": "// grayscale は1画素1バイト・左上から行優先。3bitへの量子化とRLE圧縮はSDKが行う commandManager.sendCanvasImage(id = 0, x = 16, y = 84, width = 192, height = 192, grayscale = left) // 別の id なら並べて置ける。続けて呼んでもSDKが送信を直列化する commandManager.sendCanvasImage(id = 1, x = 368, y = 84, width = 192, height = 192, grayscale = right) // テキストは画像の手前に描かれるので、キャプションを重ねられる commandManager.sendCanvasElements( listOf( CommandManager.CanvasElement(id = 0, x = 16, y = 300, width = 192, height = 40, text = \"左\"), ), ) . ",
     "url": "/api/command-manager/send-canvas-image.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-canvas-image.html#使用例"
-  },"430": {
+  },"427": {
     "doc": "sendCanvasImage",
     "title": "関連",
     "content": ". | removeCanvasImage | sendCanvas | clearCanvas | . ",
     "url": "/api/command-manager/send-canvas-image.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-canvas-image.html#関連"
-  },"431": {
+  },"428": {
     "doc": "sendCanvasImage",
     "title": "sendCanvasImage",
     "content": " ",
     "url": "/api/command-manager/send-canvas-image.html",
     
     "relUrl": "/api/command-manager/send-canvas-image.html"
-  },"432": {
+  },"429": {
     "doc": "sendCanvas",
     "title": "CommandManager.sendCanvas",
     "content": "fun sendCanvas(elements: List&lt;CommandManager.CanvasElement&gt;) . ",
     "url": "/api/command-manager/send-canvas.html#commandmanagersendcanvas",
     
     "relUrl": "/api/command-manager/send-canvas.html#commandmanagersendcanvas"
-  },"433": {
+  },"430": {
     "doc": "sendCanvas",
     "title": "概要",
     "content": "自由配置キャンバスを開いて、要素を置き直す。送るだけで画面が切り替わるので、先にページを開く必要はない。今ある要素は全て消えてから elements が並ぶ。キャンバスは 576×360 で、座標は左上が原点。はみ出した矩形は端で切られ、キャンバスの外に出た要素は描かれない。テキストは矩形内で左揃えに折り返し、あふれた分は切られる。分割して送れないため、テキストの合計は190バイト程度までに収める。収まらないときは sendCanvasElements で1要素ずつ送れば表示は積み上がる。FEATURE_VERSION 2.1.0 以上のファームが対象。 . ",
     "url": "/api/command-manager/send-canvas.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-canvas.html#概要"
-  },"434": {
+  },"431": {
     "doc": "sendCanvas",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | elements | List&lt;CommandManager.CanvasElement&gt; | 配置する要素。id は 0..7 の8個まで | . ",
     "url": "/api/command-manager/send-canvas.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-canvas.html#引数"
-  },"435": {
+  },"432": {
     "doc": "sendCanvas",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-canvas.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-canvas.html#戻り値"
-  },"436": {
+  },"433": {
     "doc": "sendCanvas",
     "title": "使用例",
     "content": "// 今ある要素は消えて、渡した要素だけが 576×360 のキャンバスに並ぶ commandManager.sendCanvas( listOf( CommandManager.CanvasElement(id = 0, x = 16, y = 8, width = 240, height = 40, text = \"上\"), CommandManager.CanvasElement(id = 1, x = 16, y = 300, width = 240, height = 40, text = \"下\"), ), ) . ",
     "url": "/api/command-manager/send-canvas.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-canvas.html#使用例"
-  },"437": {
+  },"434": {
     "doc": "sendCanvas",
     "title": "関連",
     "content": ". | sendCanvasElements | clearCanvas | closeCanvas | . ",
     "url": "/api/command-manager/send-canvas.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-canvas.html#関連"
-  },"438": {
+  },"435": {
     "doc": "sendCanvas",
     "title": "sendCanvas",
     "content": " ",
     "url": "/api/command-manager/send-canvas.html",
     
     "relUrl": "/api/command-manager/send-canvas.html"
-  },"439": {
+  },"436": {
     "doc": "sendCommandList",
     "title": "GlassClient.sendCommandList",
     "content": "このページは執筆中です。 . suspend fun sendCommandList(command: List&lt;ByteArray&gt;) . ",
     "url": "/api/glass-client/send-command-list.html#glassclientsendcommandlist",
     
     "relUrl": "/api/glass-client/send-command-list.html#glassclientsendcommandlist"
-  },"440": {
+  },"437": {
     "doc": "sendCommandList",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-client/send-command-list.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-client/send-command-list.html#概要"
-  },"441": {
+  },"438": {
     "doc": "sendCommandList",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | command | List&lt;ByteArray&gt; | | . ",
     "url": "/api/glass-client/send-command-list.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/glass-client/send-command-list.html#引数"
-  },"442": {
+  },"439": {
     "doc": "sendCommandList",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/glass-client/send-command-list.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-client/send-command-list.html#戻り値"
-  },"443": {
+  },"440": {
     "doc": "sendCommandList",
     "title": "使用例",
     "content": " ",
     "url": "/api/glass-client/send-command-list.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-client/send-command-list.html#使用例"
-  },"444": {
+  },"441": {
     "doc": "sendCommandList",
     "title": "関連",
     "content": ". | sendCommand | . ",
     "url": "/api/glass-client/send-command-list.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/glass-client/send-command-list.html#関連"
-  },"445": {
+  },"442": {
     "doc": "sendCommandList",
     "title": "sendCommandList",
     "content": " ",
     "url": "/api/glass-client/send-command-list.html",
     
     "relUrl": "/api/glass-client/send-command-list.html"
-  },"446": {
+  },"443": {
     "doc": "sendCommand",
     "title": "GlassClient.sendCommand",
     "content": "このページは執筆中です。 . suspend fun sendCommand(command: ByteArray) . ",
     "url": "/api/glass-client/send-command.html#glassclientsendcommand",
     
     "relUrl": "/api/glass-client/send-command.html#glassclientsendcommand"
-  },"447": {
+  },"444": {
     "doc": "sendCommand",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-client/send-command.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-client/send-command.html#概要"
-  },"448": {
+  },"445": {
     "doc": "sendCommand",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | command | ByteArray | | . ",
     "url": "/api/glass-client/send-command.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/glass-client/send-command.html#引数"
-  },"449": {
+  },"446": {
     "doc": "sendCommand",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/glass-client/send-command.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-client/send-command.html#戻り値"
-  },"450": {
+  },"447": {
     "doc": "sendCommand",
     "title": "使用例",
     "content": "client.sendCommand(byteArrayOf(0x4E, 0x00)) . ",
     "url": "/api/glass-client/send-command.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-client/send-command.html#使用例"
-  },"451": {
+  },"448": {
     "doc": "sendCommand",
     "title": "関連",
     "content": ". | sendCommandList | . ",
     "url": "/api/glass-client/send-command.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/glass-client/send-command.html#関連"
-  },"452": {
+  },"449": {
     "doc": "sendCommand",
     "title": "sendCommand",
     "content": " ",
     "url": "/api/glass-client/send-command.html",
     
     "relUrl": "/api/glass-client/send-command.html"
-  },"453": {
+  },"450": {
     "doc": "sendDebugPhoneName",
     "title": "CommandManager.sendDebugPhoneName",
     "content": "fun sendDebugPhoneName(phoneName: String) . ",
     "url": "/api/command-manager/send-debug-phone-name.html#commandmanagersenddebugphonename",
     
     "relUrl": "/api/command-manager/send-debug-phone-name.html#commandmanagersenddebugphonename"
-  },"454": {
+  },"451": {
     "doc": "sendDebugPhoneName",
     "title": "概要",
     "content": "開発用。接続元のスマホ名をグラスに送り、グラス側のデバッグ表示でどの端末とつながっているか分かるようにする。 . ",
     "url": "/api/command-manager/send-debug-phone-name.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-debug-phone-name.html#概要"
-  },"455": {
+  },"452": {
     "doc": "sendDebugPhoneName",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | phoneName | String | スマホ本体の Bluetooth 名 | . ",
     "url": "/api/command-manager/send-debug-phone-name.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-debug-phone-name.html#引数"
-  },"456": {
+  },"453": {
     "doc": "sendDebugPhoneName",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-debug-phone-name.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-debug-phone-name.html#戻り値"
-  },"457": {
+  },"454": {
     "doc": "sendDebugPhoneName",
     "title": "使用例",
     "content": "commandManager.sendDebugPhoneName(phoneName) . ",
     "url": "/api/command-manager/send-debug-phone-name.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-debug-phone-name.html#使用例"
-  },"458": {
+  },"455": {
     "doc": "sendDebugPhoneName",
     "title": "sendDebugPhoneName",
     "content": " ",
     "url": "/api/command-manager/send-debug-phone-name.html",
     
     "relUrl": "/api/command-manager/send-debug-phone-name.html"
-  },"459": {
+  },"456": {
     "doc": "sendEmptyScreenContent",
     "title": "CommandManager.sendEmptyScreenContent",
     "content": "fun sendEmptyScreenContent(content: String) . ",
     "url": "/api/command-manager/send-empty-screen-content.html#commandmanagersendemptyscreencontent",
     
     "relUrl": "/api/command-manager/send-empty-screen-content.html#commandmanagersendemptyscreencontent"
-  },"460": {
+  },"457": {
     "doc": "sendEmptyScreenContent",
     "title": "概要",
     "content": "汎用テキスト表示ページに本文を送る。200バイトを超える分は分割して送られる。 . ",
     "url": "/api/command-manager/send-empty-screen-content.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-empty-screen-content.html#概要"
-  },"461": {
+  },"458": {
     "doc": "sendEmptyScreenContent",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | content | String | 表示する本文 | . ",
     "url": "/api/command-manager/send-empty-screen-content.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-empty-screen-content.html#引数"
-  },"462": {
+  },"459": {
     "doc": "sendEmptyScreenContent",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-empty-screen-content.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-empty-screen-content.html#戻り値"
-  },"463": {
+  },"460": {
     "doc": "sendEmptyScreenContent",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-empty-screen-content.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-empty-screen-content.html#使用例"
-  },"464": {
+  },"461": {
     "doc": "sendEmptyScreenContent",
     "title": "関連",
     "content": ". | enterEmptyScreenPage | . ",
     "url": "/api/command-manager/send-empty-screen-content.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-empty-screen-content.html#関連"
-  },"465": {
+  },"462": {
     "doc": "sendEmptyScreenContent",
     "title": "sendEmptyScreenContent",
     "content": " ",
     "url": "/api/command-manager/send-empty-screen-content.html",
     
     "relUrl": "/api/command-manager/send-empty-screen-content.html"
-  },"466": {
+  },"463": {
     "doc": "sendImage",
     "title": "CommandManager.sendImage",
     "content": "fun sendImage(width: Int, height: Int, grayscale: ByteArray) . ",
     "url": "/api/command-manager/send-image.html#commandmanagersendimage",
     
     "relUrl": "/api/command-manager/send-image.html#commandmanagersendimage"
-  },"467": {
+  },"464": {
     "doc": "sendImage",
     "title": "概要",
     "content": "画像表示ページに画像を送る。enterImageDisplayPage で開いてから呼ぶ。渡すのはリサイズ済みのグレースケールで、1画素1バイト・左上から行優先の並び。輝度は 0-255 のままでよく、グラスが読む3bitへの量子化とRLE圧縮は SDK が行う。グラス側のバッファは静的で、196x196 を超えるサイズはファーム側で弾かれ、何も表示されない。 . ",
     "url": "/api/command-manager/send-image.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-image.html#概要"
-  },"468": {
+  },"465": {
     "doc": "sendImage",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | width | Int | 画像の幅。196まで | . | height | Int | 画像の高さ。196まで | . | grayscale | ByteArray | 1画素1バイトのグレースケール。長さは width * height 以上 | . ",
     "url": "/api/command-manager/send-image.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-image.html#引数"
-  },"469": {
+  },"466": {
     "doc": "sendImage",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-image.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-image.html#戻り値"
-  },"470": {
+  },"467": {
     "doc": "sendImage",
     "title": "使用例",
     "content": "commandManager.enterImageDisplayPage() // grayscale は1画素1バイト・左上から行優先。3bitへの量子化とRLE圧縮はSDKが行う commandManager.sendImage(width = 196, height = 196, grayscale = grayscale) . ",
     "url": "/api/command-manager/send-image.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-image.html#使用例"
-  },"471": {
+  },"468": {
     "doc": "sendImage",
     "title": "関連",
     "content": ". | enterImageDisplayPage | . ",
     "url": "/api/command-manager/send-image.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-image.html#関連"
-  },"472": {
+  },"469": {
     "doc": "sendImage",
     "title": "sendImage",
     "content": " ",
     "url": "/api/command-manager/send-image.html",
     
     "relUrl": "/api/command-manager/send-image.html"
-  },"473": {
+  },"470": {
     "doc": "sendLayoutTexts",
     "title": "CommandManager.sendLayoutTexts",
     "content": "fun sendLayoutTexts(texts: Map&lt;Int, String&gt;) . ",
     "url": "/api/command-manager/send-layout-texts.html#commandmanagersendlayouttexts",
     
     "relUrl": "/api/command-manager/send-layout-texts.html#commandmanagersendlayouttexts"
-  },"474": {
+  },"471": {
     "doc": "sendLayoutTexts",
     "title": "概要",
     "content": "分割を保ったまま、指定した領域のテキストだけ差し替える。レイアウトが閉じているときは全画面1領域として開く。 . ",
     "url": "/api/command-manager/send-layout-texts.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-layout-texts.html#概要"
-  },"475": {
+  },"472": {
     "doc": "sendLayoutTexts",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | texts | Map&lt;Int, String&gt; | 領域番号ごとの表示テキスト。空文字でその領域を消す | . ",
     "url": "/api/command-manager/send-layout-texts.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-layout-texts.html#引数"
-  },"476": {
+  },"473": {
     "doc": "sendLayoutTexts",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-layout-texts.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-layout-texts.html#戻り値"
-  },"477": {
+  },"474": {
     "doc": "sendLayoutTexts",
     "title": "使用例",
     "content": "// 分割は変えず、右側だけ差し替える commandManager.sendLayoutTexts(mapOf(1 to \"書き換え\")) . ",
     "url": "/api/command-manager/send-layout-texts.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-layout-texts.html#使用例"
-  },"478": {
+  },"475": {
     "doc": "sendLayoutTexts",
     "title": "関連",
     "content": ". | sendLayout | closeLayout | . ",
     "url": "/api/command-manager/send-layout-texts.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-layout-texts.html#関連"
-  },"479": {
+  },"476": {
     "doc": "sendLayoutTexts",
     "title": "sendLayoutTexts",
     "content": " ",
     "url": "/api/command-manager/send-layout-texts.html",
     
     "relUrl": "/api/command-manager/send-layout-texts.html"
-  },"480": {
+  },"477": {
     "doc": "sendLayout",
     "title": "CommandManager.sendLayout",
     "content": "fun sendLayout( mode: CommandManager.LayoutMode, texts: Map&lt;Int, String&gt; = emptyMap(), ) . ",
     "url": "/api/command-manager/send-layout.html#commandmanagersendlayout",
     
     "relUrl": "/api/command-manager/send-layout.html#commandmanagersendlayout"
-  },"481": {
+  },"478": {
     "doc": "sendLayout",
     "title": "概要",
     "content": "分割レイアウトを開いて、分割と初期テキストを送る。送るだけで画面が切り替わるので、先にページを開く必要はない。モードを送るとレイアウトは作り直され、全領域のテキストが消えたうえで texts が反映される。領域番号は分割ごとに意味が変わり、TOP_BOTTOM なら 0=上・1=下、QUAD なら 0=左上・1=右上・2=左下・3=右下。渡さなかった領域は空のまま。テキストは領域内で折り返し、あふれた分は切られる。分割して送れないため、テキストの合計は190バイト程度までに収める。FEATURE_VERSION 2.0.0 以上のファームが対象。 . ",
     "url": "/api/command-manager/send-layout.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-layout.html#概要"
-  },"482": {
+  },"479": {
     "doc": "sendLayout",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | mode | CommandManager.LayoutMode | FULL / TOP_BOTTOM / LEFT_RIGHT / QUAD | . | texts | Map&lt;Int, String&gt; | 領域番号ごとの表示テキスト | . ",
     "url": "/api/command-manager/send-layout.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-layout.html#引数"
-  },"483": {
+  },"480": {
     "doc": "sendLayout",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-layout.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-layout.html#戻り値"
-  },"484": {
+  },"481": {
     "doc": "sendLayout",
     "title": "使用例",
     "content": "// モードを送ると全領域がクリアされ、同じパケットのテキストが反映される commandManager.sendLayout( mode = CommandManager.LayoutMode.LEFT_RIGHT, texts = mapOf(0 to \"左\", 1 to \"右\"), ) . ",
     "url": "/api/command-manager/send-layout.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-layout.html#使用例"
-  },"485": {
+  },"482": {
     "doc": "sendLayout",
     "title": "関連",
     "content": ". | sendLayoutTexts | closeLayout | . ",
     "url": "/api/command-manager/send-layout.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-layout.html#関連"
-  },"486": {
+  },"483": {
     "doc": "sendLayout",
     "title": "sendLayout",
     "content": " ",
     "url": "/api/command-manager/send-layout.html",
     
     "relUrl": "/api/command-manager/send-layout.html"
-  },"487": {
+  },"484": {
     "doc": "sendMessage",
     "title": "CommandManager.sendMessage",
     "content": "fun sendMessage(name: String, title: String, time: Long, text: String) . ",
     "url": "/api/command-manager/send-message.html#commandmanagersendmessage",
     
     "relUrl": "/api/command-manager/send-message.html#commandmanagersendmessage"
-  },"488": {
+  },"485": {
     "doc": "sendMessage",
     "title": "概要",
     "content": "スマホに届いた通知をグラスに転送する。件数の表示は syncNotificationCount が別にある。 . ",
     "url": "/api/command-manager/send-message.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-message.html#概要"
-  },"489": {
+  },"486": {
     "doc": "sendMessage",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | name | String | 通知を出したアプリの名前 | . | title | String | 送信者名など、通知の見出し | . | time | Long | 通知が届いた時刻。エポックミリ秒 | . | text | String | 本文 | . ",
     "url": "/api/command-manager/send-message.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-message.html#引数"
-  },"490": {
+  },"487": {
     "doc": "sendMessage",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-message.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-message.html#戻り値"
-  },"491": {
+  },"488": {
     "doc": "sendMessage",
     "title": "使用例",
     "content": "commandManager.sendMessage( name = \"Slack\", title = \"山田\", time = System.currentTimeMillis(), text = \"会議室を移動しました\", ) commandManager.syncNotificationCount(1) . ",
     "url": "/api/command-manager/send-message.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-message.html#使用例"
-  },"492": {
+  },"489": {
     "doc": "sendMessage",
     "title": "関連",
     "content": ". | syncNotificationCount | . ",
     "url": "/api/command-manager/send-message.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-message.html#関連"
-  },"493": {
+  },"490": {
     "doc": "sendMessage",
     "title": "sendMessage",
     "content": " ",
     "url": "/api/command-manager/send-message.html",
     
     "relUrl": "/api/command-manager/send-message.html"
-  },"494": {
+  },"491": {
     "doc": "sendNaviCourse",
     "title": "CommandManager.sendNaviCourse",
     "content": "fun sendNaviCourse(courseDegrees: Double) . ",
     "url": "/api/command-manager/send-navi-course.html#commandmanagersendnavicourse",
     
     "relUrl": "/api/command-manager/send-navi-course.html#commandmanagersendnavicourse"
-  },"495": {
+  },"492": {
     "doc": "sendNaviCourse",
     "title": "概要",
     "content": "端末の GPS 進行方向を送る。グラスは磁力計を持たず方位を単体で保てないため、この値をジャイロのドリフト補正に使う。案内中に数秒おきに送る。 . ",
     "url": "/api/command-manager/send-navi-course.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-navi-course.html#概要"
-  },"496": {
+  },"493": {
     "doc": "sendNaviCourse",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | courseDegrees | Double | 進行方向[度]。0以上360未満。北を0として時計回り | . ",
     "url": "/api/command-manager/send-navi-course.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-navi-course.html#引数"
-  },"497": {
+  },"494": {
     "doc": "sendNaviCourse",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-navi-course.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-navi-course.html#戻り値"
-  },"498": {
+  },"495": {
     "doc": "sendNaviCourse",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-navi-course.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-navi-course.html#使用例"
-  },"499": {
+  },"496": {
     "doc": "sendNaviCourse",
     "title": "関連",
     "content": ". | sendNaviStatus | . ",
     "url": "/api/command-manager/send-navi-course.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-navi-course.html#関連"
-  },"500": {
+  },"497": {
     "doc": "sendNaviCourse",
     "title": "sendNaviCourse",
     "content": " ",
     "url": "/api/command-manager/send-navi-course.html",
     
     "relUrl": "/api/command-manager/send-navi-course.html"
-  },"501": {
+  },"498": {
     "doc": "sendNaviLanguage",
     "title": "CommandManager.sendNaviLanguage",
     "content": "fun sendNaviLanguage(languageCode: String) . ",
     "url": "/api/command-manager/send-navi-language.html#commandmanagersendnavilanguage",
     
     "relUrl": "/api/command-manager/send-navi-language.html#commandmanagersendnavilanguage"
-  },"502": {
+  },"499": {
     "doc": "sendNaviLanguage",
     "title": "概要",
     "content": "ナビ画面の表示言語を通知する。到着時刻ラベル等の切り替えに使われ、画面遷移や表示状態には影響しない。 . ",
     "url": "/api/command-manager/send-navi-language.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-navi-language.html#概要"
-  },"503": {
+  },"500": {
     "doc": "sendNaviLanguage",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | languageCode | String | \"JPN\" / \"ENG\" 等の3文字 | . ",
     "url": "/api/command-manager/send-navi-language.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-navi-language.html#引数"
-  },"504": {
+  },"501": {
     "doc": "sendNaviLanguage",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-navi-language.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-navi-language.html#戻り値"
-  },"505": {
+  },"502": {
     "doc": "sendNaviLanguage",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-navi-language.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-navi-language.html#使用例"
-  },"506": {
+  },"503": {
     "doc": "sendNaviLanguage",
     "title": "関連",
     "content": ". | enterNavigationPage | . ",
     "url": "/api/command-manager/send-navi-language.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-navi-language.html#関連"
-  },"507": {
+  },"504": {
     "doc": "sendNaviLanguage",
     "title": "sendNaviLanguage",
     "content": " ",
     "url": "/api/command-manager/send-navi-language.html",
     
     "relUrl": "/api/command-manager/send-navi-language.html"
-  },"508": {
+  },"505": {
     "doc": "sendNaviLargeImage",
     "title": "CommandManager.sendNaviLargeImage",
     "content": "fun sendNaviLargeImage(width: Int, height: Int, grayscale: ByteArray) . ",
     "url": "/api/command-manager/send-navi-large-image.html#commandmanagersendnavilargeimage",
     
     "relUrl": "/api/command-manager/send-navi-large-image.html#commandmanagersendnavilargeimage"
-  },"509": {
+  },"506": {
     "doc": "sendNaviLargeImage",
     "title": "概要",
     "content": "ナビ画面に全体ルートの地図画像を送る。sendNavi に載せる地図より大きいサイズを扱える。 . ",
     "url": "/api/command-manager/send-navi-large-image.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-navi-large-image.html#概要"
-  },"510": {
+  },"507": {
     "doc": "sendNaviLargeImage",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | width | Int | 画像の幅 | . | height | Int | 画像の高さ | . | grayscale | ByteArray | 1画素1バイトのグレースケール。長さは width * height 以上 | . ",
     "url": "/api/command-manager/send-navi-large-image.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-navi-large-image.html#引数"
-  },"511": {
+  },"508": {
     "doc": "sendNaviLargeImage",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-navi-large-image.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-navi-large-image.html#戻り値"
-  },"512": {
+  },"509": {
     "doc": "sendNaviLargeImage",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-navi-large-image.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-navi-large-image.html#使用例"
-  },"513": {
+  },"510": {
     "doc": "sendNaviLargeImage",
     "title": "関連",
     "content": ". | sendNavi | . ",
     "url": "/api/command-manager/send-navi-large-image.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-navi-large-image.html#関連"
-  },"514": {
+  },"511": {
     "doc": "sendNaviLargeImage",
     "title": "sendNaviLargeImage",
     "content": " ",
     "url": "/api/command-manager/send-navi-large-image.html",
     
     "relUrl": "/api/command-manager/send-navi-large-image.html"
-  },"515": {
+  },"512": {
     "doc": "sendNaviStatus",
     "title": "CommandManager.sendNaviStatus",
     "content": "fun sendNaviStatus(status: CommandManager.NaviStatus) . ",
     "url": "/api/command-manager/send-navi-status.html#commandmanagersendnavistatus",
     
     "relUrl": "/api/command-manager/send-navi-status.html#commandmanagersendnavistatus"
-  },"516": {
+  },"513": {
     "doc": "sendNaviStatus",
     "title": "概要",
     "content": "ナビの状態を送る。sendNavi で送った案内は START のときだけ表示される。READY は案内前の待機画面、ARRIVED は到着画面になる。 . ",
     "url": "/api/command-manager/send-navi-status.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-navi-status.html#概要"
-  },"517": {
+  },"514": {
     "doc": "sendNaviStatus",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | status | CommandManager.NaviStatus | READY / START / ARRIVED | . ",
     "url": "/api/command-manager/send-navi-status.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-navi-status.html#引数"
-  },"518": {
+  },"515": {
     "doc": "sendNaviStatus",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-navi-status.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-navi-status.html#戻り値"
-  },"519": {
+  },"516": {
     "doc": "sendNaviStatus",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-navi-status.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-navi-status.html#使用例"
-  },"520": {
+  },"517": {
     "doc": "sendNaviStatus",
     "title": "関連",
     "content": ". | enterNavigationPage | sendNavi | . ",
     "url": "/api/command-manager/send-navi-status.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-navi-status.html#関連"
-  },"521": {
+  },"518": {
     "doc": "sendNaviStatus",
     "title": "sendNaviStatus",
     "content": " ",
     "url": "/api/command-manager/send-navi-status.html",
     
     "relUrl": "/api/command-manager/send-navi-status.html"
-  },"522": {
+  },"519": {
     "doc": "sendNavi",
     "title": "CommandManager.sendNavi",
     "content": "fun sendNavi( maneuverIcon: CommandManager.ManeuverIcon, instructionText: String, distanceText: String, estimatedArrivalText: String, timeAndDistanceText: String, bitmapWidth: Int? = null, bitmapHeight: Int? = null, grayscale: ByteArray? = null, ) . ",
     "url": "/api/command-manager/send-navi.html#commandmanagersendnavi",
     
     "relUrl": "/api/command-manager/send-navi.html#commandmanagersendnavi"
-  },"523": {
+  },"520": {
     "doc": "sendNavi",
     "title": "概要",
     "content": "ナビの案内情報を送る。事前に sendNaviStatus で START にしておく。地図画像は sendImage と同じく1画素1バイト・左上から行優先のグレースケールで、3bitへの量子化とRLE圧縮は SDK が行う。 . ",
     "url": "/api/command-manager/send-navi.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-navi.html#概要"
-  },"524": {
+  },"521": {
     "doc": "sendNavi",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | maneuverIcon | CommandManager.ManeuverIcon | 次のポイントの進行方向アイコン。TURN_LEFT / STRAIGHT など | . | instructionText | String | 次のポイントでの指示。「○○を右折」など | . | distanceText | String | 次のポイントまでの距離。「300m」など | . | estimatedArrivalText | String | 予想到着時刻 | . | timeAndDistanceText | String | 画面左下に出す残り時間と距離 | . | bitmapWidth | Int? | 地図画像の幅。255まで。grayscale があるときは必須 | . | bitmapHeight | Int? | 地図画像の高さ。255まで。grayscale があるときは必須 | . | grayscale | ByteArray? | 地図画像。長さは bitmapWidth * bitmapHeight 以上 | . ",
     "url": "/api/command-manager/send-navi.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-navi.html#引数"
-  },"525": {
+  },"522": {
     "doc": "sendNavi",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-navi.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-navi.html#戻り値"
-  },"526": {
+  },"523": {
     "doc": "sendNavi",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-navi.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-navi.html#使用例"
-  },"527": {
+  },"524": {
     "doc": "sendNavi",
     "title": "関連",
     "content": ". | enterNavigationPage | sendNaviStatus | sendNaviLargeImage | . ",
     "url": "/api/command-manager/send-navi.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-navi.html#関連"
-  },"528": {
+  },"525": {
     "doc": "sendNavi",
     "title": "sendNavi",
     "content": " ",
     "url": "/api/command-manager/send-navi.html",
     
     "relUrl": "/api/command-manager/send-navi.html"
-  },"529": {
+  },"526": {
     "doc": "sendSettingPageVisibility",
     "title": "CommandManager.sendSettingPageVisibility",
     "content": "fun sendSettingPageVisibility(show: Boolean) . ",
     "url": "/api/command-manager/send-setting-page-visibility.html#commandmanagersendsettingpagevisibility",
     
     "relUrl": "/api/command-manager/send-setting-page-visibility.html#commandmanagersendsettingpagevisibility"
-  },"530": {
+  },"527": {
     "doc": "sendSettingPageVisibility",
     "title": "概要",
     "content": "グラス側の設定画面の表示・非表示を通知する。 . ",
     "url": "/api/command-manager/send-setting-page-visibility.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-setting-page-visibility.html#概要"
-  },"531": {
+  },"528": {
     "doc": "sendSettingPageVisibility",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | show | Boolean | true で表示、false で非表示 | . ",
     "url": "/api/command-manager/send-setting-page-visibility.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-setting-page-visibility.html#引数"
-  },"532": {
+  },"529": {
     "doc": "sendSettingPageVisibility",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-setting-page-visibility.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-setting-page-visibility.html#戻り値"
-  },"533": {
+  },"530": {
     "doc": "sendSettingPageVisibility",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-setting-page-visibility.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-setting-page-visibility.html#使用例"
-  },"534": {
+  },"531": {
     "doc": "sendSettingPageVisibility",
     "title": "sendSettingPageVisibility",
     "content": " ",
     "url": "/api/command-manager/send-setting-page-visibility.html",
     
     "relUrl": "/api/command-manager/send-setting-page-visibility.html"
-  },"535": {
+  },"532": {
     "doc": "sendSetting",
     "title": "CommandManager.sendSetting",
     "content": "fun sendSetting(name: String, value: Int) fun sendSetting(name: String, value: Boolean) fun sendSetting(name: String, value: String) fun sendSetting(name: String, value: ByteArray) . ",
     "url": "/api/command-manager/send-setting.html#commandmanagersendsetting",
     
     "relUrl": "/api/command-manager/send-setting.html#commandmanagersendsetting"
-  },"536": {
+  },"533": {
     "doc": "sendSetting",
     "title": "概要",
     "content": "グラスの設定値を書き換える。値の型ごとにグラスへ送る型が変わるため、文字列とバイト列は別の overload になっている。 . ",
     "url": "/api/command-manager/send-setting.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-setting.html#概要"
-  },"537": {
+  },"534": {
     "doc": "sendSetting",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | name | String | 設定キー。CommandManager.SettingKey の定数を使う | . | value | Int / Boolean / String / ByteArray | 設定値 | . ",
     "url": "/api/command-manager/send-setting.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-setting.html#引数"
-  },"538": {
+  },"535": {
     "doc": "sendSetting",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-setting.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-setting.html#戻り値"
-  },"539": {
+  },"536": {
     "doc": "sendSetting",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-setting.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-setting.html#使用例"
-  },"540": {
+  },"537": {
     "doc": "sendSetting",
     "title": "関連",
     "content": ". | requestSettingSync | . ",
     "url": "/api/command-manager/send-setting.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-setting.html#関連"
-  },"541": {
+  },"538": {
     "doc": "sendSetting",
     "title": "sendSetting",
     "content": " ",
     "url": "/api/command-manager/send-setting.html",
     
     "relUrl": "/api/command-manager/send-setting.html"
-  },"542": {
+  },"539": {
     "doc": "sendTeleprompterContent",
     "title": "CommandManager.sendTeleprompterContent",
     "content": "fun sendTeleprompterContent(content: String) fun sendTeleprompterContent(content: String, percent: Int) . ",
     "url": "/api/command-manager/send-teleprompter-content.html#commandmanagersendtelepromptercontent",
     
     "relUrl": "/api/command-manager/send-teleprompter-content.html#commandmanagersendtelepromptercontent"
-  },"543": {
+  },"540": {
     "doc": "sendTeleprompterContent",
     "title": "概要",
     "content": "テレプロンプトに原稿を送る。200バイトを超える分は分割して送られる。percent つきの overload はスクロールバーの位置も一緒に送る。 . ",
     "url": "/api/command-manager/send-teleprompter-content.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-teleprompter-content.html#概要"
-  },"544": {
+  },"541": {
     "doc": "sendTeleprompterContent",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | content | String | 表示する原稿 | . | percent | Int | スクロールバーの位置（0..100） | . ",
     "url": "/api/command-manager/send-teleprompter-content.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-teleprompter-content.html#引数"
-  },"545": {
+  },"542": {
     "doc": "sendTeleprompterContent",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-teleprompter-content.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-teleprompter-content.html#戻り値"
-  },"546": {
+  },"543": {
     "doc": "sendTeleprompterContent",
     "title": "使用例",
     "content": "commandManager.enterTeleprompterPage() commandManager.sendTeleprompterContent(\"読み上げる原稿\") . ",
     "url": "/api/command-manager/send-teleprompter-content.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-teleprompter-content.html#使用例"
-  },"547": {
+  },"544": {
     "doc": "sendTeleprompterContent",
     "title": "関連",
     "content": ". | enterTeleprompterPage | sendTeleprompterLine | . ",
     "url": "/api/command-manager/send-teleprompter-content.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-teleprompter-content.html#関連"
-  },"548": {
+  },"545": {
     "doc": "sendTeleprompterContent",
     "title": "sendTeleprompterContent",
     "content": " ",
     "url": "/api/command-manager/send-teleprompter-content.html",
     
     "relUrl": "/api/command-manager/send-teleprompter-content.html"
-  },"549": {
+  },"546": {
     "doc": "sendTeleprompterLine",
     "title": "CommandManager.sendTeleprompterLine",
     "content": "fun sendTeleprompterLine(text: String, percent: Int, scrollUp: Boolean = false) . ",
     "url": "/api/command-manager/send-teleprompter-line.html#commandmanagersendteleprompterline",
     
     "relUrl": "/api/command-manager/send-teleprompter-line.html#commandmanagersendteleprompterline"
-  },"550": {
+  },"547": {
     "doc": "sendTeleprompterLine",
     "title": "概要",
     "content": "テレプロンプトに1行だけ追記する。全文を送り直す sendTeleprompterContent と違い、読み上げに合わせて差分だけを流すのに使う。 . ",
     "url": "/api/command-manager/send-teleprompter-line.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-teleprompter-line.html#概要"
-  },"551": {
+  },"548": {
     "doc": "sendTeleprompterLine",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | text | String | 追記する1行 | . | percent | Int | スクロールバーの位置（0..100） | . | scrollUp | Boolean | true で1行上へ、false で1行下へスクロールさせる | . ",
     "url": "/api/command-manager/send-teleprompter-line.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-teleprompter-line.html#引数"
-  },"552": {
+  },"549": {
     "doc": "sendTeleprompterLine",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-teleprompter-line.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-teleprompter-line.html#戻り値"
-  },"553": {
+  },"550": {
     "doc": "sendTeleprompterLine",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-teleprompter-line.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-teleprompter-line.html#使用例"
-  },"554": {
+  },"551": {
     "doc": "sendTeleprompterLine",
     "title": "関連",
     "content": ". | sendTeleprompterContent | . ",
     "url": "/api/command-manager/send-teleprompter-line.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-teleprompter-line.html#関連"
-  },"555": {
+  },"552": {
     "doc": "sendTeleprompterLine",
     "title": "sendTeleprompterLine",
     "content": " ",
     "url": "/api/command-manager/send-teleprompter-line.html",
     
     "relUrl": "/api/command-manager/send-teleprompter-line.html"
-  },"556": {
+  },"553": {
     "doc": "sendTeleprompterStatus",
     "title": "CommandManager.sendTeleprompterStatus",
     "content": "fun sendTeleprompterStatus( status: CommandManager.TeleprompterStatus, mode: CommandManager.TeleprompterMode, ) . ",
     "url": "/api/command-manager/send-teleprompter-status.html#commandmanagersendteleprompterstatus",
     
     "relUrl": "/api/command-manager/send-teleprompter-status.html#commandmanagersendteleprompterstatus"
-  },"557": {
+  },"554": {
     "doc": "sendTeleprompterStatus",
     "title": "概要",
     "content": "テレプロンプトの再生状態と表示モードを送る。別パケットに分けると動作が安定しないため、ファーム側の都合で必ず両方まとめて送る。 . ",
     "url": "/api/command-manager/send-teleprompter-status.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-teleprompter-status.html#概要"
-  },"558": {
+  },"555": {
     "doc": "sendTeleprompterStatus",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | status | CommandManager.TeleprompterStatus | READY / STARTED / PAUSED | . | mode | CommandManager.TeleprompterMode | TELEPROMPT / TRANSCRIPT / TRANSLATION | . ",
     "url": "/api/command-manager/send-teleprompter-status.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-teleprompter-status.html#引数"
-  },"559": {
+  },"556": {
     "doc": "sendTeleprompterStatus",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-teleprompter-status.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-teleprompter-status.html#戻り値"
-  },"560": {
+  },"557": {
     "doc": "sendTeleprompterStatus",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-teleprompter-status.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-teleprompter-status.html#使用例"
-  },"561": {
+  },"558": {
     "doc": "sendTeleprompterStatus",
     "title": "関連",
     "content": ". | sendTeleprompterTime | . ",
     "url": "/api/command-manager/send-teleprompter-status.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-teleprompter-status.html#関連"
-  },"562": {
+  },"559": {
     "doc": "sendTeleprompterStatus",
     "title": "sendTeleprompterStatus",
     "content": " ",
     "url": "/api/command-manager/send-teleprompter-status.html",
     
     "relUrl": "/api/command-manager/send-teleprompter-status.html"
-  },"563": {
+  },"560": {
     "doc": "sendTeleprompterTime",
     "title": "CommandManager.sendTeleprompterTime",
     "content": "fun sendTeleprompterTime(time: String) . ",
     "url": "/api/command-manager/send-teleprompter-time.html#commandmanagersendtelepromptertime",
     
     "relUrl": "/api/command-manager/send-teleprompter-time.html#commandmanagersendtelepromptertime"
-  },"564": {
+  },"561": {
     "doc": "sendTeleprompterTime",
     "title": "概要",
     "content": "再生開始からの経過時間を送る。 . ",
     "url": "/api/command-manager/send-teleprompter-time.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-teleprompter-time.html#概要"
-  },"565": {
+  },"562": {
     "doc": "sendTeleprompterTime",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | time | String | mm:ss 形式の5文字。短ければ先頭を0埋め、長ければ切り捨てる | . ",
     "url": "/api/command-manager/send-teleprompter-time.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-teleprompter-time.html#引数"
-  },"566": {
+  },"563": {
     "doc": "sendTeleprompterTime",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-teleprompter-time.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-teleprompter-time.html#戻り値"
-  },"567": {
+  },"564": {
     "doc": "sendTeleprompterTime",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-teleprompter-time.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-teleprompter-time.html#使用例"
-  },"568": {
+  },"565": {
     "doc": "sendTeleprompterTime",
     "title": "関連",
     "content": ". | sendTeleprompterStatus | . ",
     "url": "/api/command-manager/send-teleprompter-time.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-teleprompter-time.html#関連"
-  },"569": {
+  },"566": {
     "doc": "sendTeleprompterTime",
     "title": "sendTeleprompterTime",
     "content": " ",
     "url": "/api/command-manager/send-teleprompter-time.html",
     
     "relUrl": "/api/command-manager/send-teleprompter-time.html"
-  },"570": {
+  },"567": {
     "doc": "sendText",
     "title": "GlassClient.sendText",
     "content": "このページは執筆中です。 . suspend fun sendText(page: Byte, content: String) . ",
     "url": "/api/glass-client/send-text.html#glassclientsendtext",
     
     "relUrl": "/api/glass-client/send-text.html#glassclientsendtext"
-  },"571": {
+  },"568": {
     "doc": "sendText",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-client/send-text.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-client/send-text.html#概要"
-  },"572": {
+  },"569": {
     "doc": "sendText",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | page | Byte | | . | content | String | | . ",
     "url": "/api/glass-client/send-text.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/glass-client/send-text.html#引数"
-  },"573": {
+  },"570": {
     "doc": "sendText",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/glass-client/send-text.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-client/send-text.html#戻り値"
-  },"574": {
+  },"571": {
     "doc": "sendText",
     "title": "使用例",
     "content": " ",
     "url": "/api/glass-client/send-text.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-client/send-text.html#使用例"
-  },"575": {
+  },"572": {
     "doc": "sendText",
     "title": "sendText",
     "content": " ",
     "url": "/api/glass-client/send-text.html",
     
     "relUrl": "/api/glass-client/send-text.html"
-  },"576": {
+  },"573": {
     "doc": "sendTranslateContent",
     "title": "CommandManager.sendTranslateContent",
     "content": "fun sendTranslateContent(content: String) . ",
     "url": "/api/command-manager/send-translate-content.html#commandmanagersendtranslatecontent",
     
     "relUrl": "/api/command-manager/send-translate-content.html#commandmanagersendtranslatecontent"
-  },"577": {
+  },"574": {
     "doc": "sendTranslateContent",
     "title": "概要",
     "content": "翻訳ページに訳文を送る。enterTranslatePage で開いてから呼ぶ。送るたび表示は置き換わる。消すときは clearInscriptionText を使う。 . ",
     "url": "/api/command-manager/send-translate-content.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-translate-content.html#概要"
-  },"578": {
+  },"575": {
     "doc": "sendTranslateContent",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | content | String | 表示する訳文。長い分は分割して送られる | . ",
     "url": "/api/command-manager/send-translate-content.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-translate-content.html#引数"
-  },"579": {
+  },"576": {
     "doc": "sendTranslateContent",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-translate-content.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-translate-content.html#戻り値"
-  },"580": {
+  },"577": {
     "doc": "sendTranslateContent",
     "title": "使用例",
     "content": "// 送るたび表示は置き換わる。消すときは clearInscriptionText commandManager.sendTranslateContent(\"これは訳文です\") . ",
     "url": "/api/command-manager/send-translate-content.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-translate-content.html#使用例"
-  },"581": {
+  },"578": {
     "doc": "sendTranslateContent",
     "title": "関連",
     "content": ". | enterTranslatePage | sendTranslateLanguage | . ",
     "url": "/api/command-manager/send-translate-content.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-translate-content.html#関連"
-  },"582": {
+  },"579": {
     "doc": "sendTranslateContent",
     "title": "sendTranslateContent",
     "content": " ",
     "url": "/api/command-manager/send-translate-content.html",
     
     "relUrl": "/api/command-manager/send-translate-content.html"
-  },"583": {
+  },"580": {
     "doc": "sendTranslateLanguage",
     "title": "CommandManager.sendTranslateLanguage",
     "content": "fun sendTranslateLanguage(source: String, target: String) . ",
     "url": "/api/command-manager/send-translate-language.html#commandmanagersendtranslatelanguage",
     
     "relUrl": "/api/command-manager/send-translate-language.html#commandmanagersendtranslatelanguage"
-  },"584": {
+  },"581": {
     "doc": "sendTranslateLanguage",
     "title": "概要",
     "content": "翻訳ページに出す言語ラベルを切り替える。本文を送る前に呼ぶ。画面遷移は起こらない。 . ",
     "url": "/api/command-manager/send-translate-language.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-translate-language.html#概要"
-  },"585": {
+  },"582": {
     "doc": "sendTranslateLanguage",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | source | String | 翻訳元の言語コード。\"ENG\" などの3文字 | . | target | String | 翻訳先の言語コード。\"JPN\" などの3文字 | . ",
     "url": "/api/command-manager/send-translate-language.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-translate-language.html#引数"
-  },"586": {
+  },"583": {
     "doc": "sendTranslateLanguage",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-translate-language.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-translate-language.html#戻り値"
-  },"587": {
+  },"584": {
     "doc": "sendTranslateLanguage",
     "title": "使用例",
     "content": "commandManager.enterTranslatePage() commandManager.sendTranslateLanguage(source = \"ENG\", target = \"JPN\") commandManager.sendTranslateContent(\"Hello\") . ",
     "url": "/api/command-manager/send-translate-language.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-translate-language.html#使用例"
-  },"588": {
+  },"585": {
     "doc": "sendTranslateLanguage",
     "title": "関連",
     "content": ". | sendTranslateContent | . ",
     "url": "/api/command-manager/send-translate-language.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-translate-language.html#関連"
-  },"589": {
+  },"586": {
     "doc": "sendTranslateLanguage",
     "title": "sendTranslateLanguage",
     "content": " ",
     "url": "/api/command-manager/send-translate-language.html",
     
     "relUrl": "/api/command-manager/send-translate-language.html"
-  },"590": {
+  },"587": {
     "doc": "sendWakeupTiltThreshold",
     "title": "CommandManager.sendWakeupTiltThreshold",
     "content": "fun sendWakeupTiltThreshold(degrees: Int) . ",
     "url": "/api/command-manager/send-wakeup-tilt-threshold.html#commandmanagersendwakeuptiltthreshold",
     
     "relUrl": "/api/command-manager/send-wakeup-tilt-threshold.html#commandmanagersendwakeuptiltthreshold"
-  },"591": {
+  },"588": {
     "doc": "sendWakeupTiltThreshold",
     "title": "概要",
     "content": "ヘッドアップでウェイクアップする傾きのしきい値を設定する。 . ",
     "url": "/api/command-manager/send-wakeup-tilt-threshold.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/send-wakeup-tilt-threshold.html#概要"
-  },"592": {
+  },"589": {
     "doc": "sendWakeupTiltThreshold",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | degrees | Int | しきい値[度]。0..65535 | . ",
     "url": "/api/command-manager/send-wakeup-tilt-threshold.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/send-wakeup-tilt-threshold.html#引数"
-  },"593": {
+  },"590": {
     "doc": "sendWakeupTiltThreshold",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/send-wakeup-tilt-threshold.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/send-wakeup-tilt-threshold.html#戻り値"
-  },"594": {
+  },"591": {
     "doc": "sendWakeupTiltThreshold",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/send-wakeup-tilt-threshold.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/send-wakeup-tilt-threshold.html#使用例"
-  },"595": {
+  },"592": {
     "doc": "sendWakeupTiltThreshold",
     "title": "関連",
     "content": ". | enterGlassAngleAdjustmentPage | . ",
     "url": "/api/command-manager/send-wakeup-tilt-threshold.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/send-wakeup-tilt-threshold.html#関連"
-  },"596": {
+  },"593": {
     "doc": "sendWakeupTiltThreshold",
     "title": "sendWakeupTiltThreshold",
     "content": " ",
     "url": "/api/command-manager/send-wakeup-tilt-threshold.html",
     
     "relUrl": "/api/command-manager/send-wakeup-tilt-threshold.html"
-  },"597": {
+  },"594": {
     "doc": "setDevicePersistence",
     "title": "GlassesSDK.setDevicePersistence",
     "content": "このページは執筆中です。 . fun setDevicePersistence(persistence: SdkDevicePersistence) . ",
     "url": "/api/glasses-sdk/set-device-persistence.html#glassessdksetdevicepersistence",
     
     "relUrl": "/api/glasses-sdk/set-device-persistence.html#glassessdksetdevicepersistence"
-  },"598": {
+  },"595": {
     "doc": "setDevicePersistence",
     "title": "概要",
     "content": " ",
     "url": "/api/glasses-sdk/set-device-persistence.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glasses-sdk/set-device-persistence.html#概要"
-  },"599": {
+  },"596": {
     "doc": "setDevicePersistence",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | persistence | SdkDevicePersistence | | . ",
     "url": "/api/glasses-sdk/set-device-persistence.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/glasses-sdk/set-device-persistence.html#引数"
-  },"600": {
+  },"597": {
     "doc": "setDevicePersistence",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/glasses-sdk/set-device-persistence.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glasses-sdk/set-device-persistence.html#戻り値"
-  },"601": {
+  },"598": {
     "doc": "setDevicePersistence",
     "title": "使用例",
     "content": "GlassesSDK.setDevicePersistence(SharedPrefsDevicePersistence(application)) . ",
     "url": "/api/glasses-sdk/set-device-persistence.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glasses-sdk/set-device-persistence.html#使用例"
-  },"602": {
+  },"599": {
     "doc": "setDevicePersistence",
     "title": "setDevicePersistence",
     "content": " ",
     "url": "/api/glasses-sdk/set-device-persistence.html",
     
     "relUrl": "/api/glasses-sdk/set-device-persistence.html"
-  },"603": {
+  },"600": {
     "doc": "setLogger",
     "title": "GlassesSDK.setLogger",
     "content": "このページは執筆中です。 . fun setLogger(sink: (tag: String, message: String) -&gt; Unit) . ",
     "url": "/api/glasses-sdk/set-logger.html#glassessdksetlogger",
     
     "relUrl": "/api/glasses-sdk/set-logger.html#glassessdksetlogger"
-  },"604": {
+  },"601": {
     "doc": "setLogger",
     "title": "概要",
     "content": " ",
     "url": "/api/glasses-sdk/set-logger.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glasses-sdk/set-logger.html#概要"
-  },"605": {
+  },"602": {
     "doc": "setLogger",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | sink | (String, String) -&gt; Unit | | . ",
     "url": "/api/glasses-sdk/set-logger.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/glasses-sdk/set-logger.html#引数"
-  },"606": {
+  },"603": {
     "doc": "setLogger",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/glasses-sdk/set-logger.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glasses-sdk/set-logger.html#戻り値"
-  },"607": {
+  },"604": {
     "doc": "setLogger",
     "title": "使用例",
     "content": "GlassesSDK.setLogger { tag, message -&gt; Log.d(tag, message) } . ",
     "url": "/api/glasses-sdk/set-logger.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glasses-sdk/set-logger.html#使用例"
-  },"608": {
+  },"605": {
     "doc": "setLogger",
     "title": "setLogger",
     "content": " ",
     "url": "/api/glasses-sdk/set-logger.html",
     
     "relUrl": "/api/glasses-sdk/set-logger.html"
-  },"609": {
+  },"606": {
     "doc": "setProd",
     "title": "GlassesSDK.setProd",
     "content": "このページは執筆中です。 . fun setProd(isProd: Boolean) . ",
     "url": "/api/glasses-sdk/set-prod.html#glassessdksetprod",
     
     "relUrl": "/api/glasses-sdk/set-prod.html#glassessdksetprod"
-  },"610": {
+  },"607": {
     "doc": "setProd",
     "title": "概要",
     "content": " ",
     "url": "/api/glasses-sdk/set-prod.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glasses-sdk/set-prod.html#概要"
-  },"611": {
+  },"608": {
     "doc": "setProd",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | isProd | Boolean | | . ",
     "url": "/api/glasses-sdk/set-prod.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/glasses-sdk/set-prod.html#引数"
-  },"612": {
+  },"609": {
     "doc": "setProd",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/glasses-sdk/set-prod.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glasses-sdk/set-prod.html#戻り値"
-  },"613": {
+  },"610": {
     "doc": "setProd",
     "title": "使用例",
     "content": "GlassesSDK.setProd(true) . ",
     "url": "/api/glasses-sdk/set-prod.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glasses-sdk/set-prod.html#使用例"
-  },"614": {
+  },"611": {
     "doc": "setProd",
     "title": "setProd",
     "content": " ",
     "url": "/api/glasses-sdk/set-prod.html",
     
     "relUrl": "/api/glasses-sdk/set-prod.html"
-  },"615": {
+  },"612": {
     "doc": "showAutomaticSelectionDialog",
     "title": "GlassManager.showAutomaticSelectionDialog",
     "content": "このページは執筆中です。 . suspend fun showAutomaticSelectionDialog(context: Context): GlassClient? . ",
     "url": "/api/glass-manager/show-automatic-selection-dialog.html#glassmanagershowautomaticselectiondialog",
     
     "relUrl": "/api/glass-manager/show-automatic-selection-dialog.html#glassmanagershowautomaticselectiondialog"
-  },"616": {
+  },"613": {
     "doc": "showAutomaticSelectionDialog",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-manager/show-automatic-selection-dialog.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-manager/show-automatic-selection-dialog.html#概要"
-  },"617": {
+  },"614": {
     "doc": "showAutomaticSelectionDialog",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | context | Context | | . ",
     "url": "/api/glass-manager/show-automatic-selection-dialog.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/glass-manager/show-automatic-selection-dialog.html#引数"
-  },"618": {
+  },"615": {
     "doc": "showAutomaticSelectionDialog",
     "title": "戻り値",
     "content": "GlassClient? . ",
     "url": "/api/glass-manager/show-automatic-selection-dialog.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-manager/show-automatic-selection-dialog.html#戻り値"
-  },"619": {
+  },"616": {
     "doc": "showAutomaticSelectionDialog",
     "title": "使用例",
     "content": "// 第1引数は Activity。Application Context を渡すとダイアログが出ない val client = manager.showAutomaticSelectionDialog(activity) . ",
     "url": "/api/glass-manager/show-automatic-selection-dialog.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-manager/show-automatic-selection-dialog.html#使用例"
-  },"620": {
+  },"617": {
     "doc": "showAutomaticSelectionDialog",
     "title": "関連",
     "content": ". | connect | createClientFromDeviceID | . ",
     "url": "/api/glass-manager/show-automatic-selection-dialog.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/glass-manager/show-automatic-selection-dialog.html#関連"
-  },"621": {
+  },"618": {
     "doc": "showAutomaticSelectionDialog",
     "title": "showAutomaticSelectionDialog",
     "content": " ",
     "url": "/api/glass-manager/show-automatic-selection-dialog.html",
     
     "relUrl": "/api/glass-manager/show-automatic-selection-dialog.html"
-  },"622": {
+  },"619": {
     "doc": "showBleDeviceSelectionDialog",
     "title": "SdkActivityHost.showBleDeviceSelectionDialog",
     "content": "このページは執筆中です。 . var showBleDeviceSelectionDialog: ((Context, (String?) -&gt; Unit) -&gt; Unit)? . ",
     "url": "/api/sdk-activity-host/show-ble-device-selection-dialog.html#sdkactivityhostshowbledeviceselectiondialog",
     
     "relUrl": "/api/sdk-activity-host/show-ble-device-selection-dialog.html#sdkactivityhostshowbledeviceselectiondialog"
-  },"623": {
+  },"620": {
     "doc": "showBleDeviceSelectionDialog",
     "title": "概要",
     "content": " ",
     "url": "/api/sdk-activity-host/show-ble-device-selection-dialog.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/sdk-activity-host/show-ble-device-selection-dialog.html#概要"
-  },"624": {
+  },"621": {
     "doc": "showBleDeviceSelectionDialog",
     "title": "戻り値",
     "content": "((Context, (String?) -&gt; Unit) -&gt; Unit)? . ",
     "url": "/api/sdk-activity-host/show-ble-device-selection-dialog.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/sdk-activity-host/show-ble-device-selection-dialog.html#戻り値"
-  },"625": {
+  },"622": {
     "doc": "showBleDeviceSelectionDialog",
     "title": "使用例",
     "content": "SdkActivityHost.showBleDeviceSelectionDialog = { _: Context, callback: (String?) -&gt; Unit -&gt; selector.showDialog(scope = scope, singleTarget = false, callback = callback) } . ",
     "url": "/api/sdk-activity-host/show-ble-device-selection-dialog.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/sdk-activity-host/show-ble-device-selection-dialog.html#使用例"
-  },"626": {
+  },"623": {
     "doc": "showBleDeviceSelectionDialog",
     "title": "showBleDeviceSelectionDialog",
     "content": " ",
     "url": "/api/sdk-activity-host/show-ble-device-selection-dialog.html",
     
     "relUrl": "/api/sdk-activity-host/show-ble-device-selection-dialog.html"
-  },"627": {
+  },"624": {
     "doc": "BleDeviceSelector.showDialog",
     "title": "BleDeviceSelector.showDialog",
     "content": "このページは執筆中です。 . fun showDialog(scope: CoroutineScope, singleTarget: Boolean, callback: (String?) -&gt; Unit) . ",
     "url": "/api/ble/show-dialog.html",
     
     "relUrl": "/api/ble/show-dialog.html"
-  },"628": {
+  },"625": {
     "doc": "BleDeviceSelector.showDialog",
     "title": "概要",
     "content": " ",
     "url": "/api/ble/show-dialog.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/ble/show-dialog.html#概要"
-  },"629": {
+  },"626": {
     "doc": "BleDeviceSelector.showDialog",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | scope | CoroutineScope | | . | singleTarget | Boolean | | . | callback | (String?) -&gt; Unit | | . ",
     "url": "/api/ble/show-dialog.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/ble/show-dialog.html#引数"
-  },"630": {
+  },"627": {
     "doc": "BleDeviceSelector.showDialog",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/ble/show-dialog.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/ble/show-dialog.html#戻り値"
-  },"631": {
+  },"628": {
     "doc": "BleDeviceSelector.showDialog",
     "title": "使用例",
     "content": "val selector = BleDeviceSelector(context) selector.showDialog(scope = scope, singleTarget = false) { deviceId -&gt; // 選ばれたデバイスの ID。キャンセルされた場合は null Log.d(\"sample\", \"selected: $deviceId\") } . ",
     "url": "/api/ble/show-dialog.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/ble/show-dialog.html#使用例"
-  },"632": {
+  },"629": {
     "doc": "BleDeviceSelector.showDialog",
     "title": "関連",
     "content": ". | BleDeviceSelector.onActivityResult | . ",
     "url": "/api/ble/show-dialog.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/ble/show-dialog.html#関連"
-  },"633": {
+  },"630": {
     "doc": "showDisconnectSheetIOS",
     "title": "GlassManager.showDisconnectSheetIOS",
     "content": "このページは執筆中です。 . suspend fun showDisconnectSheetIOS(): Boolean . ",
     "url": "/api/glass-manager/show-disconnect-sheet-ios.html#glassmanagershowdisconnectsheetios",
     
     "relUrl": "/api/glass-manager/show-disconnect-sheet-ios.html#glassmanagershowdisconnectsheetios"
-  },"634": {
+  },"631": {
     "doc": "showDisconnectSheetIOS",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-manager/show-disconnect-sheet-ios.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-manager/show-disconnect-sheet-ios.html#概要"
-  },"635": {
+  },"632": {
     "doc": "showDisconnectSheetIOS",
     "title": "戻り値",
     "content": "Boolean . ",
     "url": "/api/glass-manager/show-disconnect-sheet-ios.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-manager/show-disconnect-sheet-ios.html#戻り値"
-  },"636": {
+  },"633": {
     "doc": "showDisconnectSheetIOS",
     "title": "使用例",
     "content": " ",
     "url": "/api/glass-manager/show-disconnect-sheet-ios.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-manager/show-disconnect-sheet-ios.html#使用例"
-  },"637": {
+  },"634": {
     "doc": "showDisconnectSheetIOS",
     "title": "showDisconnectSheetIOS",
     "content": " ",
     "url": "/api/glass-manager/show-disconnect-sheet-ios.html",
     
     "relUrl": "/api/glass-manager/show-disconnect-sheet-ios.html"
-  },"638": {
+  },"635": {
     "doc": "showRenameAccessorySheetIOS",
     "title": "GlassManager.showRenameAccessorySheetIOS",
     "content": "このページは執筆中です。 . suspend fun showRenameAccessorySheetIOS(): Boolean . ",
     "url": "/api/glass-manager/show-rename-accessory-sheet-ios.html#glassmanagershowrenameaccessorysheetios",
     
     "relUrl": "/api/glass-manager/show-rename-accessory-sheet-ios.html#glassmanagershowrenameaccessorysheetios"
-  },"639": {
+  },"636": {
     "doc": "showRenameAccessorySheetIOS",
     "title": "概要",
     "content": " ",
     "url": "/api/glass-manager/show-rename-accessory-sheet-ios.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/glass-manager/show-rename-accessory-sheet-ios.html#概要"
-  },"640": {
+  },"637": {
     "doc": "showRenameAccessorySheetIOS",
     "title": "戻り値",
     "content": "Boolean . ",
     "url": "/api/glass-manager/show-rename-accessory-sheet-ios.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/glass-manager/show-rename-accessory-sheet-ios.html#戻り値"
-  },"641": {
+  },"638": {
     "doc": "showRenameAccessorySheetIOS",
     "title": "使用例",
     "content": " ",
     "url": "/api/glass-manager/show-rename-accessory-sheet-ios.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/glass-manager/show-rename-accessory-sheet-ios.html#使用例"
-  },"642": {
+  },"639": {
     "doc": "showRenameAccessorySheetIOS",
     "title": "showRenameAccessorySheetIOS",
     "content": " ",
     "url": "/api/glass-manager/show-rename-accessory-sheet-ios.html",
     
     "relUrl": "/api/glass-manager/show-rename-accessory-sheet-ios.html"
-  },"643": {
+  },"640": {
     "doc": "startImuData",
     "title": "CommandManager.startImuData",
     "content": "fun startImuData() . ",
     "url": "/api/command-manager/start-imu-data.html#commandmanagerstartimudata",
     
     "relUrl": "/api/command-manager/start-imu-data.html#commandmanagerstartimudata"
-  },"644": {
+  },"641": {
     "doc": "startImuData",
     "title": "概要",
     "content": "6DoF の送信を開始する。値は imuData に流れる。FEATURE_VERSION 2.0.0 以上のファームが対象で、それ未満では何も起きない。切断するとグラス側で止まるため、再接続後も続けるなら呼び直す。 . ",
     "url": "/api/command-manager/start-imu-data.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/start-imu-data.html#概要"
-  },"645": {
+  },"642": {
     "doc": "startImuData",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/start-imu-data.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/start-imu-data.html#戻り値"
-  },"646": {
+  },"643": {
     "doc": "startImuData",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/start-imu-data.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/start-imu-data.html#使用例"
-  },"647": {
+  },"644": {
     "doc": "startImuData",
     "title": "関連",
     "content": ". | imuData | stopImuData | . ",
     "url": "/api/command-manager/start-imu-data.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/start-imu-data.html#関連"
-  },"648": {
+  },"645": {
     "doc": "startImuData",
     "title": "startImuData",
     "content": " ",
     "url": "/api/command-manager/start-imu-data.html",
     
     "relUrl": "/api/command-manager/start-imu-data.html"
-  },"649": {
+  },"646": {
     "doc": "startMicStreaming",
     "title": "CommandManager.startMicStreaming",
     "content": "fun startMicStreaming() . ",
     "url": "/api/command-manager/start-mic-streaming.html#commandmanagerstartmicstreaming",
     
     "relUrl": "/api/command-manager/start-mic-streaming.html#commandmanagerstartmicstreaming"
-  },"650": {
+  },"647": {
     "doc": "startMicStreaming",
     "title": "概要",
     "content": "マイクを開いて、届いた音声をデコードしながら micAudio に流す。すでに流れているときは開き直す。生の Opus を自分で扱いたい場合は openGlassMic と GlassClient.addAudioDataEventListener を使う。 . 止めるまでグラスのマイクは開いたままになる。使い終わったら stopMicStreaming を呼ぶ。 . iOS はデコーダの差し込みが要る。差し込まれていない状態で呼ぶと例外になる。 . ",
     "url": "/api/command-manager/start-mic-streaming.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/start-mic-streaming.html#概要"
-  },"651": {
+  },"648": {
     "doc": "startMicStreaming",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/start-mic-streaming.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/start-mic-streaming.html#戻り値"
-  },"652": {
+  },"649": {
     "doc": "startMicStreaming",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/start-mic-streaming.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/start-mic-streaming.html#使用例"
-  },"653": {
+  },"650": {
     "doc": "startMicStreaming",
     "title": "関連",
     "content": ". | micAudio | stopMicStreaming | . ",
     "url": "/api/command-manager/start-mic-streaming.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/start-mic-streaming.html#関連"
-  },"654": {
+  },"651": {
     "doc": "startMicStreaming",
     "title": "startMicStreaming",
     "content": " ",
     "url": "/api/command-manager/start-mic-streaming.html",
     
     "relUrl": "/api/command-manager/start-mic-streaming.html"
-  },"655": {
+  },"652": {
     "doc": "stopImuData",
     "title": "CommandManager.stopImuData",
     "content": "fun stopImuData() . ",
     "url": "/api/command-manager/stop-imu-data.html#commandmanagerstopimudata",
     
     "relUrl": "/api/command-manager/stop-imu-data.html#commandmanagerstopimudata"
-  },"656": {
+  },"653": {
     "doc": "stopImuData",
     "title": "概要",
     "content": "6DoF の送信を止める。 . ",
     "url": "/api/command-manager/stop-imu-data.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/stop-imu-data.html#概要"
-  },"657": {
+  },"654": {
     "doc": "stopImuData",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/stop-imu-data.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/stop-imu-data.html#戻り値"
-  },"658": {
+  },"655": {
     "doc": "stopImuData",
     "title": "使用例",
     "content": "commandManager.stopImuData() . ",
     "url": "/api/command-manager/stop-imu-data.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/stop-imu-data.html#使用例"
-  },"659": {
+  },"656": {
     "doc": "stopImuData",
     "title": "関連",
     "content": ". | imuData | startImuData | . ",
     "url": "/api/command-manager/stop-imu-data.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/stop-imu-data.html#関連"
-  },"660": {
+  },"657": {
     "doc": "stopImuData",
     "title": "stopImuData",
     "content": " ",
     "url": "/api/command-manager/stop-imu-data.html",
     
     "relUrl": "/api/command-manager/stop-imu-data.html"
-  },"661": {
+  },"658": {
     "doc": "stopMicStreaming",
     "title": "CommandManager.stopMicStreaming",
     "content": "fun stopMicStreaming() . ",
     "url": "/api/command-manager/stop-mic-streaming.html#commandmanagerstopmicstreaming",
     
     "relUrl": "/api/command-manager/stop-mic-streaming.html#commandmanagerstopmicstreaming"
-  },"662": {
+  },"659": {
     "doc": "stopMicStreaming",
     "title": "概要",
     "content": "マイクを閉じて micAudio を止める。デコーダも解放する。 . ",
     "url": "/api/command-manager/stop-mic-streaming.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/stop-mic-streaming.html#概要"
-  },"663": {
+  },"660": {
     "doc": "stopMicStreaming",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/stop-mic-streaming.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/stop-mic-streaming.html#戻り値"
-  },"664": {
+  },"661": {
     "doc": "stopMicStreaming",
     "title": "使用例",
     "content": "commandManager.stopMicStreaming() . ",
     "url": "/api/command-manager/stop-mic-streaming.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/stop-mic-streaming.html#使用例"
-  },"665": {
+  },"662": {
     "doc": "stopMicStreaming",
     "title": "関連",
     "content": ". | micAudio | startMicStreaming | . ",
     "url": "/api/command-manager/stop-mic-streaming.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/stop-mic-streaming.html#関連"
-  },"666": {
+  },"663": {
     "doc": "stopMicStreaming",
     "title": "stopMicStreaming",
     "content": " ",
     "url": "/api/command-manager/stop-mic-streaming.html",
     
     "relUrl": "/api/command-manager/stop-mic-streaming.html"
-  },"667": {
+  },"664": {
     "doc": "syncNotificationCount",
     "title": "CommandManager.syncNotificationCount",
     "content": "fun syncNotificationCount(count: Int) . ",
     "url": "/api/command-manager/sync-notification-count.html#commandmanagersyncnotificationcount",
     
     "relUrl": "/api/command-manager/sync-notification-count.html#commandmanagersyncnotificationcount"
-  },"668": {
+  },"665": {
     "doc": "syncNotificationCount",
     "title": "概要",
     "content": "未読通知の件数をグラスに知らせる。ホームの通知バッジに反映される。未接続だと捨てられるので connected を見てから送る。 . ",
     "url": "/api/command-manager/sync-notification-count.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/sync-notification-count.html#概要"
-  },"669": {
+  },"666": {
     "doc": "syncNotificationCount",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | count | Int | 未読の件数 | . ",
     "url": "/api/command-manager/sync-notification-count.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/sync-notification-count.html#引数"
-  },"670": {
+  },"667": {
     "doc": "syncNotificationCount",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/sync-notification-count.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/sync-notification-count.html#戻り値"
-  },"671": {
+  },"668": {
     "doc": "syncNotificationCount",
     "title": "使用例",
     "content": "// 未接続だと捨てられるので、つながっているときだけ送る if (commandManager.connected.value) { commandManager.syncNotificationCount(unreadCount) } . ",
     "url": "/api/command-manager/sync-notification-count.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/sync-notification-count.html#使用例"
-  },"672": {
+  },"669": {
     "doc": "syncNotificationCount",
     "title": "関連",
     "content": ". | sendMessage | connected | . ",
     "url": "/api/command-manager/sync-notification-count.html#%E9%96%A2%E9%80%A3",
     
     "relUrl": "/api/command-manager/sync-notification-count.html#関連"
-  },"673": {
+  },"670": {
     "doc": "syncNotificationCount",
     "title": "syncNotificationCount",
     "content": " ",
     "url": "/api/command-manager/sync-notification-count.html",
     
     "relUrl": "/api/command-manager/sync-notification-count.html"
-  },"674": {
+  },"671": {
     "doc": "syncTime",
     "title": "CommandManager.syncTime",
     "content": "fun syncTime() . ",
     "url": "/api/command-manager/sync-time.html#commandmanagersynctime",
     
     "relUrl": "/api/command-manager/sync-time.html#commandmanagersynctime"
-  },"675": {
+  },"672": {
     "doc": "syncTime",
     "title": "概要",
     "content": "端末の現在時刻をグラスに同期する。ホーム画面の時計に反映される。 . ",
     "url": "/api/command-manager/sync-time.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/sync-time.html#概要"
-  },"676": {
+  },"673": {
     "doc": "syncTime",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/sync-time.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/sync-time.html#戻り値"
-  },"677": {
+  },"674": {
     "doc": "syncTime",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/sync-time.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/sync-time.html#使用例"
-  },"678": {
+  },"675": {
     "doc": "syncTime",
     "title": "syncTime",
     "content": " ",
     "url": "/api/command-manager/sync-time.html",
     
     "relUrl": "/api/command-manager/sync-time.html"
-  },"679": {
+  },"676": {
     "doc": "syncWeather",
     "title": "CommandManager.syncWeather",
     "content": "fun syncWeather(type: CommandManager.WeatherType, value: Int) . ",
     "url": "/api/command-manager/sync-weather.html#commandmanagersyncweather",
     
     "relUrl": "/api/command-manager/sync-weather.html#commandmanagersyncweather"
-  },"680": {
+  },"677": {
     "doc": "syncWeather",
     "title": "概要",
     "content": "天気情報をグラスに同期する。気温とアイコンは別々に送る。 . ",
     "url": "/api/command-manager/sync-weather.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/sync-weather.html#概要"
-  },"681": {
+  },"678": {
     "doc": "syncWeather",
     "title": "引数",
     "content": "| 名前 | 型 | 説明 | . | type | CommandManager.WeatherType | TEMPERATURE か ICON | . | value | Int | 気温、または天気アイコンの種別 | . ",
     "url": "/api/command-manager/sync-weather.html#%E5%BC%95%E6%95%B0",
     
     "relUrl": "/api/command-manager/sync-weather.html#引数"
-  },"682": {
+  },"679": {
     "doc": "syncWeather",
     "title": "戻り値",
     "content": "Unit . ",
     "url": "/api/command-manager/sync-weather.html#%E6%88%BB%E3%82%8A%E5%80%A4",
     
     "relUrl": "/api/command-manager/sync-weather.html#戻り値"
-  },"683": {
+  },"680": {
     "doc": "syncWeather",
     "title": "使用例",
     "content": " ",
     "url": "/api/command-manager/sync-weather.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/sync-weather.html#使用例"
-  },"684": {
+  },"681": {
     "doc": "syncWeather",
     "title": "syncWeather",
     "content": " ",
     "url": "/api/command-manager/sync-weather.html",
     
     "relUrl": "/api/command-manager/sync-weather.html"
-  },"685": {
+  },"682": {
     "doc": "テレプロンプター",
     "title": "テレプロンプター",
     "content": "原稿をグラスに出して、読み上げに合わせて流す画面。 . ",
     "url": "/pages/teleprompter.html",
     
     "relUrl": "/pages/teleprompter.html"
-  },"686": {
+  },"683": {
     "doc": "テレプロンプター",
     "title": "開く",
     "content": "enterTeleprompterPage() を呼ぶ。開く前に送った原稿は表示されないので、必ず先に開く。 . ",
     "url": "/pages/teleprompter.html#%E9%96%8B%E3%81%8F",
     
     "relUrl": "/pages/teleprompter.html#開く"
-  },"687": {
+  },"684": {
     "doc": "テレプロンプター",
     "title": "原稿を出す",
     "content": "全文を渡すなら sendTeleprompterContent()。200バイトを超える分は SDK が分割して送る。 percent つきの overload はスクロールバーの位置も一緒に送る。 . commandManager.enterTeleprompterPage() commandManager.sendTeleprompterStatus( status = CommandManager.TeleprompterStatus.READY, mode = CommandManager.TeleprompterMode.TELEPROMPT, ) commandManager.sendTeleprompterContent(\"読み上げる原稿\", percent = 0) . sendTeleprompterStatus() は再生状態と表示モードをまとめて送る。別パケットに分けると 動作が安定しないため、片方だけ変えたいときも両方渡す。 . | status | 意味 | . | READY | 再生前 | . | STARTED | 再生中 | . | PAUSED | 一時停止 | . | mode | 意味 | . | TELEPROMPT | 原稿の読み上げ | . | TRANSCRIPT | 文字起こし | . | TRANSLATION | 翻訳 | . ",
     "url": "/pages/teleprompter.html#%E5%8E%9F%E7%A8%BF%E3%82%92%E5%87%BA%E3%81%99",
     
     "relUrl": "/pages/teleprompter.html#原稿を出す"
-  },"688": {
+  },"685": {
     "doc": "テレプロンプター",
     "title": "読み上げに合わせて流す",
     "content": "文字起こしのように次の1行が決まっていく使い方では、全文を送り直さずに sendTeleprompterLine() で1行ずつ追記する。percent でスクロールバーを進め、 scrollUp = true にすると1行上へ戻る。 . 経過時間は sendTeleprompterTime() に mm:ss の5文字で渡す。短ければ先頭が0埋めされ、 長ければ切り捨てられる。 . commandManager.sendTeleprompterStatus( status = CommandManager.TeleprompterStatus.STARTED, mode = CommandManager.TeleprompterMode.TELEPROMPT, ) lines.forEachIndexed { index, line -&gt; // 全文を送り直さず、読み上げた分だけ流す commandManager.sendTeleprompterLine( text = line, percent = (index + 1) * 100 / lines.size, ) commandManager.sendTeleprompterTime(\"00:%02d\".format(index)) } commandManager.clearInscriptionText() . ",
     "url": "/pages/teleprompter.html#%E8%AA%AD%E3%81%BF%E4%B8%8A%E3%81%92%E3%81%AB%E5%90%88%E3%82%8F%E3%81%9B%E3%81%A6%E6%B5%81%E3%81%99",
     
     "relUrl": "/pages/teleprompter.html#読み上げに合わせて流す"
-  },"689": {
+  },"686": {
     "doc": "テレプロンプター",
     "title": "消す・やめる",
     "content": "clearInscriptionText() で表示中のテキストが消える。翻訳ページとグラス側のバッファを 共有しているため、消去はどちらのページでも同じコマンドになる。 . ページを離れるときは enterHomePage()。 . ",
     "url": "/pages/teleprompter.html#%E6%B6%88%E3%81%99%E3%82%84%E3%82%81%E3%82%8B",
     
     "relUrl": "/pages/teleprompter.html#消すやめる"
-  },"690": {
+  },"687": {
     "doc": "テレプロンプター",
     "title": "関連 API",
     "content": ". | enterTeleprompterPage() | sendTeleprompterContent(content: String, percent: Int) | sendTeleprompterLine(text: String, percent: Int, scrollUp: Boolean) | sendTeleprompterStatus(status: CommandManager.TeleprompterStatus, mode: CommandManager.TeleprompterMode) | sendTeleprompterTime(time: String) | clearInscriptionText() | . ",
     "url": "/pages/teleprompter.html#%E9%96%A2%E9%80%A3-api",
     
     "relUrl": "/pages/teleprompter.html#関連-api"
-  },"691": {
+  },"688": {
     "doc": "汎用テキスト表示",
     "title": "汎用テキスト表示",
     "content": "決まった用途を持たないテキスト画面。専用ページのない情報を出したいときに使う。 . ",
     "url": "/pages/text.html",
     
     "relUrl": "/pages/text.html"
-  },"692": {
+  },"689": {
     "doc": "汎用テキスト表示",
     "title": "開いて送る",
     "content": "enterEmptyScreenPage() で開き、sendEmptyScreenContent() で本文を送る。200バイトを 超える分は SDK が分割して送る。送るたびに表示は置き換わる。 . commandManager.enterEmptyScreenPage() commandManager.sendEmptyScreenContent(\"好きな文字列をそのまま出せる\") . ",
     "url": "/pages/text.html#%E9%96%8B%E3%81%84%E3%81%A6%E9%80%81%E3%82%8B",
     
     "relUrl": "/pages/text.html#開いて送る"
-  },"693": {
+  },"690": {
     "doc": "汎用テキスト表示",
     "title": "やめる",
     "content": "enterHomePage() で閉じる。 . 文字を置く位置まで決めたいなら 分割レイアウト か 自由配置キャンバス を使う。 . ",
     "url": "/pages/text.html#%E3%82%84%E3%82%81%E3%82%8B",
     
     "relUrl": "/pages/text.html#やめる"
-  },"694": {
+  },"691": {
     "doc": "汎用テキスト表示",
     "title": "関連 API",
     "content": ". | enterEmptyScreenPage() | sendEmptyScreenContent(content: String) | . ",
     "url": "/pages/text.html#%E9%96%A2%E9%80%A3-api",
     
     "relUrl": "/pages/text.html#関連-api"
-  },"695": {
+  },"692": {
     "doc": "サードパーティ表記",
     "title": "サードパーティ表記",
     "content": "SDK の配布物に含まれる第三者のソフトウェアと、アプリ側に及ぶ表記義務。 . ",
     "url": "/third-party-notices.html",
     
     "relUrl": "/third-party-notices.html"
-  },"696": {
+  },"693": {
     "doc": "サードパーティ表記",
     "title": "Opus (libopus)",
     "content": "| 項目 | 内容 | . | バージョン | 1.4 | . | ライセンス | BSD 3-Clause | . | 含まれるバージョン | SDK 0.6.0 以降の Android 版（sabera-app-core-android の aar） | . | 実体 | aar 内の jni/{arm64-v8a,armeabi-v7a}/libopus.so と、JNI ラッパーの libopusdecoder.so | . グラスのマイク音声は Opus で流れてくるため、startMicStreaming() で受け取る PCM への デコードに libopus を使っている。マイクを使わないアプリでも、aar に入っているので 再配布物には含まれる。 . アプリ側でやること . BSD 3-Clause はバイナリでの再配布に対して、著作権表示・条件文・免責を配布物に付随する 文書等で再現することを求める。ソースの公開は求めない。 . SDK を組み込んだアプリを配布するときは、下の全文をアプリのライセンス画面や それに準じる場所に載せる。Android の場合、libopus.so は Gradle の依存ではなく aar 同梱の バイナリなので、AboutLibraries のような依存から一覧を作るツールでは拾われない。 手で足す必要がある。 . SDK 0.6.1 以降は aar の META-INF/third-party-notices/opus-LICENSE.txt にも同じ全文が入って いるので、そこから読み出してもよい。 . 特許はロイヤリティフリーで許諾されている（opus-codec.org/license）。 . 全文 . Copyright 2001-2023 Xiph.Org, Skype Limited, Octasic, Jean-Marc Valin, Timothy B. Terriberry, CSIRO, Gregory Maxwell, Mark Borgerding, Erik de Castro Lopo, Mozilla, Amazon Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. - Neither the name of Internet Society, IETF or IETF Trust, nor the names of specific contributors, may be used to endorse or promote products derived from this software without specific prior written permission. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. Opus is subject to the royalty-free patent licenses which are specified at: Xiph.Org Foundation: https://datatracker.ietf.org/ipr/1524/ Microsoft Corporation: https://datatracker.ietf.org/ipr/1914/ Broadcom Corporation: https://datatracker.ietf.org/ipr/1526/ . ",
     "url": "/third-party-notices.html#opus-libopus",
     
     "relUrl": "/third-party-notices.html#opus-libopus"
-  },"697": {
+  },"694": {
     "doc": "翻訳",
     "title": "翻訳",
     "content": "訳文と言語ペアを出す画面。翻訳そのものはアプリ側で行い、結果だけを送る。 . ",
     "url": "/pages/translate.html",
     
     "relUrl": "/pages/translate.html"
-  },"698": {
+  },"695": {
     "doc": "翻訳",
     "title": "開く",
     "content": "enterTranslatePage() を呼ぶ。次に sendTranslateLanguage() で言語ラベルを決め、 sendTranslateContent() で本文を送る、の順で使う。 . 言語コードは \"ENG\" / \"JPN\" などの3文字。ラベルの表示だけを切り替えるコマンドなので、 画面遷移は起こらない。 . ",
     "url": "/pages/translate.html#%E9%96%8B%E3%81%8F",
     
     "relUrl": "/pages/translate.html#開く"
-  },"699": {
+  },"696": {
     "doc": "翻訳",
     "title": "訳文を送る",
     "content": "送るたびに表示は置き換わる。長い本文は SDK が分割して送る。 . commandManager.enterTranslatePage() commandManager.sendTranslateLanguage(source = \"ENG\", target = \"JPN\") sentences.forEach { sentence -&gt; // 送るたび全文が置き換わる commandManager.sendTranslateContent(sentence) } commandManager.clearInscriptionText() . ",
     "url": "/pages/translate.html#%E8%A8%B3%E6%96%87%E3%82%92%E9%80%81%E3%82%8B",
     
     "relUrl": "/pages/translate.html#訳文を送る"
-  },"700": {
+  },"697": {
     "doc": "翻訳",
     "title": "消す・やめる",
     "content": "clearInscriptionText() で消える。テレプロンプターと同じバッファを使っている。 . ページを離れるときは enterHomePage()。 . ",
     "url": "/pages/translate.html#%E6%B6%88%E3%81%99%E3%82%84%E3%82%81%E3%82%8B",
     
     "relUrl": "/pages/translate.html#消すやめる"
-  },"701": {
+  },"698": {
     "doc": "翻訳",
     "title": "関連 API",
     "content": ". | enterTranslatePage() | sendTranslateLanguage(source: String, target: String) | sendTranslateContent(content: String) | clearInscriptionText() | . ",

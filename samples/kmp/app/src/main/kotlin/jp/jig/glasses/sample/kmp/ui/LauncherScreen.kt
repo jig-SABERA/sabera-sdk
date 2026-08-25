@@ -238,7 +238,8 @@ private fun iconY(index: Int): Int =
 
 private fun cursorIndex(current: CommandManager.ImuData, center: CommandManager.ImuData, count: Int): Int {
     val steps = (-normalizeDegrees(current.yawDegrees - center.yawDegrees) / STEP_DEGREES).roundToInt()
-    val column = (GRID_COLUMNS / 2 + steps).coerceIn(0, GRID_COLUMNS - 1)
+    // 端で止めずに反対側へ回り込む。mod は負でも 0..GRID_COLUMNS-1 を返す
+    val column = (GRID_COLUMNS / 2 + steps).mod(GRID_COLUMNS)
     val row = if (current.pitchDegrees - center.pitchDegrees > ROW_STEP_DEGREES) 1 else 0
     return (row * GRID_COLUMNS + column).coerceAtMost(count - 1)
 }

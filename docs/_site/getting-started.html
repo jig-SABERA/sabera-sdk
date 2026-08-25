@@ -56,14 +56,14 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Sabera App SDK のドキュメント" />
 <meta name="twitter:description" property="og:description" content="Sabera App SDK のドキュメント" />
-<link rel="canonical" href="http://localhost:4000/getting-started.html" />
-<meta property="og:url" content="http://localhost:4000/getting-started.html" />
+<link rel="canonical" href="/getting-started.html" />
+<meta property="og:url" content="/getting-started.html" />
 <meta property="og:site_name" content="Sabera App SDK" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Getting Started" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Sabera App SDK のドキュメント","headline":"Getting Started","url":"http://localhost:4000/getting-started.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Sabera App SDK のドキュメント","headline":"Getting Started","url":"/getting-started.html"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -292,23 +292,14 @@ SDKはネイティブAPIとして提供している。</p>
 </h2>
     
 
-<p>SDK は GitHub Packages (<code class="language-plaintext highlighter-rouge">jig-SABERA/sabera-sdk-packages</code>) で配布している。private
-パッケージなので、取得には <code class="language-plaintext highlighter-rouge">read:packages</code> スコープを持つ Personal Access Token
-が必要。発行手順は <a href="github-pat.html">GitHub PAT の作り方</a> を参照。</p>
+<p>SDK は GitHub Packages (<code class="language-plaintext highlighter-rouge">jig-SABERA/sabera-sdk-packages</code>) で配布している。<br />
+取得には <code class="language-plaintext highlighter-rouge">read:packages</code> スコープを持つ Personal Access Token が必要。
+発行手順は <a href="github-pat.html">GitHub PAT の作り方</a> を参照。</p>
 
-<p><code class="language-plaintext highlighter-rouge">~/.gradle/gradle.properties</code> に認証情報を書く。全プロジェクトで共有される。</p>
+<p><code class="language-plaintext highlighter-rouge">~/.gradle/gradle.properties</code> に認証情報を書く。</p>
 
 <div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">GitHubPackagesUsername</span><span class="p">=</span><span class="s">&lt;GitHubのユーザー名&gt;</span>
 <span class="py">GitHubPackagesPassword</span><span class="p">=</span><span class="s">&lt;read:packages を持つ PAT&gt;</span>
-</code></pre></div></div>
-
-<p>プロパティ名は <code class="language-plaintext highlighter-rouge">settings.gradle.kts</code> でリポジトリに付けた名前（<code class="language-plaintext highlighter-rouge">GitHubPackages</code>）から
-決まる。Gradle の credentials provider が探す名前なので、変えると認証されない。</p>
-
-<p>CI では環境変数で渡す。プロパティ名の前に <code class="language-plaintext highlighter-rouge">ORG_GRADLE_PROJECT_</code> を付ける。</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ORG_GRADLE_PROJECT_GitHubPackagesUsername</span><span class="o">=</span>&lt;GitHubのユーザー名&gt;
-<span class="nv">ORG_GRADLE_PROJECT_GitHubPackagesPassword</span><span class="o">=</span>&lt;<span class="nb">read</span>:packages を持つ PAT&gt;
 </code></pre></div></div>
 <h2 id="全体の流れ">
   
@@ -319,52 +310,27 @@ SDKはネイティブAPIとして提供している。</p>
 </h2>
     
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Application.onCreate()  … SPI を差し込む
-        ↓
-Activity.onCreate()     … デバイス選択ダイアログのフックを差し込む
-        ↓
-getGlassManager(context)
-        ↓
-connectedDevice を購読開始   ← 接続状態はここだけを見る
-        ↓
-showAutomaticSelectionDialog(activity)   … 選択と接続を両方やる
-        ↓
-client.createCommandManager()
-        ↓
-コマンド送信 / gestureEvents 購読
-        ↓
-manager.disconnect(client)
-</code></pre></div></div>
-<h2 id="1-spi-の差し込み">
-  
-  
-    <a href="#1-spi-の差し込み" class="anchor-heading" aria-labelledby="1-spi-の差し込み"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. SPI の差し込み
-  
-  
-</h2>
-    
+<pre><code class="language-mermaid">flowchart TD
+    subgraph init["初期化"]
+        B["Activity.onCreate()"] --&gt; C["getGlassManager(context)"]
+    end
 
-<p><code class="language-plaintext highlighter-rouge">Application.onCreate()</code> で行う。SDK
-はプロセスシングルトンで、<strong>後から差し替えても既に発火した
-呼び出しには反映されない</strong>ため、他のどの SDK API より先に実行する必要がある。</p>
+    subgraph connect["接続"]
+        D["connectedDevice を購読"] --&gt; E["showAutomaticSelectionDialog(activity)"]
+        E --&gt; F["client.createCommandManager()"]
+    end
 
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">SampleApplication</span> <span class="p">:</span> <span class="nc">Application</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">super</span><span class="p">.</span><span class="nf">onCreate</span><span class="p">()</span>
-        <span class="nc">GlassesSDK</span><span class="p">.</span><span class="nf">setLogger</span> <span class="p">{</span> <span class="n">tag</span><span class="p">,</span> <span class="n">msg</span> <span class="p">-&gt;</span> <span class="nc">Log</span><span class="p">.</span><span class="nf">d</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="p">}</span>
-        <span class="nc">GlassesSDK</span><span class="p">.</span><span class="nf">setProd</span><span class="p">(</span><span class="k">true</span><span class="p">)</span>
-        <span class="nc">GlassesSDK</span><span class="p">.</span><span class="nf">setDevicePersistence</span><span class="p">(</span><span class="nc">SharedPrefsDevicePersistence</span><span class="p">(</span><span class="k">this</span><span class="p">))</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></div>
+    subgraph use["利用・終了"]
+        G["CommandManager でコマンドの送受信"] --&gt; H["manager.disconnect(client)"]
+    end
 
-<p><a href="/api/glasses-sdk/set-device-persistence.html"><code class="language-plaintext highlighter-rouge">setDevicePersistence</code></a>
-を省くとデフォルトのインメモリ実装になり、プロセスをまたぐと接続先を忘れる。
-前回接続したデバイスへの自動再接続を使うなら必須。</p>
-<h2 id="2-activity-側のフックandroid-のみ">
+    C --&gt; D
+    F --&gt; G
+</code></pre>
+<h2 id="1-activity-側のフックandroid-のみ">
   
   
-    <a href="#2-activity-側のフックandroid-のみ" class="anchor-heading" aria-labelledby="2-activity-側のフックandroid-のみ"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. Activity 側のフック（Android のみ）
+    <a href="#1-activity-側のフックandroid-のみ" class="anchor-heading" aria-labelledby="1-activity-側のフックandroid-のみ"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 1. Activity 側のフック（Android のみ）
   
   
 </h2>
@@ -391,10 +357,10 @@ manager.disconnect(client)
 <p><a href="/api/ble/connect-to-last-device.html"><code class="language-plaintext highlighter-rouge">connectToLastDevice()</code></a>
 は前回接続したデバイスがあれば自動で接続を試みる。これを呼んでおくと
 2回目以降の起動でユーザーにダイアログを見せずに済む。</p>
-<h2 id="3-接続状態を購読する">
+<h2 id="2-接続状態を購読する">
   
   
-    <a href="#3-接続状態を購読する" class="anchor-heading" aria-labelledby="3-接続状態を購読する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. 接続状態を購読する
+    <a href="#2-接続状態を購読する" class="anchor-heading" aria-labelledby="2-接続状態を購読する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 2. 接続状態を購読する
   
   
 </h2>
@@ -419,10 +385,10 @@ manager.disconnect(client)
 <p><a href="/api/glass-manager/connected-device.html"><code class="language-plaintext highlighter-rouge">connectedDevice</code></a> は <code class="language-plaintext highlighter-rouge">StateFlow&lt;GlassClient?&gt;</code>。<a href="/api/glass-client/"><code class="language-plaintext highlighter-rouge">GlassClient</code></a> にも
 <code class="language-plaintext highlighter-rouge">connected: StateFlow&lt;Boolean&gt;</code> があるが、接続の有無を知るだけなら
 <a href="/api/glass-manager/connected-device.html"><code class="language-plaintext highlighter-rouge">connectedDevice</code></a> が <code class="language-plaintext highlighter-rouge">null</code> かどうかで足りる。</p>
-<h2 id="4-デバイスを選んで接続する">
+<h2 id="3-デバイスを選んで接続する">
   
   
-    <a href="#4-デバイスを選んで接続する" class="anchor-heading" aria-labelledby="4-デバイスを選んで接続する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. デバイスを選んで接続する
+    <a href="#3-デバイスを選んで接続する" class="anchor-heading" aria-labelledby="3-デバイスを選んで接続する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. デバイスを選んで接続する
   
   
 </h2>
@@ -436,10 +402,10 @@ manager.disconnect(client)
 を呼ぶ必要はない。</p>
 
 <p>第1引数は Activity。Application Context を渡すとダイアログが出ないので注意。</p>
-<h2 id="5-コマンドを送る">
+<h2 id="4-コマンドを送る">
   
   
-    <a href="#5-コマンドを送る" class="anchor-heading" aria-labelledby="5-コマンドを送る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. コマンドを送る
+    <a href="#4-コマンドを送る" class="anchor-heading" aria-labelledby="4-コマンドを送る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. コマンドを送る
   
   
 </h2>
@@ -536,10 +502,10 @@ manager.disconnect(client)
 <p>汎用テキスト表示・画像表示（技適マークに使っている画面）・設定の書き換えと同期・
 時刻や天気の同期なども <a href="/api/command-manager/"><code class="language-plaintext highlighter-rouge">CommandManager</code></a> から送れる。一覧は
 <a href="api/command-manager/">API リファレンス</a> を見る。</p>
-<h2 id="6-ジェスチャーを受け取る">
+<h2 id="5-ジェスチャーを受け取る">
   
   
-    <a href="#6-ジェスチャーを受け取る" class="anchor-heading" aria-labelledby="6-ジェスチャーを受け取る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. ジェスチャーを受け取る
+    <a href="#5-ジェスチャーを受け取る" class="anchor-heading" aria-labelledby="5-ジェスチャーを受け取る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 5. ジェスチャーを受け取る
   
   
 </h2>
@@ -558,10 +524,10 @@ manager.disconnect(client)
 
 <p><a href="/api/command-manager/gesture-events.html"><code class="language-plaintext highlighter-rouge">gestureEvents</code></a> は
 <code class="language-plaintext highlighter-rouge">SharedFlow&lt;GestureType&gt;</code>。購読を始める前に発生したジェスチャーは受け取れない。</p>
-<h2 id="7-切断する">
+<h2 id="6-切断する">
   
   
-    <a href="#7-切断する" class="anchor-heading" aria-labelledby="7-切断する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 7. 切断する
+    <a href="#6-切断する" class="anchor-heading" aria-labelledby="6-切断する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 6. 切断する
   
   
 </h2>

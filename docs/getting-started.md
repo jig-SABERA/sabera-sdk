@@ -23,22 +23,24 @@ GitHubPackagesPassword=<read:packages を持つ PAT>
 
 ## 全体の流れ
 
-```
-Application.onCreate()  … SPI を差し込む
-        ↓
-Activity.onCreate()     … デバイス選択ダイアログのフックを差し込む
-        ↓
-getGlassManager(context)
-        ↓
-connectedDevice を購読開始   ← 接続状態はここだけを見る
-        ↓
-showAutomaticSelectionDialog(activity)   … 選択と接続を両方やる
-        ↓
-client.createCommandManager()
-        ↓
-コマンド送信 / gestureEvents 購読
-        ↓
-manager.disconnect(client)
+```mermaid
+flowchart TD
+    subgraph init["初期化"]
+        A["Application.onCreate()"] --> B["Activity.onCreate()"]
+        B --> C["getGlassManager(context)"]
+    end
+
+    subgraph connect["接続"]
+        D["connectedDevice を購読"] --> E["showAutomaticSelectionDialog(activity)"]
+        E --> F["client.createCommandManager()"]
+    end
+
+    subgraph use["利用・終了"]
+        G["CommandManager でコマンドの送受信"] --> H["manager.disconnect(client)"]
+    end
+
+    C --> D
+    F --> G
 ```
 
 ## 1. SPI の差し込み

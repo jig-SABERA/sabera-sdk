@@ -10,188 +10,131 @@ SDKはネイティブAPIとして提供している。
 
 ## SDK の取得設定
 
-SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。private
-パッケージなので、取得には `read:packages` スコープを持つ Personal Access Token
-が必要。発行手順は [GitHub PAT の作り方](github-pat.html) を参照。
+SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。\
+取得には `read:packages` スコープを持つ Personal Access Token が必要。
+発行手順は [GitHub PAT の作り方](github-pat.html) を参照。
 
-`~/.gradle/gradle.properties` に認証情報を書く。全プロジェクトで共有される。
+`~/.gradle/gradle.properties` に認証情報を書く。
 
 ```properties
 GitHubPackagesUsername=<GitHubのユーザー名>
 GitHubPackagesPassword=<read:packages を持つ PAT>
 ```
 
-プロパティ名は `settings.gradle.kts` でリポジトリに付けた名前（`GitHubPackages`）から
-決まる。Gradle の credentials provider が探す名前なので、変えると認証されない。
-
-CI では環境変数で渡す。プロパティ名の前に `ORG_GRADLE_PROJECT_` を付ける。
-
-```bash
-ORG_GRADLE_PROJECT_GitHubPackagesUsername=<GitHubのユーザー名>
-ORG_GRADLE_PROJECT_GitHubPackagesPassword=<read:packages を持つ PAT>
-```
-
 ## 全体の流れ
 
-```
-Application.onCreate()  … SPI を差し込む
-        ↓
-Activity.onCreate()     … デバイス選択ダイアログのフックを差し込む
-        ↓
-getGlassManager(context)
-        ↓
-connectedDevice を購読開始   ← 接続状態はここだけを見る
-        ↓
-showAutomaticSelectionDialog(activity)   … 選択と接続を両方やる
-        ↓
-client.createCommandManager()
-        ↓
-コマンド送信 / gestureEvents 購読
-        ↓
-manager.disconnect(client)
+このページは Android 向けに書いている。iOS も API の並びは同じだが、
+マニフェストの設定と権限の要求は要らない。
+
+```mermaid
+flowchart TD
+    subgraph init["初期化"]
+        B["Activity.onCreate()"] --> C["getGlassManager(context)"]
+    end
+
+    subgraph connect["接続"]
+        D["connectedDevice を購読"] --> E["showAutomaticSelectionDialog(activity)"]
+        E --> F["client.createCommandManager()"]
+    end
+
+    subgraph use["利用・終了"]
+        G["CommandManager でコマンドの送受信"] --> H["manager.disconnect(client)"]
+    end
+
+    C --> D
+    F --> G
 ```
 
-## 1. SPI の差し込み
+## 1. マニフェストと権限
 
-`Application.onCreate()` で行う。SDK
-はプロセスシングルトンで、**後から差し替えても既に発火した
-呼び出しには反映されない**ため、他のどの SDK API より先に実行する必要がある。
+`AndroidManifest.xml` に権限と、SDK 内蔵のサービスを書く。
+
+```xml
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+<uses-permission android:name="android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE" />
+
+<service
+    android:name="app.jigglass.ble.BleCompanionDeviceService"
+    android:exported="true"
+    android:permission="android.permission.BIND_COMPANION_DEVICE_SERVICE">
+    <intent-filter>
+        <action android:name="android.companion.CompanionDeviceService" />
+    </intent-filter>
+</service>
+```
+
+## 2. 接続してホーム画面を出す
+
+`MainActivity.kt`に、SABERAに接続してホーム画面を出すまでのコードを書く。
 
 ```kotlin
-class SampleApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        GlassesSDK.setLogger { tag, msg -> Log.d(tag, msg) }
-        GlassesSDK.setProd(true)
-        GlassesSDK.setDevicePersistence(SharedPrefsDevicePersistence(this))
-    }
-}
-```
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-`setDevicePersistence`
-を省くとデフォルトのインメモリ実装になり、プロセスをまたぐと接続先を忘れる。
-前回接続したデバイスへの自動再接続を使うなら必須。
+        // Bluetoothスキャンと接続の許可
+        requestPermissions(
+            arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT),
+            1001,
+        )
 
-## 2. Activity 側のフック（Android のみ）
+        // デバイス選択ダイアログは SDK 側が持っている。表示に Activity が必要。
+        SdkActivityHost.showBleDeviceSelectionDialog = { scope, callback ->
+            BleDeviceSelector(this).showDialog(scope, singleTarget = false, callback)
+        }
 
-Companion Device Manager のダイアログは Activity
-を必要とするため、`SdkActivityHost` に 表示処理を差し込む。iOS
-では不要（CoreBluetooth は Activity を要求しない）。
+        // 前回接続したデバイスに自動で接続する。
+        BleCompanionDeviceService.connectToLastDevice(this)
 
-```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    SdkActivityHost.showBleDeviceSelectionDialog = { scope, callback ->
-        BleDeviceSelector(this).showDialog(scope, singleTarget = false, callback)
-    }
-    BleCompanionDeviceService.connectToLastDevice(this)
-}
+        val manager = getGlassManager(this)
 
-override fun onDestroy() {
-    SdkActivityHost.showBleDeviceSelectionDialog = null
-    super.onDestroy()
-}
-```
+        // 接続・切断の通知を受け取る
+        lifecycleScope.launch {
+            manager.connectedDevice.collect { client ->
+                if (client == null) return@collect
 
-`connectToLastDevice()`
-は前回接続したデバイスがあれば自動で接続を試みる。これを呼んでおくと
-2回目以降の起動でユーザーにダイアログを見せずに済む。
+                // 接続したSABERAにBluetoothコマンドを送信する。
+                val commandManager = client.createCommandManager()
 
-## 3. 接続状態を購読する
+                // ホーム画面を開く
+                commandManager.enterHomePage()
+            }
+        }
 
-`GlassManager` を取得したら、まず `connectedDevice`
-の購読を始める。接続の成立も切断も この Flow ひとつで観測する。
-
-```kotlin
-val manager = getGlassManager(context)
-
-scope.launch {
-    manager.connectedDevice.collect { client ->
-        if (client != null) {
-            // 接続済み。ここで CommandManager を作る
-        } else {
-            // 未接続
+        // 接続するSABERAを選択するダイアログを出す。前回接続したデバイスがあれば自動で接続する。
+        lifecycleScope.launch {
+            manager.showAutomaticSelectionDialog(this@MainActivity)
         }
     }
-}
-```
 
-`connectedDevice` は `StateFlow<GlassClient?>`。`GlassClient` にも
-`connected: StateFlow<Boolean>` があるが、接続の有無を知るだけなら
-`connectedDevice` が `null` かどうかで足りる。
-
-## 4. デバイスを選んで接続する
-
-```kotlin
-val client: GlassClient? = manager.showAutomaticSelectionDialog(activity)
-```
-
-OS のデバイス選択 UI が出て、選ばれたデバイスの `GlassClient` が返る。
-**この呼び出しは接続まで済ませる。** 返り値を受け取ったあとに別途 `connect()`
-を呼ぶ必要はない。
-
-第1引数は Activity。Application Context を渡すとダイアログが出ないので注意。
-
-## 5. コマンドを送る
-
-```kotlin
-val commandManager = client.createCommandManager()
-
-commandManager.enterTeleprompterPage()
-commandManager.sendTeleprompterContent("Hello")
-```
-
-送信系は同期メソッドだが内部でキューイングされるため、呼び出しスレッドはブロックしない。
-
-### ページ遷移
-
-| メソッド                                  | 遷移先                     |
-| ----------------------------------------- | -------------------------- |
-| `enterHomePage()`                         | ホーム                     |
-| `enterTeleprompterPage()`                 | テレプロンプター           |
-| `enterAiChatPage()`                       | AI アシスタント            |
-| `enterTranslatePage()`                    | 翻訳                       |
-
-### コンテンツ送信
-
-| メソッド                                                | 内容                               |
-| ------------------------------------------------------- | ---------------------------------- |
-| `sendTeleprompterContent(content: String)`              | テレプロンプターに表示する文字列   |
-| `sendTranslateContent(content: String)`                 | 翻訳ページに表示する文字列         |
-| `sendTranslateLanguage(source: String, target: String)` | 翻訳の言語ペア（例: `"ENG", "JPN"`） |
-| `sendAiChatText(text: String)`                          | AI チャットに表示する文字列        |
-
-ページを開いてからコンテンツを送る。送信先のページが開いていないと表示されない。
-
-### そのほかのコマンド
-
-汎用テキスト表示・画像表示（技適マークに使っている画面）・設定の書き換えと同期・
-時刻や天気の同期なども `CommandManager` から送れる。一覧は
-[API リファレンス](api/command-manager/) を見る。
-
-## 6. ジェスチャーを受け取る
-
-```kotlin
-scope.launch {
-    commandManager.gestureEvents.collect { gesture ->
-        when (gesture) {
-            GestureType.SINGLE_TAP -> {}
-            GestureType.DOUBLE_TAP -> {}
-            GestureType.HOLD -> {}
-        }
+    override fun onDestroy() {
+        // 破棄した Activity を SDK が掴んだままにしない
+        SdkActivityHost.showBleDeviceSelectionDialog = null
+        super.onDestroy()
     }
 }
 ```
 
-`gestureEvents` は
-`SharedFlow<GestureType>`。購読を始める前に発生したジェスチャーは受け取れない。
+ノート:
 
-## 7. 切断する
+- [`SdkActivityHost.showBleDeviceSelectionDialog`](api/sdk-activity-host/show-ble-device-selection-dialog.html)
+  — プロセスに1つとする。`onDestroy()`で破棄すること。
+- [`showAutomaticSelectionDialog()`](api/glass-manager/show-automatic-selection-dialog.html)
+  — 選択ダイアログ表示したあと、接続まで処理する。別途`connect()`
+  を呼ぶ必要はない。
+- [`createCommandManager()`](api/glass-client/create-command-manager.html) —
+  コマンドは内部キューに積まれて順番に送信される。
+- [`enterHomePage()`](api/command-manager/enter-home-page.html) —
+  グラス側の画面を切り替える。コンテンツ送信は、対応するページを開いていないと表示されない
 
-```kotlin
-manager.disconnect(client)
-```
+## 次のステップ
 
-`GlassClient` に `disconnect()` は無い。型の上で `GlassClientInternal`
-に隔離してあり、 必ず `GlassManager` を経由する。UI
-層が接続状態を持たないようにするための制約。
+| やりたいこと           | 参照先                                                            |
+| ---------------------- | ----------------------------------------------------------------- |
+| 既存のページを開く     | [ページごとの使い方](pages/)                                      |
+| 画像を表示する         | [画像表示](pages/image.html)                                      |
+| UIを自由に配置する     | [自由配置キャンバス](pages/canvas.html)                           |
+| ジェスチャーを受け取る | [gestureEvents](api/command-manager/gesture-events.html)          |
+| マイクを使う           | [startMicStreaming](api/command-manager/start-mic-streaming.html) |
+| IMUを使う              | [startImuData](api/command-manager/start-imu-data.html)           |

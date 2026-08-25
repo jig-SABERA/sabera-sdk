@@ -66,8 +66,11 @@ private const val CANVAS_WIDTH = 576
 /** 隣の列へ移るまでの振り向き量 */
 private const val STEP_DEGREES = 20f
 
-/** 下の段へ移るまでのうなずき量。ピッチは上向きが負 */
+/** 上の段へ移るまでの見上げ量。ピッチは上向きが負 */
 private const val ROW_STEP_DEGREES = 15f
+
+/** 起点は下段の中央。楽な姿勢のまま選べる位置に置く */
+private const val DEFAULT_INDEX = (GRID_ROWS - 1) * GRID_COLUMNS + GRID_COLUMNS / 2
 
 /** ヨーとピッチを見に行く間隔。変わったときだけ送るので短くても送信は増えない */
 private const val CURSOR_POLL_MS = 100L
@@ -97,7 +100,7 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
     // フォーカスの有無で差し替えるので、2状態とも先に作っておく
     val icons = remember { items.map { iconImage(it.glyph, false) to iconImage(it.glyph, true) } }
 
-    var focused by remember { mutableStateOf(0) }
+    var focused by remember { mutableStateOf(DEFAULT_INDEX) }
 
     DisposableEffect(commandManager) {
         val jobs = listOf(
@@ -119,7 +122,7 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
     }
 
     LaunchedEffect(Unit) {
-        // 画面に入った向きを上段の中央に合わせる
+        // 画面に入った向きを下段の中央に合わせる
         val center = imu.filterNotNull().first()
 
         commandManager.sendCanvas(listOf(descriptionElement(items[focused])))
@@ -173,7 +176,7 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
         ) {
             Text(
                 "首を振ってカーソルを動かし、グラスのシングルタップで選ぶ。" +
-                    "隣の列まで${STEP_DEGREES.toInt()}度、下の段までうなずき${ROW_STEP_DEGREES.toInt()}度。",
+                    "隣の列まで${STEP_DEGREES.toInt()}度、上の段は${ROW_STEP_DEGREES.toInt()}度見上げる。",
                 style = MaterialTheme.typography.bodySmall,
             )
             Spacer(Modifier.height(16.dp))
@@ -240,7 +243,7 @@ private fun cursorIndex(current: CommandManager.ImuData, center: CommandManager.
     val steps = (-normalizeDegrees(current.yawDegrees - center.yawDegrees) / STEP_DEGREES).roundToInt()
     // 端で止めずに反対側へ回り込む。mod は負でも 0..GRID_COLUMNS-1 を返す
     val column = (GRID_COLUMNS / 2 + steps).mod(GRID_COLUMNS)
-    val row = if (current.pitchDegrees - center.pitchDegrees > ROW_STEP_DEGREES) 1 else 0
+    val row = if (current.pitchDegrees - center.pitchDegrees < -ROW_STEP_DEGREES) 0 else GRID_ROWS - 1
     return (row * GRID_COLUMNS + column).coerceAtMost(count - 1)
 }
 

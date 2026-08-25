@@ -64,11 +64,20 @@ private const val TEXT_HEIGHT = 112
 
 private const val CANVAS_WIDTH = 576
 
+/** アイコンを横に並べたときの左端 */
+private const val GRID_LEFT = (CANVAS_WIDTH - (GRID_COLUMNS * ICON_SIZE + (GRID_COLUMNS - 1) * ICON_GAP)) / 2
+
 /** 隣の列へ移るまでの振り向き量 */
 private const val STEP_DEGREES = 20f
 
 /** 上の段へ移るまでの見上げ量。ピッチは上向きが負 */
 private const val ROW_STEP_DEGREES = 15f
+
+/** 首の向きそのものを差すポインター。テキストは画像の手前に描かれる */
+private const val POINTER_TEXT = "・"
+private const val POINTER_ELEMENT_ID = 1
+private const val POINTER_SIZE = 32
+private const val POINTER_MOVE_PX = 8
 
 /** 境目での行き来を防ぐ遊び。列はセル幅に対する割合、段は度 */
 private const val COLUMN_HYSTERESIS = 0.25f
@@ -132,8 +141,14 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
 
         // 回り込んでも連続させるため、列は範囲を切らないセル番号で持つ
         var columnCell = GRID_COLUMNS / 2
+        var pointerX = pointerX(columnCell.toFloat())
 
-        commandManager.sendCanvas(listOf(descriptionElement(items[focused])))
+        commandManager.sendCanvas(
+            listOf(
+                descriptionElement(items[focused]),
+                pointerElement(pointerX, focused / GRID_COLUMNS),
+            ),
+        )
         items.indices.forEach { index ->
             commandManager.sendCanvasImage(
                 id = index,
@@ -151,10 +166,19 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
             columnCell = columnCellFor(data, center, columnCell)
             val row = rowFor(data, center, focused / GRID_COLUMNS)
             val next = row * GRID_COLUMNS + columnCell.mod(GRID_COLUMNS)
-            if (next == focused) continue
+
+            // ポインターは離散したフォーカスではなく、首の向きのまま動かす
+            val nextPointerX = pointerX(columnPosition(data, center))
+            if (next == focused) {
+                if (abs(nextPointerX - pointerX) < POINTER_MOVE_PX) continue
+                pointerX = nextPointerX
+                commandManager.sendCanvasElements(listOf(pointerElement(pointerX, row)))
+                continue
+            }
 
             val previous = focused
             focused = next
+            pointerX = nextPointerX
             commandManager.sendCanvasImage(
                 id = previous,
                 x = iconX(previous),
@@ -171,7 +195,12 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
                 height = ICON_SIZE,
                 grayscale = icons[next].second.pixels,
             )
-            commandManager.sendCanvasElements(listOf(descriptionElement(items[next])))
+            commandManager.sendCanvasElements(
+                listOf(
+                    descriptionElement(items[next]),
+                    pointerElement(pointerX, row),
+                ),
+            )
         }
     }
 
@@ -242,23 +271,38 @@ private fun descriptionElement(item: LauncherItem) = CommandManager.CanvasElemen
     text = "${item.label}\n${item.description}",
 )
 
-private fun iconX(index: Int): Int {
-    val row = GRID_COLUMNS * ICON_SIZE + (GRID_COLUMNS - 1) * ICON_GAP
-    return (CANVAS_WIDTH - row) / 2 + (index % GRID_COLUMNS) * (ICON_SIZE + ICON_GAP)
-}
+private fun iconX(index: Int): Int = GRID_LEFT + (index % GRID_COLUMNS) * (ICON_SIZE + ICON_GAP)
 
 private fun iconY(index: Int): Int =
     ICON_TOP_Y + (index / GRID_COLUMNS) * (ICON_SIZE + ICON_ROW_GAP)
+
+/** 首の向きをセル単位の連続値にする。回り込むぶん範囲は切らない */
+private fun columnPosition(current: CommandManager.ImuData, center: CommandManager.ImuData): Float =
+    GRID_COLUMNS / 2f - normalizeDegrees(current.yawDegrees - center.yawDegrees) / STEP_DEGREES
 
 private fun columnCellFor(
     current: CommandManager.ImuData,
     center: CommandManager.ImuData,
     currentCell: Int,
 ): Int {
-    val position = GRID_COLUMNS / 2f - normalizeDegrees(current.yawDegrees - center.yawDegrees) / STEP_DEGREES
+    val position = columnPosition(current, center)
     // 半セルを少し越えるまで居座らせる。境目で振れても隣に落ちない
     return if (abs(position - currentCell) > 0.5f + COLUMN_HYSTERESIS) position.roundToInt() else currentCell
 }
+
+private fun pointerX(position: Float): Int {
+    val cell = position.mod(GRID_COLUMNS.toFloat())
+    return (GRID_LEFT + cell * (ICON_SIZE + ICON_GAP) + (ICON_SIZE - POINTER_SIZE) / 2).roundToInt()
+}
+
+private fun pointerElement(x: Int, row: Int) = CommandManager.CanvasElement(
+    id = POINTER_ELEMENT_ID,
+    x = x,
+    y = ICON_TOP_Y + row * (ICON_SIZE + ICON_ROW_GAP),
+    width = POINTER_SIZE,
+    height = POINTER_SIZE,
+    text = POINTER_TEXT,
+)
 
 private fun rowFor(current: CommandManager.ImuData, center: CommandManager.ImuData, currentRow: Int): Int {
     val delta = current.pitchDegrees - center.pitchDegrees

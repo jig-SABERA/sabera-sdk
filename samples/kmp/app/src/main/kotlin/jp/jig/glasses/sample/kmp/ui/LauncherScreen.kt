@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /** アイコンの一辺。96角6枚でもグラスの画像バッファに収まる */
@@ -68,6 +69,10 @@ private const val STEP_DEGREES = 20f
 
 /** 上の段へ移るまでの見上げ量。ピッチは上向きが負 */
 private const val ROW_STEP_DEGREES = 15f
+
+/** 境目での行き来を防ぐ遊び。列はセル幅に対する割合、段は度 */
+private const val COLUMN_HYSTERESIS = 0.25f
+private const val ROW_HYSTERESIS_DEGREES = 7f
 
 /** 起点は下段の中央。楽な姿勢のまま選べる位置に置く */
 private const val DEFAULT_INDEX = (GRID_ROWS - 1) * GRID_COLUMNS + GRID_COLUMNS / 2
@@ -125,6 +130,9 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
         // 画面に入った向きを下段の中央に合わせる
         val center = imu.filterNotNull().first()
 
+        // 回り込んでも連続させるため、列は範囲を切らないセル番号で持つ
+        var columnCell = GRID_COLUMNS / 2
+
         commandManager.sendCanvas(listOf(descriptionElement(items[focused])))
         items.indices.forEach { index ->
             commandManager.sendCanvasImage(
@@ -139,7 +147,10 @@ fun LauncherScreen(client: GlassClient, onSelect: (LauncherItem) -> Unit, onBack
 
         while (isActive) {
             delay(CURSOR_POLL_MS)
-            val next = cursorIndex(imu.value ?: center, center, items.size)
+            val data = imu.value ?: center
+            columnCell = columnCellFor(data, center, columnCell)
+            val row = rowFor(data, center, focused / GRID_COLUMNS)
+            val next = row * GRID_COLUMNS + columnCell.mod(GRID_COLUMNS)
             if (next == focused) continue
 
             val previous = focused
@@ -239,12 +250,23 @@ private fun iconX(index: Int): Int {
 private fun iconY(index: Int): Int =
     ICON_TOP_Y + (index / GRID_COLUMNS) * (ICON_SIZE + ICON_ROW_GAP)
 
-private fun cursorIndex(current: CommandManager.ImuData, center: CommandManager.ImuData, count: Int): Int {
-    val steps = (-normalizeDegrees(current.yawDegrees - center.yawDegrees) / STEP_DEGREES).roundToInt()
-    // 端で止めずに反対側へ回り込む。mod は負でも 0..GRID_COLUMNS-1 を返す
-    val column = (GRID_COLUMNS / 2 + steps).mod(GRID_COLUMNS)
-    val row = if (current.pitchDegrees - center.pitchDegrees < -ROW_STEP_DEGREES) 0 else GRID_ROWS - 1
-    return (row * GRID_COLUMNS + column).coerceAtMost(count - 1)
+private fun columnCellFor(
+    current: CommandManager.ImuData,
+    center: CommandManager.ImuData,
+    currentCell: Int,
+): Int {
+    val position = GRID_COLUMNS / 2f - normalizeDegrees(current.yawDegrees - center.yawDegrees) / STEP_DEGREES
+    // 半セルを少し越えるまで居座らせる。境目で振れても隣に落ちない
+    return if (abs(position - currentCell) > 0.5f + COLUMN_HYSTERESIS) position.roundToInt() else currentCell
+}
+
+private fun rowFor(current: CommandManager.ImuData, center: CommandManager.ImuData, currentRow: Int): Int {
+    val delta = current.pitchDegrees - center.pitchDegrees
+    return when {
+        delta < -ROW_STEP_DEGREES -> 0
+        delta > -ROW_STEP_DEGREES + ROW_HYSTERESIS_DEGREES -> GRID_ROWS - 1
+        else -> currentRow
+    }
 }
 
 /**

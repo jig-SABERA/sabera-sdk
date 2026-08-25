@@ -10,7 +10,7 @@ SDKはネイティブAPIとして提供している。
 
 ## SDK の取得設定
 
-SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。  
+SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。\
 取得には `read:packages` スコープを持つ Personal Access Token が必要。
 発行手順は [GitHub PAT の作り方](github-pat.html) を参照。
 
@@ -22,6 +22,9 @@ GitHubPackagesPassword=<read:packages を持つ PAT>
 ```
 
 ## 全体の流れ
+
+このページは Android 向けに書いている。iOS も API の並びは同じだが、
+マニフェストの設定と権限の要求は要らない。
 
 ```mermaid
 flowchart TD
@@ -42,11 +45,29 @@ flowchart TD
     F --> G
 ```
 
-## 1. Activity 側のフック（Android のみ）
+## 1. マニフェストと権限
 
-Companion Device Manager のダイアログは Activity
-を必要とするため、`SdkActivityHost` に 表示処理を差し込む。iOS
-では不要（CoreBluetooth は Activity を要求しない）。
+`AndroidManifest.xml` に権限と、SDK 内蔵のサービスを書く。
+
+```xml
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+<uses-permission android:name="android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE" />
+
+<service
+    android:name="app.jigglass.ble.BleCompanionDeviceService"
+    android:exported="true"
+    android:permission="android.permission.BIND_COMPANION_DEVICE_SERVICE">
+    <intent-filter>
+        <action android:name="android.companion.CompanionDeviceService" />
+    </intent-filter>
+</service>
+```
+
+## 2. BlueTooth接続ダイアログの表示
+
+Bluetooth接続のダイアログは SDK 側で用意している。
+ダイアログ表示にはコンテキストが必要なため、`Activity.onCreate()` 内で設定する。
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +88,19 @@ override fun onDestroy() {
 は前回接続したデバイスがあれば自動で接続を試みる。これを呼んでおくと
 2回目以降の起動でユーザーにダイアログを見せずに済む。
 
-## 2. 接続状態を購読する
+Bluetoothの許可ダイアログを表示する。
+
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    ...
+    requestPermissions(
+        arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT),
+        1001,
+    )
+}
+```
+
+## 3. 接続状態を購読する
 
 `GlassManager` を取得したら、まず `connectedDevice`
 の購読を始める。接続の成立も切断も この Flow ひとつで観測する。
@@ -90,7 +123,7 @@ scope.launch {
 `connected: StateFlow<Boolean>` があるが、接続の有無を知るだけなら
 `connectedDevice` が `null` かどうかで足りる。
 
-## 3. デバイスを選んで接続する
+## 4. デバイスを選んで接続する
 
 ```kotlin
 val client: GlassClient? = manager.showAutomaticSelectionDialog(activity)
@@ -102,7 +135,7 @@ OS のデバイス選択 UI が出て、選ばれたデバイスの `GlassClient
 
 第1引数は Activity。Application Context を渡すとダイアログが出ないので注意。
 
-## 4. コマンドを送る
+## 5. コマンドを送る
 
 ```kotlin
 val commandManager = client.createCommandManager()
@@ -115,21 +148,21 @@ commandManager.sendTeleprompterContent("Hello")
 
 ### ページ遷移
 
-| メソッド                                  | 遷移先                     |
-| ----------------------------------------- | -------------------------- |
-| `enterHomePage()`                         | ホーム                     |
-| `enterTeleprompterPage()`                 | テレプロンプター           |
-| `enterAiChatPage()`                       | AI アシスタント            |
-| `enterTranslatePage()`                    | 翻訳                       |
+| メソッド                  | 遷移先           |
+| ------------------------- | ---------------- |
+| `enterHomePage()`         | ホーム           |
+| `enterTeleprompterPage()` | テレプロンプター |
+| `enterAiChatPage()`       | AI アシスタント  |
+| `enterTranslatePage()`    | 翻訳             |
 
 ### コンテンツ送信
 
-| メソッド                                                | 内容                               |
-| ------------------------------------------------------- | ---------------------------------- |
-| `sendTeleprompterContent(content: String)`              | テレプロンプターに表示する文字列   |
-| `sendTranslateContent(content: String)`                 | 翻訳ページに表示する文字列         |
+| メソッド                                                | 内容                                 |
+| ------------------------------------------------------- | ------------------------------------ |
+| `sendTeleprompterContent(content: String)`              | テレプロンプターに表示する文字列     |
+| `sendTranslateContent(content: String)`                 | 翻訳ページに表示する文字列           |
 | `sendTranslateLanguage(source: String, target: String)` | 翻訳の言語ペア（例: `"ENG", "JPN"`） |
-| `sendAiChatText(text: String)`                          | AI チャットに表示する文字列        |
+| `sendAiChatText(text: String)`                          | AI チャットに表示する文字列          |
 
 ページを開いてからコンテンツを送る。送信先のページが開いていないと表示されない。
 
@@ -139,7 +172,7 @@ commandManager.sendTeleprompterContent("Hello")
 時刻や天気の同期なども `CommandManager` から送れる。一覧は
 [API リファレンス](api/command-manager/) を見る。
 
-## 5. ジェスチャーを受け取る
+## 6. ジェスチャーを受け取る
 
 ```kotlin
 scope.launch {
@@ -156,7 +189,7 @@ scope.launch {
 `gestureEvents` は
 `SharedFlow<GestureType>`。購読を始める前に発生したジェスチャーは受け取れない。
 
-## 6. 切断する
+## 7. 切断する
 
 ```kotlin
 manager.disconnect(client)

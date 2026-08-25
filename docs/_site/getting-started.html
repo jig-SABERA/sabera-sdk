@@ -412,137 +412,62 @@ SDKはネイティブAPIとして提供している。</p>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><a href="/api/glass-manager/show-automatic-selection-dialog.html"><code class="language-plaintext highlighter-rouge">showAutomaticSelectionDialog()</code></a> に渡すのは Activity。Application Context
-を渡すとダイアログが出ない。</p>
+<p>ノート:</p>
 
-<p>ここまでで、グラスがつながってホーム画面が出る。あとは <code class="language-plaintext highlighter-rouge">commandManager</code>
-から各ページを開き、中身を送る。送信系は同期メソッドだが内部でキューに積むため、
-呼び出しスレッドは止まらない。</p>
-
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">commandManager</span><span class="p">.</span><span class="nf">enterTeleprompterPage</span><span class="p">()</span>
-<span class="n">commandManager</span><span class="p">.</span><span class="nf">sendTeleprompterContent</span><span class="p">(</span><span class="s">"Hello"</span><span class="p">)</span>
-</code></pre></div></div>
-<h3 id="ページ遷移">
+<ul>
+  <li><a href="api/sdk-activity-host/show-ble-device-selection-dialog.html"><code class="language-plaintext highlighter-rouge">SdkActivityHost.showBleDeviceSelectionDialog</code></a>
+— プロセスに1つとする。<code class="language-plaintext highlighter-rouge">onDestroy()</code>で破棄すること。</li>
+  <li><a href="api/glass-manager/show-automatic-selection-dialog.html"><code class="language-plaintext highlighter-rouge">showAutomaticSelectionDialog()</code></a>
+— 選択ダイアログ表示したあと、接続まで処理する。別途<a href="/api/glass-manager/connect.html"><code class="language-plaintext highlighter-rouge">connect()</code></a>
+を呼ぶ必要はない。</li>
+  <li><a href="api/glass-client/create-command-manager.html"><code class="language-plaintext highlighter-rouge">createCommandManager()</code></a> —
+コマンドは内部キューに積まれて順番に送信される。</li>
+  <li><a href="api/command-manager/enter-home-page.html"><code class="language-plaintext highlighter-rouge">enterHomePage()</code></a> —
+グラス側の画面を切り替える。コンテンツ送信は、対応するページを開いていないと表示されない</li>
+</ul>
+<h2 id="次のステップ">
   
   
-    <a href="#ページ遷移" class="anchor-heading" aria-labelledby="ページ遷移"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> ページ遷移
-  
-  
-</h3>
-    
-
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th>メソッド</th>
-      <th>遷移先</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><a href="/api/command-manager/enter-home-page.html"><code class="language-plaintext highlighter-rouge">enterHomePage()</code></a></td>
-      <td>ホーム</td>
-    </tr>
-    <tr>
-      <td><a href="/api/command-manager/enter-teleprompter-page.html"><code class="language-plaintext highlighter-rouge">enterTeleprompterPage()</code></a></td>
-      <td>テレプロンプター</td>
-    </tr>
-    <tr>
-      <td><a href="/api/command-manager/enter-ai-chat-page.html"><code class="language-plaintext highlighter-rouge">enterAiChatPage()</code></a></td>
-      <td>AI アシスタント</td>
-    </tr>
-    <tr>
-      <td><a href="/api/command-manager/enter-translate-page.html"><code class="language-plaintext highlighter-rouge">enterTranslatePage()</code></a></td>
-      <td>翻訳</td>
-    </tr>
-  </tbody>
-</table></div>
-<h3 id="コンテンツ送信">
-  
-  
-    <a href="#コンテンツ送信" class="anchor-heading" aria-labelledby="コンテンツ送信"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> コンテンツ送信
-  
-  
-</h3>
-    
-
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th>メソッド</th>
-      <th>内容</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><a href="/api/command-manager/send-teleprompter-content.html"><code class="language-plaintext highlighter-rouge">sendTeleprompterContent(content: String)</code></a></td>
-      <td>テレプロンプターに表示する文字列</td>
-    </tr>
-    <tr>
-      <td><a href="/api/command-manager/send-translate-content.html"><code class="language-plaintext highlighter-rouge">sendTranslateContent(content: String)</code></a></td>
-      <td>翻訳ページに表示する文字列</td>
-    </tr>
-    <tr>
-      <td><a href="/api/command-manager/send-translate-language.html"><code class="language-plaintext highlighter-rouge">sendTranslateLanguage(source: String, target: String)</code></a></td>
-      <td>翻訳の言語ペア（例: <code class="language-plaintext highlighter-rouge">"ENG", "JPN"</code>）</td>
-    </tr>
-    <tr>
-      <td><a href="/api/command-manager/send-ai-chat-text.html"><code class="language-plaintext highlighter-rouge">sendAiChatText(text: String)</code></a></td>
-      <td>AI チャットに表示する文字列</td>
-    </tr>
-  </tbody>
-</table></div>
-
-<p>ページを開いてからコンテンツを送る。送信先のページが開いていないと表示されない。</p>
-<h3 id="そのほかのコマンド">
-  
-  
-    <a href="#そのほかのコマンド" class="anchor-heading" aria-labelledby="そのほかのコマンド"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> そのほかのコマンド
-  
-  
-</h3>
-    
-
-<p>汎用テキスト表示・画像表示（技適マークに使っている画面）・設定の書き換えと同期・
-時刻や天気の同期なども <a href="/api/command-manager/"><code class="language-plaintext highlighter-rouge">CommandManager</code></a> から送れる。一覧は
-<a href="api/command-manager/">API リファレンス</a> を見る。</p>
-<h2 id="3-ジェスチャーを受け取る">
-  
-  
-    <a href="#3-ジェスチャーを受け取る" class="anchor-heading" aria-labelledby="3-ジェスチャーを受け取る"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 3. ジェスチャーを受け取る
+    <a href="#次のステップ" class="anchor-heading" aria-labelledby="次のステップ"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 次のステップ
   
   
 </h2>
     
 
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
-    <span class="n">commandManager</span><span class="p">.</span><span class="n">gestureEvents</span><span class="p">.</span><span class="nf">collect</span> <span class="p">{</span> <span class="n">gesture</span> <span class="p">-&gt;</span>
-        <span class="k">when</span> <span class="p">(</span><span class="n">gesture</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nc">GestureType</span><span class="p">.</span><span class="nc">SINGLE_TAP</span> <span class="p">-&gt;</span> <span class="p">{}</span>
-            <span class="nc">GestureType</span><span class="p">.</span><span class="nc">DOUBLE_TAP</span> <span class="p">-&gt;</span> <span class="p">{}</span>
-            <span class="nc">GestureType</span><span class="p">.</span><span class="nc">HOLD</span> <span class="p">-&gt;</span> <span class="p">{}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p><a href="/api/command-manager/gesture-events.html"><code class="language-plaintext highlighter-rouge">gestureEvents</code></a> は
-<code class="language-plaintext highlighter-rouge">SharedFlow&lt;GestureType&gt;</code>。購読を始める前に発生したジェスチャーは受け取れない。</p>
-<h2 id="4-切断する">
-  
-  
-    <a href="#4-切断する" class="anchor-heading" aria-labelledby="4-切断する"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> 4. 切断する
-  
-  
-</h2>
-    
-
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">manager</span><span class="p">.</span><span class="nf">disconnect</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
-</code></pre></div></div>
-
-<p><a href="/api/glass-client/"><code class="language-plaintext highlighter-rouge">GlassClient</code></a> に <a href="/api/glass-manager/disconnect.html"><code class="language-plaintext highlighter-rouge">disconnect()</code></a> は無い。型の上で <code class="language-plaintext highlighter-rouge">GlassClientInternal</code>
-に隔離してあり、 必ず <a href="/api/glass-manager/"><code class="language-plaintext highlighter-rouge">GlassManager</code></a> を経由する。UI
-層が接続状態を持たないようにするための制約。</p>
+<div class="table-wrapper"><table>
+  <thead>
+    <tr>
+      <th>やりたいこと</th>
+      <th>参照先</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>既存のページを開く</td>
+      <td><a href="pages/">ページごとの使い方</a></td>
+    </tr>
+    <tr>
+      <td>画像を表示する</td>
+      <td><a href="pages/image.html">画像表示</a></td>
+    </tr>
+    <tr>
+      <td>UIを自由に配置する</td>
+      <td><a href="pages/canvas.html">自由配置キャンバス</a></td>
+    </tr>
+    <tr>
+      <td>ジェスチャーを受け取る</td>
+      <td><a href="api/command-manager/gesture-events.html">gestureEvents</a></td>
+    </tr>
+    <tr>
+      <td>マイクを使う</td>
+      <td><a href="api/command-manager/start-mic-streaming.html">startMicStreaming</a></td>
+    </tr>
+    <tr>
+      <td>IMUを使う</td>
+      <td><a href="api/command-manager/start-imu-data.html">startImuData</a></td>
+    </tr>
+  </tbody>
+</table></div>
 
           
 

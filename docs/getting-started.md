@@ -26,8 +26,7 @@ GitHubPackagesPassword=<read:packages を持つ PAT>
 ```mermaid
 flowchart TD
     subgraph init["初期化"]
-        A["Application.onCreate()"] --> B["Activity.onCreate()"]
-        B --> C["getGlassManager(context)"]
+        B["Activity.onCreate()"] --> C["getGlassManager(context)"]
     end
 
     subgraph connect["接続"]
@@ -43,28 +42,7 @@ flowchart TD
     F --> G
 ```
 
-## 1. SPI の差し込み
-
-`Application.onCreate()` で行う。SDK
-はプロセスシングルトンで、**後から差し替えても既に発火した
-呼び出しには反映されない**ため、他のどの SDK API より先に実行する必要がある。
-
-```kotlin
-class SampleApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        GlassesSDK.setLogger { tag, msg -> Log.d(tag, msg) }
-        GlassesSDK.setProd(true)
-        GlassesSDK.setDevicePersistence(SharedPrefsDevicePersistence(this))
-    }
-}
-```
-
-`setDevicePersistence`
-を省くとデフォルトのインメモリ実装になり、プロセスをまたぐと接続先を忘れる。
-前回接続したデバイスへの自動再接続を使うなら必須。
-
-## 2. Activity 側のフック（Android のみ）
+## 1. Activity 側のフック（Android のみ）
 
 Companion Device Manager のダイアログは Activity
 を必要とするため、`SdkActivityHost` に 表示処理を差し込む。iOS
@@ -89,7 +67,7 @@ override fun onDestroy() {
 は前回接続したデバイスがあれば自動で接続を試みる。これを呼んでおくと
 2回目以降の起動でユーザーにダイアログを見せずに済む。
 
-## 3. 接続状態を購読する
+## 2. 接続状態を購読する
 
 `GlassManager` を取得したら、まず `connectedDevice`
 の購読を始める。接続の成立も切断も この Flow ひとつで観測する。
@@ -112,7 +90,7 @@ scope.launch {
 `connected: StateFlow<Boolean>` があるが、接続の有無を知るだけなら
 `connectedDevice` が `null` かどうかで足りる。
 
-## 4. デバイスを選んで接続する
+## 3. デバイスを選んで接続する
 
 ```kotlin
 val client: GlassClient? = manager.showAutomaticSelectionDialog(activity)
@@ -124,7 +102,7 @@ OS のデバイス選択 UI が出て、選ばれたデバイスの `GlassClient
 
 第1引数は Activity。Application Context を渡すとダイアログが出ないので注意。
 
-## 5. コマンドを送る
+## 4. コマンドを送る
 
 ```kotlin
 val commandManager = client.createCommandManager()
@@ -161,7 +139,7 @@ commandManager.sendTeleprompterContent("Hello")
 時刻や天気の同期なども `CommandManager` から送れる。一覧は
 [API リファレンス](api/command-manager/) を見る。
 
-## 6. ジェスチャーを受け取る
+## 5. ジェスチャーを受け取る
 
 ```kotlin
 scope.launch {
@@ -178,7 +156,7 @@ scope.launch {
 `gestureEvents` は
 `SharedFlow<GestureType>`。購読を始める前に発生したジェスチャーは受け取れない。
 
-## 7. 切断する
+## 6. 切断する
 
 ```kotlin
 manager.disconnect(client)

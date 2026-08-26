@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -55,6 +56,8 @@ fun CommandScreen(
 ) {
     val scope = rememberCoroutineScope()
     val commandManager = remember(client) { client.createCommandManager() }
+
+    val charging by commandManager.charging.collectAsState()
 
     var error by remember { mutableStateOf<String?>(null) }
     val gestures = remember { mutableStateListOf<String>() }
@@ -112,6 +115,16 @@ fun CommandScreen(
             CommandButton("Home に戻す") { safeRun("enterHomePage") { commandManager.enterHomePage() } }
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
+
+            SectionTitle("デバイス状態")
+            Text(
+                when (charging) {
+                    true -> "充電中"
+                    false -> "充電していない"
+                    null -> "未取得"
+                },
+            )
+            Spacer(Modifier.height(16.dp))
 
             if (gestures.isNotEmpty()) {
                 SectionTitle("ジェスチャーイベント")

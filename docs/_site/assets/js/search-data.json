@@ -77,11 +77,11 @@
     "relUrl": "/api-history.html"
   },"11": {
     "doc": "メソッドの追加履歴",
-    "title": "未リリース",
-    "content": "| メソッド | 補足 | . | charging | 充電中かどうかが流れる。requestSystemStatus の応答で埋まる | . ",
-    "url": "/api-history.html#%E6%9C%AA%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9",
+    "title": "0.7.0",
+    "content": "| メソッド | 補足 | . | charging | 充電中かどうかが流れる。接続すると SDK が状態を要求するので、購読するだけでよい | . ",
+    "url": "/api-history.html#070",
     
-    "relUrl": "/api-history.html#未リリース"
+    "relUrl": "/api-history.html#070"
   },"12": {
     "doc": "メソッドの追加履歴",
     "title": "0.6.0",
@@ -344,7 +344,7 @@
   },"49": {
     "doc": "charging",
     "title": "概要",
-    "content": "グラスが充電中なら true。状態がまだ届いていないうちは null。requestSystemStatus を呼ぶと応答で埋まり、以降はグラス側の変化通知で更新される。切断すると null に戻るので、再接続後は取得前として扱える。 . ",
+    "content": "グラスが充電中なら true。状態がまだ届いていないうちは null。接続すると SDK が一度状態を要求するので、購読するだけでよい。以降はグラス側の変化通知で更新される。切断すると null に戻る。 . ",
     "url": "/api/command-manager/charging.html#%E6%A6%82%E8%A6%81",
     
     "relUrl": "/api/command-manager/charging.html#概要"
@@ -358,7 +358,7 @@
   },"51": {
     "doc": "charging",
     "title": "使用例",
-    "content": " ",
+    "content": "scope.launch { // 接続するとSDKが状態を要求するので、購読するだけでよい。届く前は null commandManager.charging.collect { charging -&gt; Log.d(\"sample\", if (charging == true) \"充電中\" else \"充電していない\") } } . ",
     "url": "/api/command-manager/charging.html#%E4%BD%BF%E7%94%A8%E4%BE%8B",
     
     "relUrl": "/api/command-manager/charging.html#使用例"
@@ -1898,7 +1898,7 @@
   },"271": {
     "doc": "API リファレンス",
     "title": "API リファレンス",
-    "content": "Sabera App SDK (Kotlin) の公開 API。バージョン 0.6.0 時点。 . メソッドごとに使えるようになったバージョンはメソッドの追加履歴にまとめてある。 . | 型 | 説明 | . | GlassesSDK | SDK 全体の初期設定を行うシングルトン。Application.onCreate() で呼ぶ。 | . | GlassManager | デバイスの探索・接続・切断を担う。getGlassManager(context) で取得する。 | . | GlassClient | 接続済みの1台を表す。GlassManager.connectedDevice から得る。 | . | CommandManager | グラス側の画面遷移・コンテンツ送信・イベント購読。GlassClient.createCommandManager() で作る。 | . | SdkActivityHost | Activity を必要とする処理を差し込むシングルトン（Android のみ）。 | . | SdkDevicePersistence | 最後に接続したデバイスの保存先。アプリ側が実装する SPI。 | . | BLE (Android) | Companion Device Manager 周り。Android 固有。 | . ",
+    "content": "Sabera App SDK (Kotlin) の公開 API。バージョン 0.7.0 時点。 . メソッドごとに使えるようになったバージョンはメソッドの追加履歴にまとめてある。 . | 型 | 説明 | . | GlassesSDK | SDK 全体の初期設定を行うシングルトン。Application.onCreate() で呼ぶ。 | . | GlassManager | デバイスの探索・接続・切断を担う。getGlassManager(context) で取得する。 | . | GlassClient | 接続済みの1台を表す。GlassManager.connectedDevice から得る。 | . | CommandManager | グラス側の画面遷移・コンテンツ送信・イベント購読。GlassClient.createCommandManager() で作る。 | . | SdkActivityHost | Activity を必要とする処理を差し込むシングルトン（Android のみ）。 | . | SdkDevicePersistence | 最後に接続したデバイスの保存先。アプリ側が実装する SPI。 | . | BLE (Android) | Companion Device Manager 周り。Android 固有。 | . ",
     "url": "/api/",
     
     "relUrl": "/api/"

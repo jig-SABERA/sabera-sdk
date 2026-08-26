@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.6.0 の公開 API に合わせたもの。
+シグネチャは SDK 0.7.0 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -220,8 +220,8 @@ SPEC = [
             m("charging", "val charging: StateFlow<Boolean?>",
               returns="StateFlow<Boolean?>",
               summary="グラスが充電中なら true。状態がまだ届いていないうちは null。"
-                      "requestSystemStatus を呼ぶと応答で埋まり、以降はグラス側の変化通知で更新される。"
-                      "切断すると null に戻るので、再接続後は取得前として扱える。",
+                      "接続すると SDK が一度状態を要求するので、購読するだけでよい。"
+                      "以降はグラス側の変化通知で更新される。切断すると null に戻る。",
               related=["requestSystemStatus"]),
             m("enterHomePage", "fun enterHomePage()",
               summary="グラスをホーム画面に戻す。開いていたページは閉じ、表示していた内容は破棄される。"

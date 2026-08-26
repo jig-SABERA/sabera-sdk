@@ -306,7 +306,7 @@
 </h2>
     
 
-<p>グラスが充電中なら true。状態がまだ届いていないうちは null。requestSystemStatus を呼ぶと応答で埋まり、以降はグラス側の変化通知で更新される。切断すると null に戻るので、再接続後は取得前として扱える。</p>
+<p>グラスが充電中なら true。状態がまだ届いていないうちは null。接続すると SDK が一度状態を要求するので、購読するだけでよい。以降はグラス側の変化通知で更新される。切断すると null に戻る。</p>
 <h2 id="戻り値">
   
   
@@ -327,7 +327,13 @@
     
 
 <!-- snippet: CommandManager.charging -->
-<!-- WIP -->
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scope</span><span class="p">.</span><span class="nf">launch</span> <span class="p">{</span>
+    <span class="c1">// 接続するとSDKが状態を要求するので、購読するだけでよい。届く前は null</span>
+    <span class="n">commandManager</span><span class="p">.</span><span class="n">charging</span><span class="p">.</span><span class="nf">collect</span> <span class="p">{</span> <span class="n">charging</span> <span class="p">-&gt;</span>
+        <span class="nc">Log</span><span class="p">.</span><span class="nf">d</span><span class="p">(</span><span class="s">"sample"</span><span class="p">,</span> <span class="k">if</span> <span class="p">(</span><span class="n">charging</span> <span class="p">==</span> <span class="k">true</span><span class="p">)</span> <span class="s">"充電中"</span> <span class="k">else</span> <span class="s">"充電していない"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 <!-- /snippet -->
 <h2 id="関連">
   

@@ -41,6 +41,17 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
+    fun observeCharging(commandManager: CommandManager, scope: CoroutineScope) {
+        // #snippet CommandManager.charging
+        scope.launch {
+            // 接続するとSDKが状態を要求するので、購読するだけでよい。届く前は null
+            commandManager.charging.collect { charging ->
+                Log.d("sample", if (charging == true) "充電中" else "充電していない")
+            }
+        }
+        // #endsnippet
+    }
+
     fun teleprompterPage(commandManager: CommandManager) {
         // #snippet CommandManager.enterTeleprompterPage
         // 開いてからでないと原稿は表示されない

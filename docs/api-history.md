@@ -10,6 +10,12 @@ nav_order: 6
 配布しているのは Android のみで、iOS は 0.0.10 で止まっている。iOS で使えるのは
 0.0.10 時点の API までになる。
 
+## 未リリース
+
+| メソッド | 補足 |
+|---|---|
+| [charging](api/command-manager/charging.html) | 充電中かどうかが流れる。requestSystemStatus の応答で埋まる |
+
 ## 0.6.0
 
 | メソッド | 補足 |

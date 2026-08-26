@@ -2,7 +2,7 @@
 title: requestSystemStatus
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 63
+nav_order: 64
 ---
 
 # CommandManager.requestSystemStatus
@@ -13,7 +13,7 @@ fun requestSystemStatus()
 
 ## 概要
 
-バッテリー残量・装着状態・充電状態の通知をグラスに要求する。応答は parseResponse で受ける。
+バッテリー残量・装着状態・充電状態の通知をグラスに要求する。充電状態は charging に反映される。残量と装着状態は parseResponse で受ける。
 
 ## 戻り値
 
@@ -27,4 +27,5 @@ fun requestSystemStatus()
 
 ## 関連
 
+- [charging](charging.html)
 - [parseResponse](parse-response.html)

@@ -2,7 +2,7 @@
 title: enterTranslatePage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 10
+nav_order: 11
 ---
 
 # CommandManager.enterTranslatePage

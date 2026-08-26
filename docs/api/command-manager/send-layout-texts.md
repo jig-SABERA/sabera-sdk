@@ -2,7 +2,7 @@
 title: sendLayoutTexts
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 29
+nav_order: 30
 ---
 
 # CommandManager.sendLayoutTexts

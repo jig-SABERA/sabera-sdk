@@ -17,6 +17,7 @@ has_children: true
 | [imuDataStarted](imu-data-started.html) | `val imuDataStarted: StateFlow<Boolean>` |
 | [micAudio](mic-audio.html) | `val micAudio: SharedFlow<ByteArray>` |
 | [micStreaming](mic-streaming.html) | `val micStreaming: StateFlow<Boolean>` |
+| [charging](charging.html) | `val charging: StateFlow<Boolean?>` |
 | [enterHomePage](enter-home-page.html) | `fun enterHomePage()` |
 | [enterTeleprompterPage](enter-teleprompter-page.html) | `fun enterTeleprompterPage()` |
 | [sendTeleprompterContent](send-teleprompter-content.html) | `fun sendTeleprompterContent(content: String)`<br>`fun sendTeleprompterContent(content: String, percent: Int)` |

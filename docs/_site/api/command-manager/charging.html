@@ -17,7 +17,7 @@
     .site-nav > ul.nav-list:first-child > li > a,
     .site-nav > ul.nav-list:first-child > li > ul > li > a,
     
-    .site-nav > ul.nav-list:first-child > li > ul > li > ul > li:not(:nth-child(14)) > a,
+    .site-nav > ul.nav-list:first-child > li > ul > li > ul > li:not(:nth-child(7)) > a,
     .site-nav > ul.nav-list:first-child > li > ul > li > ul > li > ul > li a {
       background-image: none;
     }
@@ -27,16 +27,16 @@
       background-image: none;
     }
 
-    .site-nav > ul.nav-list:first-child > li:nth-child(5) > ul > li:nth-child(4) > ul > li:nth-child(14) > a {
+    .site-nav > ul.nav-list:first-child > li:nth-child(5) > ul > li:nth-child(4) > ul > li:nth-child(7) > a {
       font-weight: 600;
       text-decoration: none;
     }.site-nav > ul.nav-list:first-child > li:nth-child(5) > button svg,
     .site-nav > ul.nav-list:first-child > li:nth-child(5) > ul > li:nth-child(4) > button svg,
-    .site-nav > ul.nav-list:first-child > li:nth-child(5) > ul > li:nth-child(4) > ul > li:nth-child(14) > button svg {
+    .site-nav > ul.nav-list:first-child > li:nth-child(5) > ul > li:nth-child(4) > ul > li:nth-child(7) > button svg {
       transform: rotate(-90deg);
     }.site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(5) > ul.nav-list,
     .site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(5) > ul.nav-list > li.nav-list-item:nth-child(4) > ul.nav-list,
-    .site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(5) > ul.nav-list > li.nav-list-item:nth-child(4) > ul.nav-list > li.nav-list-item:nth-child(14) > ul.nav-list {
+    .site-nav > ul.nav-list:first-child > li.nav-list-item:nth-child(5) > ul.nav-list > li.nav-list-item:nth-child(4) > ul.nav-list > li.nav-list-item:nth-child(7) > ul.nav-list {
       display: block;
     }
   </style>
@@ -56,20 +56,20 @@
 
 
   <!-- Begin Jekyll SEO tag v2.9.0 -->
-<title>enterAiChatPage | Sabera App SDK</title>
+<title>charging | Sabera App SDK</title>
 <meta name="generator" content="Jekyll v4.4.1" />
-<meta property="og:title" content="enterAiChatPage" />
+<meta property="og:title" content="charging" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Sabera App SDK のドキュメント" />
 <meta name="twitter:description" property="og:description" content="Sabera App SDK のドキュメント" />
-<link rel="canonical" href="/api/command-manager/enter-ai-chat-page.html" />
-<meta property="og:url" content="/api/command-manager/enter-ai-chat-page.html" />
+<link rel="canonical" href="/api/command-manager/charging.html" />
+<meta property="og:url" content="/api/command-manager/charging.html" />
 <meta property="og:site_name" content="Sabera App SDK" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="enterAiChatPage" />
+<meta name="twitter:title" content="charging" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Sabera App SDK のドキュメント","headline":"enterAiChatPage","url":"/api/command-manager/enter-ai-chat-page.html"}</script>
+{"@context":"https://schema.org","@type":"WebPage","description":"Sabera App SDK のドキュメント","headline":"charging","url":"/api/command-manager/charging.html"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -278,7 +278,7 @@
   <ol class="breadcrumb-nav-list">
     <li class="breadcrumb-nav-list-item"><a href="/api/">API リファレンス</a></li>
     <li class="breadcrumb-nav-list-item"><a href="/api/command-manager/">CommandManager</a></li>
-    <li class="breadcrumb-nav-list-item"><span>enterAiChatPage</span></li>
+    <li class="breadcrumb-nav-list-item"><span>charging</span></li>
   </ol>
 </nav>
 
@@ -286,16 +286,16 @@
       <div id="main-content" class="main-content">
         <main>
           
-            <h1 id="commandmanagerenteraichatpage">
+            <h1 id="commandmanagercharging">
   
   
-    <a href="#commandmanagerenteraichatpage" class="anchor-heading" aria-labelledby="commandmanagerenteraichatpage"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> CommandManager.enterAiChatPage
+    <a href="#commandmanagercharging" class="anchor-heading" aria-labelledby="commandmanagercharging"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> CommandManager.charging
   
   
 </h1>
     
 
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">enterAiChatPage</span><span class="p">()</span>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">val</span> <span class="py">charging</span><span class="p">:</span> <span class="nc">StateFlow</span><span class="p">&lt;</span><span class="nc">Boolean</span><span class="p">?&gt;</span>
 </code></pre></div></div>
 <h2 id="概要">
   
@@ -306,7 +306,7 @@
 </h2>
     
 
-<p>AI アシスタントページを開く。吹き出しは sendAiChatSenderText で送る。本文のフォントが言語で変わるため、開く前に sendAiChatLanguage を送っておく。</p>
+<p>グラスが充電中なら true。状態がまだ届いていないうちは null。requestSystemStatus を呼ぶと応答で埋まり、以降はグラス側の変化通知で更新される。切断すると null に戻るので、再接続後は取得前として扱える。</p>
 <h2 id="戻り値">
   
   
@@ -316,7 +316,7 @@
 </h2>
     
 
-<p><code class="language-plaintext highlighter-rouge">Unit</code></p>
+<p><code class="language-plaintext highlighter-rouge">StateFlow&lt;Boolean?&gt;</code></p>
 <h2 id="使用例">
   
   
@@ -326,10 +326,8 @@
 </h2>
     
 
-<!-- snippet: CommandManager.enterAiChatPage -->
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// AI アシスタント（AI チャットページ）をグラスに開かせる</span>
-<span class="n">commandManager</span><span class="p">.</span><span class="nf">enterAiChatPage</span><span class="p">()</span>
-</code></pre></div></div>
+<!-- snippet: CommandManager.charging -->
+<!-- WIP -->
 <!-- /snippet -->
 <h2 id="関連">
   
@@ -341,8 +339,7 @@
     
 
 <ul>
-  <li><a href="send-ai-chat-sender-text.html">sendAiChatSenderText</a></li>
-  <li><a href="send-ai-chat-language.html">sendAiChatLanguage</a></li>
+  <li><a href="request-system-status.html">requestSystemStatus</a></li>
 </ul>
 
           
@@ -358,13 +355,13 @@
     
 
     <nav class="page-nav" aria-label="前後のページ">
-  <a class="page-nav-prev" href="/api/command-manager/send-translate-language.html">
+  <a class="page-nav-prev" href="/api/command-manager/mic-streaming.html">
     <span class="page-nav-label">&larr; 前</span>
-    <span class="page-nav-title">CommandManager / sendTranslateLanguage</span>
+    <span class="page-nav-title">CommandManager / micStreaming</span>
   </a>
-  <a class="page-nav-next" href="/api/command-manager/send-ai-chat-text.html">
+  <a class="page-nav-next" href="/api/command-manager/enter-home-page.html">
     <span class="page-nav-label">次 &rarr;</span>
-    <span class="page-nav-title">CommandManager / sendAiChatText</span>
+    <span class="page-nav-title">CommandManager / enterHomePage</span>
   </a>
 </nav>
 

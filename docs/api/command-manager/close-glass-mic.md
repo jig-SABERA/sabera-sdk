@@ -2,7 +2,7 @@
 title: closeGlassMic
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 19
+nav_order: 20
 ---
 
 # CommandManager.closeGlassMic

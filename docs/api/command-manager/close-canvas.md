@@ -2,7 +2,7 @@
 title: closeCanvas
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 36
+nav_order: 37
 ---
 
 # CommandManager.closeCanvas

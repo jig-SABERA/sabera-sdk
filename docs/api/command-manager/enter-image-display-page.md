@@ -2,7 +2,7 @@
 title: enterImageDisplayPage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 27
+nav_order: 28
 ---
 
 # CommandManager.enterImageDisplayPage

@@ -1,12 +1,12 @@
 ---
 title: API リファレンス
-nav_order: 5
+nav_order: 4
 has_children: true
 ---
 
 # API リファレンス
 
-Sabera App SDK (Kotlin) の公開 API。バージョン 0.6.0 時点。
+Sabera App SDK (Kotlin) の公開 API。バージョン 0.7.0 時点。
 
 メソッドごとに使えるようになったバージョンは[メソッドの追加履歴](../api-history.html)にまとめてある。
 

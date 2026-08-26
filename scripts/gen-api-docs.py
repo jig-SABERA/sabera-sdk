@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.6.0 の公開 API に合わせたもの。
+シグネチャは SDK 0.7.0 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -217,6 +217,12 @@ SPEC = [
               returns="StateFlow<Boolean>",
               summary="マイクが流れている間 true。",
               related=["startMicStreaming"]),
+            m("charging", "val charging: StateFlow<Boolean?>",
+              returns="StateFlow<Boolean?>",
+              summary="グラスが充電中なら true。状態がまだ届いていないうちは null。"
+                      "接続すると SDK が一度状態を要求するので、購読するだけでよい。"
+                      "以降はグラス側の変化通知で更新される。切断すると null に戻る。",
+              related=["requestSystemStatus"]),
             m("enterHomePage", "fun enterHomePage()",
               summary="グラスをホーム画面に戻す。開いていたページは閉じ、表示していた内容は破棄される。"
                       "機能を止めるときの後片付けに使う。"),
@@ -568,8 +574,8 @@ SPEC = [
               summary="天気情報をグラスに同期する。気温とアイコンは別々に送る。"),
             m("requestSystemStatus", "fun requestSystemStatus()",
               summary="バッテリー残量・装着状態・充電状態の通知をグラスに要求する。"
-                      "応答は parseResponse で受ける。",
-              related=["parseResponse"]),
+                      "充電状態は charging に反映される。残量と装着状態は parseResponse で受ける。",
+              related=["charging", "parseResponse"]),
         ],
     },
     {

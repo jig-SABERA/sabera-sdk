@@ -2,7 +2,7 @@
 title: removeCanvasImage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 34
+nav_order: 35
 ---
 
 # CommandManager.removeCanvasImage

@@ -10,6 +10,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -33,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
@@ -60,6 +63,9 @@ private const val MAX_FRAMES = 200
 /** 暗いほど左。グラスは自発光なので、明るい画素を濃い文字にする */
 private const val RAMP = " .:-=+*#%@"
 
+/** 同梱のアスキーアート。1コマ ASCII_ROWS 行ずつ並べたもの */
+private const val BUNDLED_ASSET = "badapple.txt"
+
 /**
  * 動画をアスキーアートにして流す画面。
  * 送り方はかわくだりと同じで、1コマずつ汎用テキスト表示ページを置き換える。
@@ -77,6 +83,8 @@ fun AsciiVideoScreen(client: GlassClient, onBack: () -> Unit) {
     var current by remember { mutableStateOf("") }
     var position by remember { mutableStateOf(0) }
     var error by remember { mutableStateOf<String?>(null) }
+    // 白地に黒い影の映像は、そのままだと背景が文字で埋まる
+    var invert by remember { mutableStateOf(false) }
 
     DisposableEffect(commandManager) {
         onDispose { commandManager.enterHomePage() }
@@ -93,7 +101,7 @@ fun AsciiVideoScreen(client: GlassClient, onBack: () -> Unit) {
         // デコードは重いので、選んだ時点でまとめて文字に変換しておく
         scope.launch {
             try {
-                frames = decodeAsciiFrames(context, uri)
+                frames = decodeAsciiFrames(context, uri, invert)
             } catch (e: Throwable) {
                 Log.e(TAG, "decodeAsciiFrames failed", e)
                 error = e.message
@@ -135,6 +143,23 @@ fun AsciiVideoScreen(client: GlassClient, onBack: () -> Unit) {
 
             Button(
                 onClick = {
+                    playing = false
+                    position = 0
+                    error = null
+                    try {
+                        frames = loadBundledFrames(context)
+                    } catch (e: Throwable) {
+                        Log.e(TAG, "loadBundledFrames failed", e)
+                        error = "同梱データを読めなかった: ${e.message}"
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("同梱の Bad Apple を読む")
+            }
+            Spacer(Modifier.height(8.dp))
+            Button(
+                onClick = {
                     picker.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly),
                     )
@@ -144,7 +169,11 @@ fun AsciiVideoScreen(client: GlassClient, onBack: () -> Unit) {
             ) {
                 Text(if (loading) "変換中..." else "動画を選ぶ")
             }
-            Spacer(Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Switch(checked = invert, onCheckedChange = { invert = it })
+                Spacer(Modifier.height(8.dp))
+                Text("明暗を反転して変換する", style = MaterialTheme.typography.bodySmall)
+            }
             Button(
                 onClick = {
                     playing = !playing
@@ -189,7 +218,12 @@ fun AsciiVideoScreen(client: GlassClient, onBack: () -> Unit) {
     }
 }
 
-private suspend fun decodeAsciiFrames(context: Context, uri: Uri): List<String> = withContext(Dispatchers.IO) {
+private fun loadBundledFrames(context: Context): List<String> =
+    context.assets.open(BUNDLED_ASSET).bufferedReader().useLines { lines ->
+        lines.chunked(ASCII_ROWS).map { rows -> rows.joinToString("\n") { it.trimEnd() } }.toList()
+    }
+
+private suspend fun decodeAsciiFrames(context: Context, uri: Uri, invert: Boolean): List<String> = withContext(Dispatchers.IO) {
     val retriever = MediaMetadataRetriever()
     try {
         retriever.setDataSource(context, uri)
@@ -204,14 +238,14 @@ private suspend fun decodeAsciiFrames(context: Context, uri: Uri): List<String> 
                 MediaMetadataRetriever.OPTION_CLOSEST_SYNC,
                 ASCII_COLUMNS,
                 ASCII_ROWS,
-            )?.toAsciiFrame()
+            )?.toAsciiFrame(invert)
         }
     } finally {
         retriever.release()
     }
 }
 
-private fun Bitmap.toAsciiFrame(): String =
+private fun Bitmap.toAsciiFrame(invert: Boolean): String =
     (0 until height).joinToString("\n") { y ->
         buildString {
             for (x in 0 until width) {
@@ -219,7 +253,8 @@ private fun Bitmap.toAsciiFrame(): String =
                 val luminance = 0.299 * Color.red(color) +
                     0.587 * Color.green(color) +
                     0.114 * Color.blue(color)
-                append(RAMP[luminance.toInt().coerceIn(0, 255) * (RAMP.length - 1) / 255])
+                val level = luminance.toInt().coerceIn(0, 255).let { if (invert) 255 - it else it }
+                append(RAMP[level * (RAMP.length - 1) / 255])
             }
         }.trimEnd()
     }

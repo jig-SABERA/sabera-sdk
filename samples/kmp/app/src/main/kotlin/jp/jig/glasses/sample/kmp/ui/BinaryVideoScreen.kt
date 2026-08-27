@@ -47,7 +47,7 @@ private const val FRAME_HEIGHT = 72
 private const val PACKED_FRAME_BYTES = FRAME_WIDTH * FRAME_HEIGHT / 8
 
 /** 1コマの表示時間。画像は数百バイトずつ分割して送られるので文字より遅い */
-private const val FRAME_INTERVAL_MS = 400L
+private const val FRAME_INTERVAL_MS = 200L
 
 private const val BUNDLED_ASSET = "badapple.bin"
 

@@ -55,7 +55,7 @@ private const val ASCII_COLUMNS = 20
 private const val ASCII_ROWS = 8
 
 /** 1コマの表示時間。送信が追いつく範囲で選ぶ */
-private const val FRAME_INTERVAL_MS = 200L
+private const val FRAME_INTERVAL_MS = 100L
 
 /** 変換の待ち時間と端末のメモリを抑えるための上限。200コマで40秒ぶん */
 private const val MAX_FRAMES = 200

@@ -21,6 +21,7 @@ private enum class ConnectedScreen {
     CANVAS,
     KAWAKUDARI,
     LAUNCHER,
+    ASCII_VIDEO,
 }
 
 @Composable
@@ -49,6 +50,7 @@ fun GlassesApp(manager: GlassManager) {
             onOpenCanvasScreen = { screen = ConnectedScreen.CANVAS },
             onOpenKawakudariScreen = { screen = ConnectedScreen.KAWAKUDARI },
             onOpenLauncherScreen = { screen = ConnectedScreen.LAUNCHER },
+            onOpenAsciiVideoScreen = { screen = ConnectedScreen.ASCII_VIDEO },
         )
 
         ConnectedScreen.TELEPROMPTER -> TeleprompterScreen(
@@ -97,6 +99,11 @@ fun GlassesApp(manager: GlassManager) {
         )
 
         ConnectedScreen.KAWAKUDARI -> KawakudariScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.ASCII_VIDEO -> AsciiVideoScreen(
             client = currentClient,
             onBack = { screen = ConnectedScreen.COMMAND },
         )

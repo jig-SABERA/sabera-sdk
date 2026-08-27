@@ -10,6 +10,24 @@ nav_order: 6
 配布しているのは Android のみで、iOS は 0.0.10 で止まっている。iOS で使えるのは
 0.0.10 時点の API までになる。
 
+## 0.8.1
+
+| メソッド | 補足 |
+|---|---|
+| [startCanvasAnimation](api/command-manager/start-canvas-animation.html) | キャンバスに動画を流す準備をして、寸法と再生間隔を宣言する |
+| [sendCanvasAnimationFrame](api/command-manager/send-canvas-animation-frame.html) | 流すコマを1枚送る |
+| [stopCanvasAnimation](api/command-manager/stop-canvas-animation.html) | 流すのをやめる |
+
+FEATURE_VERSION 2.3.0 以上のファームが対象。コマは使い捨てなので、`sendCanvasImage`
+のようなバッファの容量に縛られず流し続けられる。ただしバッファを共有しているため、
+静的な画像とは同時に置けない。
+
+## 0.8.0
+
+**充電状態の取得（`charging` / `requestSystemStatus`）が入っていないので使わないこと。**
+0.8.1 と同じキャンバスのアニメーションが入っているが、0.7.0 で追加した充電状態が
+欠けているため、0.7.x から上げると後退する。0.8.1 で取り込み直した。
+
 ## 0.7.3
 
 メソッドの追加はない。0.7.0 の aar に Opus のネイティブライブラリが入っておらず、

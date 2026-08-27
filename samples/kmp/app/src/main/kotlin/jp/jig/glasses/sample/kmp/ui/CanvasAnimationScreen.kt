@@ -18,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -36,6 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
 
 private const val TAG = "CanvasAnimationScreen"
 
@@ -49,8 +51,13 @@ private const val PACKED_FRAME_BYTES = PIXEL_COUNT / 8
 private const val FRAME_X = (576 - FRAME_WIDTH) / 2
 private const val FRAME_Y = (360 - FRAME_HEIGHT) / 2
 
-/** 宣言する再生間隔。グラスはこの間隔でリングからフレームを取り出す */
-private const val INTERVAL_MS = 100
+/** 宣言する再生間隔の初期値。グラスはこの間隔でリングからフレームを取り出す */
+private const val INTERVAL_DEFAULT_MS = 100
+
+/** スライダーで動かせる範囲。50ms刻み */
+private const val INTERVAL_MIN_MS = 50f
+private const val INTERVAL_MAX_MS = 500f
+private const val INTERVAL_STEPS = 8
 
 private const val BUNDLED_ASSET = "badapple128.bin"
 
@@ -69,6 +76,9 @@ fun CanvasAnimationScreen(client: GlassClient, onBack: () -> Unit) {
     var position by remember { mutableStateOf(0) }
     var preview by remember { mutableStateOf<GrayscaleImage?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
+    var intervalMs by remember { mutableStateOf(INTERVAL_DEFAULT_MS) }
+    // ドラッグ中に宣言し直すと止まって見えるので、離してから反映する
+    var sliderPosition by remember { mutableStateOf(INTERVAL_DEFAULT_MS.toFloat()) }
 
     DisposableEffect(commandManager) {
         onDispose {
@@ -86,17 +96,18 @@ fun CanvasAnimationScreen(client: GlassClient, onBack: () -> Unit) {
         }
     }
 
-    LaunchedEffect(playing) {
+    LaunchedEffect(playing, intervalMs) {
         if (!playing || frames.isEmpty()) return@LaunchedEffect
 
-        commandManager.startCanvasAnimation(FRAME_X, FRAME_Y, FRAME_WIDTH, FRAME_HEIGHT, INTERVAL_MS)
+        // 間隔はANIM_STARTで宣言するので、変えたら送り直す
+        commandManager.startCanvasAnimation(FRAME_X, FRAME_Y, FRAME_WIDTH, FRAME_HEIGHT, intervalMs)
         try {
             while (isActive) {
                 val pixels = unpackBits(frames[position % frames.size], PIXEL_COUNT)
                 preview = GrayscaleImage(FRAME_WIDTH, FRAME_HEIGHT, pixels)
                 commandManager.sendCanvasAnimationFrame(FRAME_WIDTH, FRAME_HEIGHT, pixels)
                 position++
-                delay(INTERVAL_MS.toLong())
+                delay(intervalMs.toLong())
             }
         } finally {
             commandManager.stopCanvasAnimation()
@@ -114,8 +125,8 @@ fun CanvasAnimationScreen(client: GlassClient, onBack: () -> Unit) {
                 .verticalScroll(rememberScrollState()),
         ) {
             Text(
-                "${FRAME_WIDTH}×$FRAME_HEIGHT を interval=$INTERVAL_MS ms で宣言して、" +
-                    "1コマずつ送り続ける。FEATURE_VERSION 2.3.0 以上のファームが対象。",
+                "${FRAME_WIDTH}×$FRAME_HEIGHT を宣言した interval で送り続ける。" +
+                    "同梱データは10fpsぶんなので、100ms から離すと再生速度も変わる。",
                 style = MaterialTheme.typography.bodySmall,
             )
             Spacer(Modifier.height(16.dp))
@@ -131,6 +142,18 @@ fun CanvasAnimationScreen(client: GlassClient, onBack: () -> Unit) {
                 Text(if (playing) "止める" else "流す")
             }
             Spacer(Modifier.height(8.dp))
+            Text(
+                "interval = ${sliderPosition.roundToInt()} ms" +
+                    "（約 ${1000 / sliderPosition.roundToInt()} fps）",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Slider(
+                value = sliderPosition,
+                onValueChange = { sliderPosition = it },
+                onValueChangeFinished = { intervalMs = sliderPosition.roundToInt() },
+                valueRange = INTERVAL_MIN_MS..INTERVAL_MAX_MS,
+                steps = INTERVAL_STEPS,
+            )
             Text(
                 if (frames.isEmpty()) {
                     "読み込み中"

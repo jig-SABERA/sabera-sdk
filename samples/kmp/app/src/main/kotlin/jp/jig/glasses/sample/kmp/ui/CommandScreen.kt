@@ -53,6 +53,11 @@ fun CommandScreen(
     onOpenMicScreen: () -> Unit,
     onOpenLayoutScreen: () -> Unit,
     onOpenCanvasScreen: () -> Unit,
+    onOpenKawakudariScreen: () -> Unit,
+    onOpenLauncherScreen: () -> Unit,
+    onOpenAsciiVideoScreen: () -> Unit,
+    onOpenBinaryVideoScreen: () -> Unit,
+    onOpenCanvasAnimationScreen: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val commandManager = remember(client) { client.createCommandManager() }
@@ -112,6 +117,11 @@ fun CommandScreen(
             SectionTitle("その他")
             CommandButton("6DoF を受け取る画面へ", onClick = onOpenImuScreen)
             CommandButton("マイクを受け取る画面へ", onClick = onOpenMicScreen)
+            CommandButton("かわくだりで遊ぶ画面へ", onClick = onOpenKawakudariScreen)
+            CommandButton("ランチャーの画面へ", onClick = onOpenLauncherScreen)
+            CommandButton("アスキーアートを流す画面へ", onClick = onOpenAsciiVideoScreen)
+            CommandButton("2値画像を流す画面へ", onClick = onOpenBinaryVideoScreen)
+            CommandButton("キャンバスに動画を流す画面へ", onClick = onOpenCanvasAnimationScreen)
             CommandButton("Home に戻す") { safeRun("enterHomePage") { commandManager.enterHomePage() } }
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))

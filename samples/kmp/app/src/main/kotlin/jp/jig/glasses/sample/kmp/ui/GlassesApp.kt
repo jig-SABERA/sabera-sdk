@@ -19,6 +19,11 @@ private enum class ConnectedScreen {
     MIC,
     LAYOUT,
     CANVAS,
+    KAWAKUDARI,
+    LAUNCHER,
+    ASCII_VIDEO,
+    BINARY_VIDEO,
+    CANVAS_ANIMATION,
 }
 
 @Composable
@@ -45,6 +50,11 @@ fun GlassesApp(manager: GlassManager) {
             onOpenMicScreen = { screen = ConnectedScreen.MIC },
             onOpenLayoutScreen = { screen = ConnectedScreen.LAYOUT },
             onOpenCanvasScreen = { screen = ConnectedScreen.CANVAS },
+            onOpenKawakudariScreen = { screen = ConnectedScreen.KAWAKUDARI },
+            onOpenLauncherScreen = { screen = ConnectedScreen.LAUNCHER },
+            onOpenAsciiVideoScreen = { screen = ConnectedScreen.ASCII_VIDEO },
+            onOpenBinaryVideoScreen = { screen = ConnectedScreen.BINARY_VIDEO },
+            onOpenCanvasAnimationScreen = { screen = ConnectedScreen.CANVAS_ANIMATION },
         )
 
         ConnectedScreen.TELEPROMPTER -> TeleprompterScreen(
@@ -89,6 +99,41 @@ fun GlassesApp(manager: GlassManager) {
 
         ConnectedScreen.CANVAS -> CanvasScreen(
             client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.KAWAKUDARI -> KawakudariScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.ASCII_VIDEO -> AsciiVideoScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.BINARY_VIDEO -> BinaryVideoScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.CANVAS_ANIMATION -> CanvasAnimationScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.LAUNCHER -> LauncherScreen(
+            client = currentClient,
+            onSelect = { item ->
+                screen = when (item) {
+                    LauncherItem.KAWAKUDARI -> ConnectedScreen.KAWAKUDARI
+                    LauncherItem.TELEPROMPTER -> ConnectedScreen.TELEPROMPTER
+                    LauncherItem.TRANSLATE -> ConnectedScreen.TRANSLATE
+                    LauncherItem.AI_CHAT -> ConnectedScreen.AI_CHAT
+                    LauncherItem.IMAGE -> ConnectedScreen.IMAGE
+                    LauncherItem.IMU -> ConnectedScreen.IMU
+                }
+            },
             onBack = { screen = ConnectedScreen.COMMAND },
         )
     }

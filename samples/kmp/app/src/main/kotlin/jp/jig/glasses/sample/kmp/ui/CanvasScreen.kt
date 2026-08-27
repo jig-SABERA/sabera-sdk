@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import app.jigglass.glass.CommandManager
 import app.jigglass.glass.GlassClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 
 private const val TAG = "CanvasScreen"
 
@@ -61,6 +66,23 @@ private const val CANVAS_IMAGE_MAX_SIZE = 240
 
 /** 複数枚を並べるデモ。64角なら四隅に置いてもバッファに余裕がある */
 private const val TILED_IMAGE_SIZE = 64
+
+/**
+ * 静止画と動画を並べて流すデモ。アニメ中は静的なビットマップを置けないので、
+ * 1枚のコマに左右へ並べて描いてから送る。テキスト要素だけは別に置ける。
+ */
+private const val ANIM_WIDTH = 320
+private const val ANIM_HEIGHT = 120
+private const val ANIM_X = (CANVAS_WIDTH - ANIM_WIDTH) / 2
+private const val ANIM_Y = 40
+private const val ANIM_INTERVAL_MS = 200
+
+/** コマの左に置く静止画と、右に流す動画。動画は 4:3 に合わせる */
+private const val ANIM_STILL_SIZE = 120
+private const val ANIM_MOVIE_WIDTH = 160
+
+/** 並べたことが分かるように添えるテキスト。デモ要素と当たらない id を使う */
+private const val ANIM_TEXT_ID = 7
 
 /** 縞の太さを変えて、どの id がどこに出たか見分けられるようにする */
 private val TILED_IMAGES = listOf(
@@ -100,6 +122,7 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
     var imageX by remember { mutableStateOf(100) }
     var imageY by remember { mutableStateOf(50) }
     var error by remember { mutableStateOf<String?>(null) }
+    var animating by remember { mutableStateOf(false) }
 
     val used = elements.sumOf { it.text.toByteArray().size + ELEMENT_OVERHEAD_BYTES }
 
@@ -110,6 +133,43 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
         } catch (e: Throwable) {
             Log.e(TAG, "safeRun: $label FAILED", e)
             error = e.message
+        }
+    }
+
+    LaunchedEffect(animating) {
+        if (!animating) return@LaunchedEffect
+
+        val frames = withContext(Dispatchers.IO) { loadBadAppleFrames(context) }
+        val still = stripePatternImage(size = ANIM_STILL_SIZE, stripeWidth = 8)
+
+        // アリーナ共用なので、置いてある静的画像はここで破棄される。テキスト要素は残る
+        commandManager.startCanvasAnimation(ANIM_X, ANIM_Y, ANIM_WIDTH, ANIM_HEIGHT, ANIM_INTERVAL_MS)
+        commandManager.sendCanvasElements(
+            listOf(
+                CommandManager.CanvasElement(
+                    id = ANIM_TEXT_ID,
+                    x = ANIM_X,
+                    y = ANIM_Y + ANIM_HEIGHT + 8,
+                    width = ANIM_WIDTH,
+                    height = 40,
+                    text = "左は静止画 / 右は動画 / これはテキスト要素",
+                ),
+            ),
+        )
+        var index = 0
+        try {
+            while (isActive) {
+                val movie = badAppleFrame(frames[index % frames.size], ANIM_MOVIE_WIDTH, ANIM_HEIGHT)
+                commandManager.sendCanvasAnimationFrame(
+                    width = ANIM_WIDTH,
+                    height = ANIM_HEIGHT,
+                    grayscale = composeFrame(still, movie),
+                )
+                index++
+                delay(ANIM_INTERVAL_MS.toLong())
+            }
+        } finally {
+            commandManager.stopCanvasAnimation()
         }
     }
 
@@ -331,6 +391,29 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
 
+            Text("アニメーション", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "アニメと静的な画像はバッファを共有していて同時に置けないので、" +
+                    "静止画と動画を1枚のコマに並べて描いてから流す。テキスト要素は別に置ける。" +
+                    "FEATURE_VERSION 2.3.0 以上のファームが対象。",
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Spacer(Modifier.height(8.dp))
+            Button(
+                onClick = { animating = !animating },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    if (animating) {
+                        "アニメを止める"
+                    } else {
+                        "画像とアニメとテキストを並べる"
+                    },
+                )
+            }
+
+            HorizontalDivider(Modifier.padding(vertical = 16.dp))
+
             OutlinedButton(
                 onClick = { safeRun("clearCanvas") { commandManager.clearCanvas() } },
                 modifier = Modifier.fillMaxWidth(),
@@ -365,6 +448,26 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
             }
             Spacer(Modifier.height(24.dp))
         }
+    }
+}
+
+/** 静止画と動画のコマを1枚に並べる。左に静止画、右に動画 */
+private fun composeFrame(still: GrayscaleImage, movie: ByteArray): ByteArray {
+    val frame = ByteArray(ANIM_WIDTH * ANIM_HEIGHT)
+    blit(frame, still.pixels, still.width, still.height, x = 0)
+    blit(frame, movie, ANIM_MOVIE_WIDTH, ANIM_HEIGHT, x = ANIM_WIDTH - ANIM_MOVIE_WIDTH)
+    return frame
+}
+
+/** 行ごとにコピーする。コマの高さに収まらない分は切る */
+private fun blit(frame: ByteArray, source: ByteArray, width: Int, height: Int, x: Int) {
+    for (row in 0 until minOf(height, ANIM_HEIGHT)) {
+        source.copyInto(
+            destination = frame,
+            destinationOffset = row * ANIM_WIDTH + x,
+            startIndex = row * width,
+            endIndex = (row + 1) * width,
+        )
     }
 }
 

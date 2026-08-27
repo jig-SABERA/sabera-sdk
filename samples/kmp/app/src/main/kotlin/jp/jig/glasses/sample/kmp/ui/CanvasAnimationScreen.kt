@@ -54,10 +54,10 @@ private const val FRAME_Y = (360 - FRAME_HEIGHT) / 2
 /** 宣言する再生間隔の初期値。グラスはこの間隔でリングからフレームを取り出す */
 private const val INTERVAL_DEFAULT_MS = 100
 
-/** スライダーで動かせる範囲。50ms刻み */
-private const val INTERVAL_MIN_MS = 50f
-private const val INTERVAL_MAX_MS = 500f
-private const val INTERVAL_STEPS = 8
+/** スライダーで動かせる範囲。100msは通ったので、そこから下だけを刻みなしで探る */
+private const val INTERVAL_MIN_MS = 1f
+private const val INTERVAL_MAX_MS = 100f
+private const val INTERVAL_STEPS = 0
 
 private const val BUNDLED_ASSET = "badapple128.bin"
 

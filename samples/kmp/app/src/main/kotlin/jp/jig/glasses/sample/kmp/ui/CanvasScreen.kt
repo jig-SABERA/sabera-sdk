@@ -67,12 +67,22 @@ private const val CANVAS_IMAGE_MAX_SIZE = 240
 /** 複数枚を並べるデモ。64角なら四隅に置いてもバッファに余裕がある */
 private const val TILED_IMAGE_SIZE = 64
 
-/** 画像1枚をアニメに差し替えるデモ。左上の画像と同じ位置に置く */
-private const val ANIM_WIDTH = 128
-private const val ANIM_HEIGHT = 96
-private const val ANIM_X = 16
-private const val ANIM_Y = 16
+/**
+ * 静止画と動画を並べて流すデモ。アニメ中は静的なビットマップを置けないので、
+ * 1枚のコマに左右へ並べて描いてから送る。テキスト要素だけは別に置ける。
+ */
+private const val ANIM_WIDTH = 320
+private const val ANIM_HEIGHT = 120
+private const val ANIM_X = (CANVAS_WIDTH - ANIM_WIDTH) / 2
+private const val ANIM_Y = 40
 private const val ANIM_INTERVAL_MS = 200
+
+/** コマの左に置く静止画と、右に流す動画。動画は 4:3 に合わせる */
+private const val ANIM_STILL_SIZE = 120
+private const val ANIM_MOVIE_WIDTH = 160
+
+/** 並べたことが分かるように添えるテキスト。デモ要素と当たらない id を使う */
+private const val ANIM_TEXT_ID = 7
 
 /** 縞の太さを変えて、どの id がどこに出たか見分けられるようにする */
 private val TILED_IMAGES = listOf(
@@ -130,15 +140,30 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
         if (!animating) return@LaunchedEffect
 
         val frames = withContext(Dispatchers.IO) { loadBadAppleFrames(context) }
-        // アリーナ共用なので、ここで置いてある静的画像は破棄される。テキスト要素は残る
+        val still = stripePatternImage(size = ANIM_STILL_SIZE, stripeWidth = 8)
+
+        // アリーナ共用なので、置いてある静的画像はここで破棄される。テキスト要素は残る
         commandManager.startCanvasAnimation(ANIM_X, ANIM_Y, ANIM_WIDTH, ANIM_HEIGHT, ANIM_INTERVAL_MS)
+        commandManager.sendCanvasElements(
+            listOf(
+                CommandManager.CanvasElement(
+                    id = ANIM_TEXT_ID,
+                    x = ANIM_X,
+                    y = ANIM_Y + ANIM_HEIGHT + 8,
+                    width = ANIM_WIDTH,
+                    height = 40,
+                    text = "左は静止画 / 右は動画 / これはテキスト要素",
+                ),
+            ),
+        )
         var index = 0
         try {
             while (isActive) {
+                val movie = badAppleFrame(frames[index % frames.size], ANIM_MOVIE_WIDTH, ANIM_HEIGHT)
                 commandManager.sendCanvasAnimationFrame(
                     width = ANIM_WIDTH,
                     height = ANIM_HEIGHT,
-                    grayscale = badAppleFrame(frames[index % frames.size], ANIM_WIDTH, ANIM_HEIGHT),
+                    grayscale = composeFrame(still, movie),
                 )
                 index++
                 delay(ANIM_INTERVAL_MS.toLong())
@@ -368,8 +393,8 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
 
             Text("アニメーション", style = MaterialTheme.typography.titleMedium)
             Text(
-                "画像1枚のかわりに動画を流す。テキスト要素は残るが、" +
-                    "バッファを共有しているので置いてある画像は消える。" +
+                "アニメと静的な画像はバッファを共有していて同時に置けないので、" +
+                    "静止画と動画を1枚のコマに並べて描いてから流す。テキスト要素は別に置ける。" +
                     "FEATURE_VERSION 2.3.0 以上のファームが対象。",
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -382,7 +407,7 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
                     if (animating) {
                         "アニメを止める"
                     } else {
-                        "左上を ${ANIM_WIDTH}×$ANIM_HEIGHT のアニメにする"
+                        "画像とアニメとテキストを並べる"
                     },
                 )
             }
@@ -423,6 +448,26 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
             }
             Spacer(Modifier.height(24.dp))
         }
+    }
+}
+
+/** 静止画と動画のコマを1枚に並べる。左に静止画、右に動画 */
+private fun composeFrame(still: GrayscaleImage, movie: ByteArray): ByteArray {
+    val frame = ByteArray(ANIM_WIDTH * ANIM_HEIGHT)
+    blit(frame, still.pixels, still.width, still.height, x = 0)
+    blit(frame, movie, ANIM_MOVIE_WIDTH, ANIM_HEIGHT, x = ANIM_WIDTH - ANIM_MOVIE_WIDTH)
+    return frame
+}
+
+/** 行ごとにコピーする。コマの高さに収まらない分は切る */
+private fun blit(frame: ByteArray, source: ByteArray, width: Int, height: Int, x: Int) {
+    for (row in 0 until minOf(height, ANIM_HEIGHT)) {
+        source.copyInto(
+            destination = frame,
+            destinationOffset = row * ANIM_WIDTH + x,
+            startIndex = row * width,
+            endIndex = (row + 1) * width,
+        )
     }
 }
 

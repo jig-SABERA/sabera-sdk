@@ -23,6 +23,7 @@ private enum class ConnectedScreen {
     LAUNCHER,
     ASCII_VIDEO,
     BINARY_VIDEO,
+    CANVAS_ANIMATION,
 }
 
 @Composable
@@ -53,6 +54,7 @@ fun GlassesApp(manager: GlassManager) {
             onOpenLauncherScreen = { screen = ConnectedScreen.LAUNCHER },
             onOpenAsciiVideoScreen = { screen = ConnectedScreen.ASCII_VIDEO },
             onOpenBinaryVideoScreen = { screen = ConnectedScreen.BINARY_VIDEO },
+            onOpenCanvasAnimationScreen = { screen = ConnectedScreen.CANVAS_ANIMATION },
         )
 
         ConnectedScreen.TELEPROMPTER -> TeleprompterScreen(
@@ -111,6 +113,11 @@ fun GlassesApp(manager: GlassManager) {
         )
 
         ConnectedScreen.BINARY_VIDEO -> BinaryVideoScreen(
+            client = currentClient,
+            onBack = { screen = ConnectedScreen.COMMAND },
+        )
+
+        ConnectedScreen.CANVAS_ANIMATION -> CanvasAnimationScreen(
             client = currentClient,
             onBack = { screen = ConnectedScreen.COMMAND },
         )

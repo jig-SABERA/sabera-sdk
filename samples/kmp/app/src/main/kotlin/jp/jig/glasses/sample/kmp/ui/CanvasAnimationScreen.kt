@@ -37,27 +37,30 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
-private const val TAG = "BinaryVideoScreen"
+private const val TAG = "CanvasAnimationScreen"
 
-/** 4:3 の 96x72。196角までは送れるが、小さいほど1コマの転送が短い */
-private const val FRAME_WIDTH = 96
-private const val FRAME_HEIGHT = 72
+/** 4:3 の 128x96。380,000バイトのアリーナを w*h*2 で割ると15枚ぶんのリングになる */
+private const val FRAME_WIDTH = 128
+private const val FRAME_HEIGHT = 96
+private const val PIXEL_COUNT = FRAME_WIDTH * FRAME_HEIGHT
+private const val PACKED_FRAME_BYTES = PIXEL_COUNT / 8
 
-/** 1画素1bitに詰めた1コマの大きさ */
-private const val PACKED_FRAME_BYTES = FRAME_WIDTH * FRAME_HEIGHT / 8
+/** キャンバス 576x360 の中央に置く */
+private const val FRAME_X = (576 - FRAME_WIDTH) / 2
+private const val FRAME_Y = (360 - FRAME_HEIGHT) / 2
 
-/** 1コマの表示時間。画像は数百バイトずつ分割して送られるので文字より遅い */
-private const val FRAME_INTERVAL_MS = 200L
+/** 宣言する再生間隔。グラスはこの間隔でリングからフレームを取り出す */
+private const val INTERVAL_MS = 100
 
-private const val BUNDLED_ASSET = "badapple.bin"
+private const val BUNDLED_ASSET = "badapple128.bin"
 
 /**
- * 2値の画像をそのまま流す画面。
- * アスキーアート版と同じ映像を、文字ではなく画像表示ページへ送る。
+ * キャンバスのアニメーションで動画を流す画面。
+ * FEATURE_VERSION 2.3.0 で入った ANIM_START / ANIM_FRAME / ANIM_STOP を通す。
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BinaryVideoScreen(client: GlassClient, onBack: () -> Unit) {
+fun CanvasAnimationScreen(client: GlassClient, onBack: () -> Unit) {
     val context = LocalContext.current
     val commandManager = remember(client) { client.createCommandManager() }
 
@@ -68,14 +71,17 @@ fun BinaryVideoScreen(client: GlassClient, onBack: () -> Unit) {
     var error by remember { mutableStateOf<String?>(null) }
 
     DisposableEffect(commandManager) {
-        onDispose { commandManager.enterHomePage() }
+        onDispose {
+            commandManager.stopCanvasAnimation()
+            commandManager.closeCanvas()
+        }
     }
 
     LaunchedEffect(Unit) {
         try {
-            frames = withContext(Dispatchers.IO) { loadPackedFrames(context) }
+            frames = withContext(Dispatchers.IO) { loadFrames(context) }
         } catch (e: Throwable) {
-            Log.e(TAG, "loadPackedFrames failed", e)
+            Log.e(TAG, "loadFrames failed", e)
             error = "同梱データを読めなかった: ${e.message}"
         }
     }
@@ -83,18 +89,22 @@ fun BinaryVideoScreen(client: GlassClient, onBack: () -> Unit) {
     LaunchedEffect(playing) {
         if (!playing || frames.isEmpty()) return@LaunchedEffect
 
-        commandManager.enterImageDisplayPage()
-        while (isActive) {
-            val pixels = unpackBits(frames[position % frames.size], FRAME_WIDTH * FRAME_HEIGHT)
-            preview = GrayscaleImage(FRAME_WIDTH, FRAME_HEIGHT, pixels)
-            commandManager.sendImage(FRAME_WIDTH, FRAME_HEIGHT, pixels)
-            position++
-            delay(FRAME_INTERVAL_MS)
+        commandManager.startCanvasAnimation(FRAME_X, FRAME_Y, FRAME_WIDTH, FRAME_HEIGHT, INTERVAL_MS)
+        try {
+            while (isActive) {
+                val pixels = unpackBits(frames[position % frames.size], PIXEL_COUNT)
+                preview = GrayscaleImage(FRAME_WIDTH, FRAME_HEIGHT, pixels)
+                commandManager.sendCanvasAnimationFrame(FRAME_WIDTH, FRAME_HEIGHT, pixels)
+                position++
+                delay(INTERVAL_MS.toLong())
+            }
+        } finally {
+            commandManager.stopCanvasAnimation()
         }
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("2値画像を流す") }) },
+        topBar = { TopAppBar(title = { Text("キャンバスに動画を流す") }) },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -104,8 +114,8 @@ fun BinaryVideoScreen(client: GlassClient, onBack: () -> Unit) {
                 .verticalScroll(rememberScrollState()),
         ) {
             Text(
-                "同梱の1bit画像を ${FRAME_WIDTH}×$FRAME_HEIGHT のまま画像表示ページへ送る。" +
-                    "1コマ $PACKED_FRAME_BYTES バイトを展開して ${FRAME_INTERVAL_MS}ms ごとに1枚。",
+                "${FRAME_WIDTH}×$FRAME_HEIGHT を interval=$INTERVAL_MS ms で宣言して、" +
+                    "1コマずつ送り続ける。FEATURE_VERSION 2.3.0 以上のファームが対象。",
                 style = MaterialTheme.typography.bodySmall,
             )
             Spacer(Modifier.height(16.dp))
@@ -125,7 +135,7 @@ fun BinaryVideoScreen(client: GlassClient, onBack: () -> Unit) {
                 if (frames.isEmpty()) {
                     "読み込み中"
                 } else {
-                    "${frames.size} コマ / 再生位置 ${position % frames.size}"
+                    "${frames.size} コマ / 送った数 $position"
                 },
                 style = MaterialTheme.typography.bodySmall,
             )
@@ -137,11 +147,40 @@ fun BinaryVideoScreen(client: GlassClient, onBack: () -> Unit) {
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
 
+            Text("流している間に割り込ませて挙動を見る", style = MaterialTheme.typography.bodySmall)
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = { commandManager.clearCanvas() },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("clearCanvas を送る")
+            }
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = {
+                    // アリーナ共用なので、静的ビットマップを送るとアニメは止まる
+                    val pattern = testPatternImage(96)
+                    commandManager.sendCanvasImage(
+                        id = 0,
+                        x = 16,
+                        y = 16,
+                        width = pattern.width,
+                        height = pattern.height,
+                        grayscale = pattern.pixels,
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("静的な画像を1枚置く")
+            }
+
+            HorizontalDivider(Modifier.padding(vertical = 16.dp))
+
             preview?.let {
                 Image(
                     bitmap = it.toBitmap().asImageBitmap(),
                     contentDescription = "いま送っているコマ",
-                    modifier = Modifier.size(288.dp, 216.dp),
+                    modifier = Modifier.size(256.dp, 192.dp),
                 )
             }
 
@@ -160,7 +199,7 @@ fun BinaryVideoScreen(client: GlassClient, onBack: () -> Unit) {
     }
 }
 
-private fun loadPackedFrames(context: Context): List<ByteArray> {
+private fun loadFrames(context: Context): List<ByteArray> {
     val bytes = context.assets.open(BUNDLED_ASSET).use { it.readBytes() }
     return (0 until bytes.size / PACKED_FRAME_BYTES).map { index ->
         bytes.copyOfRange(index * PACKED_FRAME_BYTES, (index + 1) * PACKED_FRAME_BYTES)

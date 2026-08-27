@@ -73,3 +73,13 @@ fun stripePatternImage(size: Int, stripeWidth: Int): GrayscaleImage {
     }
     return GrayscaleImage(size, size, pixels)
 }
+
+/** 1bitずつ詰めた画像を、SDKが受け取る1画素1バイトへ戻す。MSBが左端 */
+fun unpackBits(packed: ByteArray, pixelCount: Int): ByteArray {
+    val pixels = ByteArray(pixelCount)
+    pixels.indices.forEach { index ->
+        val bit = (packed[index / 8].toInt() shr (7 - index % 8)) and 1
+        pixels[index] = if (bit == 1) 0xFF.toByte() else 0
+    }
+    return pixels
+}

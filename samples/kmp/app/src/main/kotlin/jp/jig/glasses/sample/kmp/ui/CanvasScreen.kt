@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import app.jigglass.glass.CommandManager
 import app.jigglass.glass.GlassClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 
 private const val TAG = "CanvasScreen"
 
@@ -61,6 +66,13 @@ private const val CANVAS_IMAGE_MAX_SIZE = 240
 
 /** 複数枚を並べるデモ。64角なら四隅に置いてもバッファに余裕がある */
 private const val TILED_IMAGE_SIZE = 64
+
+/** 画像1枚をアニメに差し替えるデモ。左上の画像と同じ位置に置く */
+private const val ANIM_WIDTH = 128
+private const val ANIM_HEIGHT = 96
+private const val ANIM_X = 16
+private const val ANIM_Y = 16
+private const val ANIM_INTERVAL_MS = 200
 
 /** 縞の太さを変えて、どの id がどこに出たか見分けられるようにする */
 private val TILED_IMAGES = listOf(
@@ -100,6 +112,7 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
     var imageX by remember { mutableStateOf(100) }
     var imageY by remember { mutableStateOf(50) }
     var error by remember { mutableStateOf<String?>(null) }
+    var animating by remember { mutableStateOf(false) }
 
     val used = elements.sumOf { it.text.toByteArray().size + ELEMENT_OVERHEAD_BYTES }
 
@@ -110,6 +123,28 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
         } catch (e: Throwable) {
             Log.e(TAG, "safeRun: $label FAILED", e)
             error = e.message
+        }
+    }
+
+    LaunchedEffect(animating) {
+        if (!animating) return@LaunchedEffect
+
+        val frames = withContext(Dispatchers.IO) { loadBadAppleFrames(context) }
+        // アリーナ共用なので、ここで置いてある静的画像は破棄される。テキスト要素は残る
+        commandManager.startCanvasAnimation(ANIM_X, ANIM_Y, ANIM_WIDTH, ANIM_HEIGHT, ANIM_INTERVAL_MS)
+        var index = 0
+        try {
+            while (isActive) {
+                commandManager.sendCanvasAnimationFrame(
+                    width = ANIM_WIDTH,
+                    height = ANIM_HEIGHT,
+                    grayscale = badAppleFrame(frames[index % frames.size], ANIM_WIDTH, ANIM_HEIGHT),
+                )
+                index++
+                delay(ANIM_INTERVAL_MS.toLong())
+            }
+        } finally {
+            commandManager.stopCanvasAnimation()
         }
     }
 
@@ -327,6 +362,29 @@ fun CanvasScreen(client: GlassClient, onBack: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("id $imageId の画像を消す")
+            }
+
+            HorizontalDivider(Modifier.padding(vertical = 16.dp))
+
+            Text("アニメーション", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "画像1枚のかわりに動画を流す。テキスト要素は残るが、" +
+                    "バッファを共有しているので置いてある画像は消える。" +
+                    "FEATURE_VERSION 2.3.0 以上のファームが対象。",
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Spacer(Modifier.height(8.dp))
+            Button(
+                onClick = { animating = !animating },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    if (animating) {
+                        "アニメを止める"
+                    } else {
+                        "左上を ${ANIM_WIDTH}×$ANIM_HEIGHT のアニメにする"
+                    },
+                )
             }
 
             HorizontalDivider(Modifier.padding(vertical = 16.dp))

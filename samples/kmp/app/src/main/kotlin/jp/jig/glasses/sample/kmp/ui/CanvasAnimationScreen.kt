@@ -1,6 +1,5 @@
 package jp.jig.glasses.sample.kmp.ui
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -41,25 +40,30 @@ import kotlin.math.roundToInt
 
 private const val TAG = "CanvasAnimationScreen"
 
-/** 4:3 の 128x96。380,000バイトのアリーナを w*h*2 で割ると15枚ぶんのリングになる */
-private const val FRAME_WIDTH = 128
-private const val FRAME_HEIGHT = 96
-private const val PIXEL_COUNT = FRAME_WIDTH * FRAME_HEIGHT
-private const val PACKED_FRAME_BYTES = PIXEL_COUNT / 8
+private const val CANVAS_WIDTH = 576
+private const val CANVAS_HEIGHT = 360
 
-/** キャンバス 576x360 の中央に置く */
-private const val FRAME_X = (576 - FRAME_WIDTH) / 2
-private const val FRAME_Y = (360 - FRAME_HEIGHT) / 2
+/**
+ * 選べる寸法。4:3 のまま、380,000バイトのアリーナに w*h*2 が2枚入る範囲で並べた。
+ * 320x240 が上限で、これ以上大きくするとリングが1枚になって再生が始まらない。
+ */
+private val FRAME_SIZES = listOf(
+    80 to 60,
+    128 to 96,
+    160 to 120,
+    200 to 150,
+    240 to 180,
+    280 to 210,
+    BAD_APPLE_WIDTH to BAD_APPLE_HEIGHT,
+)
 
-/** 宣言する再生間隔の初期値。グラスはこの間隔でリングからフレームを取り出す */
-private const val INTERVAL_DEFAULT_MS = 100
+/** 宣言する再生間隔の初期値 */
+private const val INTERVAL_DEFAULT_MS = 200
 
-/** スライダーで動かせる範囲。100msは通ったので、そこから下だけを刻みなしで探る */
-private const val INTERVAL_MIN_MS = 1f
-private const val INTERVAL_MAX_MS = 100f
+/** スライダーで動かせる範囲。1コマが大きいと転送に時間がかかるので上を広く取る */
+private const val INTERVAL_MIN_MS = 50f
+private const val INTERVAL_MAX_MS = 1000f
 private const val INTERVAL_STEPS = 0
-
-private const val BUNDLED_ASSET = "badapple128.bin"
 
 /**
  * キャンバスのアニメーションで動画を流す画面。
@@ -76,9 +80,12 @@ fun CanvasAnimationScreen(client: GlassClient, onBack: () -> Unit) {
     var position by remember { mutableStateOf(0) }
     var preview by remember { mutableStateOf<GrayscaleImage?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
-    var intervalMs by remember { mutableStateOf(INTERVAL_DEFAULT_MS) }
+
     // ドラッグ中に宣言し直すと止まって見えるので、離してから反映する
-    var sliderPosition by remember { mutableStateOf(INTERVAL_DEFAULT_MS.toFloat()) }
+    var intervalMs by remember { mutableStateOf(INTERVAL_DEFAULT_MS) }
+    var intervalSlider by remember { mutableStateOf(INTERVAL_DEFAULT_MS.toFloat()) }
+    var sizeIndex by remember { mutableStateOf(FRAME_SIZES.lastIndex) }
+    var sizeSlider by remember { mutableStateOf(FRAME_SIZES.lastIndex.toFloat()) }
 
     DisposableEffect(commandManager) {
         onDispose {
@@ -89,23 +96,30 @@ fun CanvasAnimationScreen(client: GlassClient, onBack: () -> Unit) {
 
     LaunchedEffect(Unit) {
         try {
-            frames = withContext(Dispatchers.IO) { loadFrames(context) }
+            frames = withContext(Dispatchers.IO) { loadBadAppleFrames(context) }
         } catch (e: Throwable) {
-            Log.e(TAG, "loadFrames failed", e)
+            Log.e(TAG, "loadBadAppleFrames failed", e)
             error = "同梱データを読めなかった: ${e.message}"
         }
     }
 
-    LaunchedEffect(playing, intervalMs) {
+    LaunchedEffect(playing, intervalMs, sizeIndex) {
         if (!playing || frames.isEmpty()) return@LaunchedEffect
 
-        // 間隔はANIM_STARTで宣言するので、変えたら送り直す
-        commandManager.startCanvasAnimation(FRAME_X, FRAME_Y, FRAME_WIDTH, FRAME_HEIGHT, intervalMs)
+        val (width, height) = FRAME_SIZES[sizeIndex]
+        // 寸法と間隔はANIM_STARTで宣言するので、変えたら送り直す
+        commandManager.startCanvasAnimation(
+            x = (CANVAS_WIDTH - width) / 2,
+            y = (CANVAS_HEIGHT - height) / 2,
+            width = width,
+            height = height,
+            intervalMs = intervalMs,
+        )
         try {
             while (isActive) {
-                val pixels = unpackBits(frames[position % frames.size], PIXEL_COUNT)
-                preview = GrayscaleImage(FRAME_WIDTH, FRAME_HEIGHT, pixels)
-                commandManager.sendCanvasAnimationFrame(FRAME_WIDTH, FRAME_HEIGHT, pixels)
+                val pixels = badAppleFrame(frames[position % frames.size], width, height)
+                preview = GrayscaleImage(width, height, pixels)
+                commandManager.sendCanvasAnimationFrame(width, height, pixels)
                 position++
                 delay(intervalMs.toLong())
             }
@@ -125,8 +139,8 @@ fun CanvasAnimationScreen(client: GlassClient, onBack: () -> Unit) {
                 .verticalScroll(rememberScrollState()),
         ) {
             Text(
-                "${FRAME_WIDTH}×$FRAME_HEIGHT を宣言した interval で送り続ける。" +
-                    "同梱データは10fpsぶんなので、100ms から離すと再生速度も変わる。",
+                "4:3 のまま寸法と interval を選んで送り続ける。同梱データは ${BAD_APPLE_WIDTH}×$BAD_APPLE_HEIGHT の5fpsぶんで、" +
+                    "小さい寸法は間引いて作る。FEATURE_VERSION 2.3.0 以上のファームが対象。",
                 style = MaterialTheme.typography.bodySmall,
             )
             Spacer(Modifier.height(16.dp))
@@ -141,16 +155,31 @@ fun CanvasAnimationScreen(client: GlassClient, onBack: () -> Unit) {
             ) {
                 Text(if (playing) "止める" else "流す")
             }
+
+            val (sliderWidth, sliderHeight) = FRAME_SIZES[sizeSlider.roundToInt()]
             Spacer(Modifier.height(8.dp))
             Text(
-                "interval = ${sliderPosition.roundToInt()} ms" +
-                    "（約 ${1000 / sliderPosition.roundToInt()} fps）",
+                "サイズ = ${sliderWidth}×$sliderHeight" +
+                    "（リング ${380_000 / (sliderWidth * sliderHeight * 2)} 枚）",
                 style = MaterialTheme.typography.bodyMedium,
             )
             Slider(
-                value = sliderPosition,
-                onValueChange = { sliderPosition = it },
-                onValueChangeFinished = { intervalMs = sliderPosition.roundToInt() },
+                value = sizeSlider,
+                onValueChange = { sizeSlider = it },
+                onValueChangeFinished = { sizeIndex = sizeSlider.roundToInt() },
+                valueRange = 0f..FRAME_SIZES.lastIndex.toFloat(),
+                steps = FRAME_SIZES.size - 2,
+            )
+
+            Text(
+                "interval = ${intervalSlider.roundToInt()} ms" +
+                    "（約 ${1000 / intervalSlider.roundToInt()} fps）",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Slider(
+                value = intervalSlider,
+                onValueChange = { intervalSlider = it },
+                onValueChangeFinished = { intervalMs = intervalSlider.roundToInt() },
                 valueRange = INTERVAL_MIN_MS..INTERVAL_MAX_MS,
                 steps = INTERVAL_STEPS,
             )
@@ -219,12 +248,5 @@ fun CanvasAnimationScreen(client: GlassClient, onBack: () -> Unit) {
             }
             Spacer(Modifier.height(24.dp))
         }
-    }
-}
-
-private fun loadFrames(context: Context): List<ByteArray> {
-    val bytes = context.assets.open(BUNDLED_ASSET).use { it.readBytes() }
-    return (0 until bytes.size / PACKED_FRAME_BYTES).map { index ->
-        bytes.copyOfRange(index * PACKED_FRAME_BYTES, (index + 1) * PACKED_FRAME_BYTES)
     }
 }

@@ -48,6 +48,9 @@ has_children: true
 | [removeCanvasImage](remove-canvas-image.html) | `fun removeCanvasImage(id: Int)` |
 | [clearCanvas](clear-canvas.html) | `fun clearCanvas()` |
 | [closeCanvas](close-canvas.html) | `fun closeCanvas()` |
+| [startCanvasAnimation](start-canvas-animation.html) | `fun startCanvasAnimation(x: Int, y: Int, width: Int, height: Int, intervalMs: Int)` |
+| [sendCanvasAnimationFrame](send-canvas-animation-frame.html) | `fun sendCanvasAnimationFrame(width: Int, height: Int, grayscale: ByteArray)` |
+| [stopCanvasAnimation](stop-canvas-animation.html) | `fun stopCanvasAnimation()` |
 | [enterNavigationPage](enter-navigation-page.html) | `fun enterNavigationPage()` |
 | [enterGlassAngleAdjustmentPage](enter-glass-angle-adjustment-page.html) | `fun enterGlassAngleAdjustmentPage()` |
 | [enterImuDebugPage](enter-imu-debug-page.html) | `fun enterImuDebugPage()` |

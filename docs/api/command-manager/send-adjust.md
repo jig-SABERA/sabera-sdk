@@ -2,7 +2,7 @@
 title: sendAdjust
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 55
+nav_order: 58
 ---
 
 # CommandManager.sendAdjust

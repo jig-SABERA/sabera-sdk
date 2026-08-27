@@ -417,6 +417,38 @@ SPEC = [
               summary="自由配置キャンバスを閉じてホームなどに戻す。表示していた要素は破棄される。"
                       "リモコンの戻る操作やホームへの遷移でも閉じる。",
               related=["sendCanvas"]),
+            m("startCanvasAnimation",
+              "fun startCanvasAnimation(x: Int, y: Int, width: Int, height: Int, intervalMs: Int)",
+              [("x", "Int", "コマの左上のx座標。x + width は 576 まで"),
+               ("y", "Int", "コマの左上のy座標。y + height は 360 まで"),
+               ("width", "Int", "1コマの幅"),
+               ("height", "Int", "1コマの高さ"),
+               ("intervalMs", "Int", "1コマの表示時間[ms]")],
+              summary="キャンバスに動画を流す準備をして、寸法と再生間隔を宣言する。"
+                      "グラスは画像バッファを1コマぶんのスロットに切り直してリングバッファにするため、"
+                      "宣言した時点で sendCanvasImage で置いた画像は破棄される。テキスト要素は残る。"
+                      "コマは使い捨てなので、長さの制限なく流し続けられる。"
+                      "2枚たまってから再生が始まり、送信が間に合わないときは直前のコマを出したまま待つので、"
+                      "黒画面にもコマ飛びにもならない。"
+                      "ナビの全体ルート画像とバッファを共有しているため、ナビ表示中は使えない。"
+                      "実効fpsはBLEのスループットが天井になる。"
+                      "FEATURE_VERSION 2.3.0 以上のファームが対象。",
+              related=["sendCanvasAnimationFrame", "stopCanvasAnimation", "sendCanvasImage"]),
+            m("sendCanvasAnimationFrame",
+              "fun sendCanvasAnimationFrame(width: Int, height: Int, grayscale: ByteArray)",
+              [("width", "Int", "1コマの幅。startCanvasAnimation で宣言した値と揃える"),
+               ("height", "Int", "1コマの高さ。startCanvasAnimation で宣言した値と揃える"),
+               ("grayscale", "ByteArray",
+                "1画素1バイトのグレースケール。長さは width * height 以上")],
+              summary="流すコマを1枚送る。startCanvasAnimation で宣言してから呼ぶ。"
+                      "渡すのは1画素1バイト・左上から行優先のグレースケールで、輝度は 0-255 のまま渡してよい。"
+                      "3bit(0-7)への量子化とRLE圧縮、チャンク分割はSDK内で行う。"
+                      "コマの順番は送った順で決まり、SDK が分割送信を直列化するので"
+                      "間隔を詰めて呼んでも1枚ずつ送り切られる。",
+              related=["startCanvasAnimation", "stopCanvasAnimation"]),
+            m("stopCanvasAnimation", "fun stopCanvasAnimation()",
+              summary="流すのをやめる。リングは解放され、sendCanvasImage の画像が再び使える。",
+              related=["startCanvasAnimation", "sendCanvasImage"]),
             m("enterNavigationPage", "fun enterNavigationPage()",
               summary="ナビページを開く。案内内容は sendNaviStatus と sendNavi で送る。",
               related=["sendNaviStatus", "sendNavi"]),

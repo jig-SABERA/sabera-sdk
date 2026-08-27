@@ -2,7 +2,7 @@
 title: requestSettingSync
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 59
+nav_order: 62
 ---
 
 # CommandManager.requestSettingSync

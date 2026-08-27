@@ -2,7 +2,7 @@
 title: sendNaviCourse
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 51
+nav_order: 54
 ---
 
 # CommandManager.sendNaviCourse

@@ -49,6 +49,33 @@ commandManager.closeCanvas()
 数百バイトずつに分けて送るため、大きい画像ほど表示までに時間がかかる。続けて呼んでも
 SDK が分割送信を直列化するので、送信が混ざることはない。
 
+## 動画を流す
+
+`startCanvasAnimation()` で寸法と再生間隔を宣言し、`sendCanvasAnimationFrame()` で1コマずつ送る。
+FEATURE_VERSION 2.3.0 以上のファームが対象。
+
+```kotlin
+// 128x96 をキャンバス中央に、1コマ100msで流すと宣言する
+commandManager.startCanvasAnimation(x = 224, y = 132, width = 128, height = 96, intervalMs = 100)
+frames.forEach { frame ->
+    // grayscale は1画素1バイト・左上から行優先。量子化と圧縮、分割はSDKが行う
+    commandManager.sendCanvasAnimationFrame(width = 128, height = 96, grayscale = frame)
+}
+commandManager.stopCanvasAnimation()
+```
+
+画像バッファは1コマぶんのスロットに切り直され、リングバッファとして使い回される。コマは
+使い捨てなので、`sendCanvasImage()` のような容量の上限がなく、長さの制限なく流し続けられる。
+2枚たまってから再生が始まり、送信が間に合わないときは直前のコマを出したまま待つので、
+黒画面にもコマ飛びにもならない。
+
+バッファを共有しているため、流し始めると置いてある画像は消え、流している間に
+`sendCanvasImage()` を送ると再生が止まる。テキスト要素とは併用できる。
+
+実効fpsはBLEのスループットが天井になる。128x96・`intervalMs = 100` あたりから始めて、
+グラス側の見え方を確かめながら詰めるとよい。1コマが大きいほど分割送信が増えるので、
+間隔を詰めるより先に寸法を落とした方が効く。
+
 ## 制限
 
 | 対象 | 上限 |
@@ -75,5 +102,8 @@ SDK が分割送信を直列化するので、送信が混ざることはない�
 - `sendCanvasElements(elements: List<CommandManager.CanvasElement>)`
 - `sendCanvasImage(id: Int, x: Int, y: Int, width: Int, height: Int, grayscale: ByteArray)`
 - `removeCanvasImage(id: Int)`
+- `startCanvasAnimation(x: Int, y: Int, width: Int, height: Int, intervalMs: Int)`
+- `sendCanvasAnimationFrame(width: Int, height: Int, grayscale: ByteArray)`
+- `stopCanvasAnimation()`
 - `clearCanvas()`
 - `closeCanvas()`

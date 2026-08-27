@@ -2,7 +2,7 @@
 title: sendNaviLanguage
 parent: CommandManager
 grandparent: API リファレンス
-nav_order: 52
+nav_order: 55
 ---
 
 # CommandManager.sendNaviLanguage

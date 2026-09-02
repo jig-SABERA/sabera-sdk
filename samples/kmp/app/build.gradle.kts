@@ -24,7 +24,6 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-            freeCompilerArgs.add("-Xskip-prerelease-check")
         }
     }
 
@@ -38,7 +37,7 @@ android {
 
 dependencies {
     // Sabera App SDK
-    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.8.1")
+    implementation("jp.jig.sabera.app.sdk:sabera-app-core:0.8.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 
     // Compose

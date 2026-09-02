@@ -14,7 +14,7 @@ nav_order: 6
 
 メソッドの追加は無い。ビルド上の変更のみ。
 
-- 成果物が pre-release 扱いにならなくなった。0.8.2 以前で必要だった `-Xskip-prerelease-check` は不要
+- 成果物が pre-release 扱いにならなくなった。0.8.1 以前で必要だった `-Xskip-prerelease-check` は不要
 - `GlassConnection` インターフェースと `PickerUnavailableException` が aar に残るようになり、接続管理を `GlassManager` 具象型ではなく `GlassConnection` で受けられる
 
 ## 0.8.1

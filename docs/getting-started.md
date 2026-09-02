@@ -8,6 +8,10 @@ nav_order: 2
 SABERA App SDK を使ってSABERAグラスと通信するアプリを作る手順。 SABERA
 SDKはネイティブAPIとして提供している。
 
+SDK 本体の利用には [SDK 利用規約](terms.html) が適用される。SDK が用意する同意手続を
+完了しないとビルドは通らない。手続を経ずに使った場合も同意したものとみなされるので、
+先に目を通しておくこと。
+
 ## SDK の取得設定
 
 SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。\

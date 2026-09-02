@@ -45,9 +45,10 @@ machine maven.pkg.github.com
 自分のアプリに取り込んでよい。
 
 ただし **SDK 本体（`jp.jig.sabera.app.sdk:*`）はこのライセンスの対象外**。SDK は GitHub Packages
-から配布するバイナリで、利用には別途 SDK 利用規約が適用される。
+から配布するバイナリで、利用には別途 [SDK 利用規約](docs/terms.md) が適用される。
+SDK が用意する同意手続の完了が同意の意思表示となる。手続を経ずに使った場合も同意したものとみなす。
 
 | 対象 | ライセンス |
 |---|---|
 | このリポジトリのサンプル・ラッパーコード | Apache License 2.0 |
-| Sabera App SDK 本体（AAR / XCFramework） | SDK 利用規約 |
+| Sabera App SDK 本体（AAR / XCFramework） | [SDK 利用規約](docs/terms.md) |

@@ -12,6 +12,7 @@ SABERAグラスと通信するアプリを作るための SDK。Android / iOS �
 - [ページごとの使い方](pages/) — グラスに用意された画面ごとの呼び出しフロー
 - [API リファレンス](api/) — 公開 API の一覧
 - [更新履歴](api-history.html) — リファレンスとSDKの更新履歴
+- [SDK 利用規約](terms.html) — SDK 本体の利用条件
 - [サードパーティ表記](third-party-notices.html) — SDKで利用しているサードパーティ
 
 ## サンプル

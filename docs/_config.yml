@@ -37,4 +37,3 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - vendor
-  - main.ts

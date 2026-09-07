@@ -7,7 +7,7 @@ nav_order: 1
 
 SABERAグラスと通信するアプリを作るための SDK。Android / iOS で同じ API を使う。
 
-## SABERA グラスのスペック
+## SABERAグラスのスペック
 
 アプリ開発に関わるハードウェアの要点。
 

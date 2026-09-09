@@ -10,16 +10,8 @@ SDKはネイティブAPIとして提供している。
 
 ## SDK の取得設定
 
-SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。\
-取得には `read:packages` スコープを持つ Personal Access Token が必要。
-発行手順は [GitHub PAT の作り方](github-pat.html) を参照。
-
-`~/.gradle/gradle.properties` に認証情報を書く。
-
-```properties
-GitHubPackagesUsername=<GitHubのユーザー名>
-GitHubPackagesPassword=<read:packages を持つ PAT>
-```
+SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。
+サンプルのリポジトリ設定をそのまま使えば取得できる。認証は要らない。
 
 ## 全体の流れ
 

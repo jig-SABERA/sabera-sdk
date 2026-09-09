@@ -72,7 +72,7 @@ python3 scripts/gen-api-docs.py
 
 ```console
 # 0.0.12 の AAR を GitHub Packages から取る
-curl -sL -u "<user>:<PAT>" -o core.aar \
+curl -sL -o core.aar \
   https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-core-android/0.0.12/sabera-app-core-android-0.0.12.aar
 unzip -o core.aar -d aar && unzip -o aar/classes.jar -d cls
 javap -public cls/app/jigglass/glass/CommandManager.class
@@ -161,8 +161,7 @@ private リポジトリで Pages を公開するには GitHub Team 以上のプ�
 
 ```console
 cd samples/kmp
-GITHUB_ACTOR=<user> GITHUB_TOKEN=<PAT> \
-  ./gradlew :snippets:compileDebugKotlin :snippets:ktlintCheck
+./gradlew :snippets:compileDebugKotlin :snippets:ktlintCheck
 cd - && python3 scripts/sync-snippets.py --check
 ```
 

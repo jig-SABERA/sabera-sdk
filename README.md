@@ -19,25 +19,11 @@ Sabera App SDK の使い方を示すサンプルアプリ集。
 
 ## 前提条件
 
-SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) から取得する。private パッケージのため、
-`read:packages` スコープを持つ PAT を `~/.gradle/gradle.properties` に設定しておく。
-
-```properties
-GitHubPackagesUsername=<GitHubのユーザー名>
-GitHubPackagesPassword=<read:packages を持つ PAT>
-```
-
+SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) から取得する。認証は要らない。
 詳細は [Getting Started](docs/getting-started.md) を参照。
 
 iOS は Swift Package Manager で取得する。Xcode の Add Package Dependencies に
-このリポジトリの URL を入れる。XCFramework の実体は GitHub Packages にあり、
-**SPM は Authorization ヘッダを付けられない**ため `~/.netrc` に認証情報が要る。
-
-```
-machine maven.pkg.github.com
-  login <GitHubのユーザー名>
-  password <read:packages を持つ PAT>
-```
+このリポジトリの URL を入れる。
 
 ## ライセンス
 

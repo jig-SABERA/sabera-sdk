@@ -29,7 +29,6 @@ SABERAグラスと通信するアプリを作るための SDK。Android / iOS �
 ## ドキュメント
 
 - [Getting Started](getting-started.html) — セットアップと基本的な使い方
-- [GitHub PAT の作り方](github-pat.html) — SDK 取得に必要なトークンの発行手順
 - [ページごとの使い方](pages/) — グラスに用意された画面ごとの呼び出しフロー
 - [API リファレンス](api/) — 公開 API の一覧
 - [更新履歴](api-history.html) — リファレンスとSDKの更新履歴

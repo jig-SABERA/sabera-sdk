@@ -19,7 +19,7 @@ Sabera App SDK の使い方を示すサンプルアプリ集。
 
 ## 前提条件
 
-SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) から取得する。認証は要らない。
+SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) から取得する。
 詳細は [Getting Started](docs/getting-started.md) を参照。
 
 iOS は Swift Package Manager で取得する。Xcode の Add Package Dependencies に

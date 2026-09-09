@@ -11,12 +11,11 @@ SDKはネイティブAPIとして提供している。
 ## SDK の取得設定
 
 SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。
-サンプルのリポジトリ設定をそのまま使えば取得できる。認証は要らない。
+サンプルのリポジトリ設定をそのまま使えば取得できる。
 
 ## 全体の流れ
 
-このページは Android 向けに書いている。iOS も API の並びは同じだが、
-マニフェストの設定と権限の要求は要らない。
+このページは Android 向けに書いている。iOS も API の並びは同じ。
 
 ```mermaid
 flowchart TD

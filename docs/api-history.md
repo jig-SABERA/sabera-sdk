@@ -10,6 +10,13 @@ nav_order: 6
 配布しているのは Android のみで、iOS は 0.0.10 で止まっている。iOS で使えるのは
 0.0.10 時点の API までになる。
 
+## 1.0.0
+
+メソッドの追加は無い。0.8.3 からバージョン番号を上げただけで、API は同じ。
+
+**0.x 系はここでサポートを終了する。** 0.8.3 以前の SDK は更新も不具合の修正も行わないので、
+1.0.0 に上げること。ファームウェアバージョンの表記も 1.x に揃えた。
+
 ## 0.8.3
 
 メソッドの追加は無い。ビルド上の変更のみ。
@@ -25,7 +32,7 @@ nav_order: 6
 | [sendCanvasAnimationFrame](api/command-manager/send-canvas-animation-frame.html) | 流すコマを1枚送る |
 | [stopCanvasAnimation](api/command-manager/stop-canvas-animation.html) | 流すのをやめる |
 
-FEATURE_VERSION 2.3.0 以上のファームが対象。コマは使い捨てなので、`sendCanvasImage`
+ファームウェア 1.2.0 以上が対象。コマは使い捨てなので、`sendCanvasImage`
 のようなバッファの容量に縛られず流し続けられる。ただしバッファを共有しているため、
 静的な画像とは同時に置けない。
 
@@ -68,7 +75,7 @@ FEATURE_VERSION 2.3.0 以上のファームが対象。コマは使い捨てな�
 
 | メソッド | 補足 |
 |---|---|
-| [sendCanvasImage](api/command-manager/send-canvas-image.html) | キャンバスに画像を置く。FEATURE_VERSION 2.2.0 以上 |
+| [sendCanvasImage](api/command-manager/send-canvas-image.html) | キャンバスに画像を置く。ファームウェア 1.2.0 以上 |
 
 ## 0.3.1
 
@@ -91,7 +98,7 @@ API の追加はない。
 
 | メソッド | 補足 |
 |---|---|
-| [sendCanvas](api/command-manager/send-canvas.html) | 自由配置キャンバス。FEATURE_VERSION 2.1.0 以上 |
+| [sendCanvas](api/command-manager/send-canvas.html) | 自由配置キャンバス。ファームウェア 1.2.0 以上 |
 | [sendCanvasElements](api/command-manager/send-canvas-elements.html) | |
 | [clearCanvas](api/command-manager/clear-canvas.html) | |
 | [closeCanvas](api/command-manager/close-canvas.html) | |
@@ -100,7 +107,7 @@ API の追加はない。
 
 | メソッド | 補足 |
 |---|---|
-| [sendLayout](api/command-manager/send-layout.html) | 分割レイアウト。FEATURE_VERSION 2.0.0 以上 |
+| [sendLayout](api/command-manager/send-layout.html) | 分割レイアウト。ファームウェア 1.2.0 以上 |
 | [sendLayoutTexts](api/command-manager/send-layout-texts.html) | |
 | [closeLayout](api/command-manager/close-layout.html) | |
 

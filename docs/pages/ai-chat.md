@@ -50,7 +50,7 @@ commandManager.clearAiChat()
 ```
 <!-- /snippet -->
 
-`clearAiChat()` は FEATURE_VERSION 1.1.0 以降のファームが対象。未対応のファームは
+`clearAiChat()` は ファームウェア 1.1.0 以降が対象。未対応のファームは
 このコマンドを読み捨てて表示が残るため、`clearAiChatLegacy()` で改行を流し込んで
 見かけ上クリアする。
 

@@ -352,7 +352,7 @@ SPEC = [
                       "`TOP_BOTTOM` なら 0=上・1=下、`QUAD` なら 0=左上・1=右上・2=左下・3=右下。"
                       "渡さなかった領域は空のまま。テキストは領域内で折り返し、あふれた分は切られる。"
                       "分割して送れないため、テキストの合計は190バイト程度までに収める。"
-                      "FEATURE_VERSION 2.0.0 以上のファームが対象。",
+                      "ファームウェア 1.2.0 以上が対象。",
               related=["sendLayoutTexts", "closeLayout"]),
             m("sendLayoutTexts", "fun sendLayoutTexts(texts: Map<Int, String>)",
               [("texts", "Map<Int, String>",
@@ -374,7 +374,7 @@ SPEC = [
                       "キャンバスの外に出た要素は描かれない。テキストは矩形内で左揃えに折り返し、"
                       "あふれた分は切られる。分割して送れないため、テキストの合計は190バイト程度までに"
                       "収める。収まらないときは sendCanvasElements で1要素ずつ送れば表示は積み上がる。"
-                      "FEATURE_VERSION 2.1.0 以上のファームが対象。",
+                      "ファームウェア 1.2.0 以上が対象。",
               related=["sendCanvasElements", "clearCanvas", "closeCanvas"]),
             m("sendCanvasElements",
               "fun sendCanvasElements(elements: List<CommandManager.CanvasElement>)",
@@ -404,7 +404,7 @@ SPEC = [
                       "数百バイトずつに分けて送るので、大きい画像ほど表示まで時間がかかる。"
                       "転送しきる前に別の id を送るとファームは受信中の画像を捨てるが、"
                       "SDK が分割送信を直列化するので続けて呼んでも順番に送られる。"
-                      "FEATURE_VERSION 2.2.0 以上のファームが対象。",
+                      "ファームウェア 1.2.0 以上が対象。",
               related=["removeCanvasImage", "sendCanvas", "clearCanvas"]),
             m("removeCanvasImage", "fun removeCanvasImage(id: Int)",
               [("id", "Int", "消す画像の識別子")],
@@ -432,7 +432,7 @@ SPEC = [
                       "黒画面にもコマ飛びにもならない。"
                       "ナビの全体ルート画像とバッファを共有しているため、ナビ表示中は使えない。"
                       "実効fpsはBLEのスループットが天井になる。"
-                      "FEATURE_VERSION 2.3.0 以上のファームが対象。",
+                      "ファームウェア 1.2.0 以上が対象。",
               related=["sendCanvasAnimationFrame", "stopCanvasAnimation", "sendCanvasImage"]),
             m("sendCanvasAnimationFrame",
               "fun sendCanvasAnimationFrame(width: Int, height: Int, grayscale: ByteArray)",
@@ -505,11 +505,11 @@ SPEC = [
                       "画面遷移は起こさない。フォントを先に確定させるため enterAiChatPage の前に送る。",
               related=["enterAiChatPage"]),
             m("clearAiChat", "fun clearAiChat()",
-              summary="AI チャットの表示を消して先頭に戻す。FEATURE_VERSION 1.1.0 以降のファームが対象で、"
+              summary="AI チャットの表示を消して先頭に戻す。ファームウェア 1.1.0 以降が対象で、"
                       "未対応のファームはこのコマンドを読み捨てるため表示が残る。",
               related=["clearAiChatLegacy"]),
             m("clearAiChatLegacy", "fun clearAiChatLegacy()",
-              summary="FEATURE_VERSION 1.1.0 未満のファーム向けに、改行を流し込んで見かけ上クリアする。"
+              summary="ファームウェア 1.1.0 未満向けに、改行を流し込んで見かけ上クリアする。"
                       "グラス側に履歴が残るため、対応ファームでは clearAiChat を使う。",
               related=["clearAiChat"]),
             m("sendNaviStatus", "fun sendNaviStatus(status: CommandManager.NaviStatus)",
@@ -592,7 +592,7 @@ SPEC = [
               related=["sendSetting", "parseResponse"]),
             m("startImuData", "fun startImuData()",
               summary="6DoF の送信を開始する。値は imuData に流れる。"
-                      "FEATURE_VERSION 2.0.0 以上のファームが対象で、それ未満では何も起きない。"
+                      "ファームウェア 1.2.0 以上が対象で、それ未満では何も起きない。"
                       "切断するとグラス側で止まるため、再接続後も続けるなら呼び直す。",
               related=["imuData", "stopImuData"]),
             m("stopImuData", "fun stopImuData()",

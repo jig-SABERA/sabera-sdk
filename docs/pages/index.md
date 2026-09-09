@@ -23,12 +23,12 @@ val commandManager = client.createCommandManager()
 | [AI アシスタント](ai-chat.html) | `enterAiChatPage()` | 吹き出しの本文・生成状態 | — |
 | [汎用テキスト表示](text.html) | `enterEmptyScreenPage()` | 本文 | — |
 | [画像表示](image.html) | `enterImageDisplayPage()` | 196x196 までの画像 | — |
-| [分割レイアウト](layout.html) | `sendLayout()` | 分割と領域ごとのテキスト | 2.0.0 |
-| [自由配置キャンバス](canvas.html) | `sendCanvas()` | 座標指定のテキストと画像 | 2.1.0 / 画像は 2.2.0 |
+| [分割レイアウト](layout.html) | `sendLayout()` | 分割と領域ごとのテキスト | 1.2.0 |
+| [自由配置キャンバス](canvas.html) | `sendCanvas()` | 座標指定のテキストと画像 | 1.2.0 |
 | [ナビ](navigation.html) | `enterNavigationPage()` | 案内情報・進行方向・地図画像 | — |
 | [調整・デバッグ](adjust.html) | `enterGlassAngleAdjustmentPage()` など | 傾き閾値・調整画像 | — |
 
-「必要ファーム」は FEATURE_VERSION。満たさないファームはコマンドを読み捨てるので、
+「必要ファーム」はファームウェアバージョン。満たさないファームはコマンドを読み捨てるので、
 アプリ側からは送れたように見えて何も起こらない。
 
 ## 共通の約束

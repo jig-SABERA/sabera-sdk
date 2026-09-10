@@ -46,3 +46,5 @@ app.*.map.json
 docs/.sass-cache/
 docs/_site/
 .env
+**/.kotlin/
+**/xcuserdata/

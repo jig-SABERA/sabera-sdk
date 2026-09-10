@@ -1,0 +1,94 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 77;
+	objects = {
+		A10000000000000000000001 = {
+			isa = PBXProject;
+			attributes = { BuildIndependentTargetsInParallel = YES; };
+			buildConfigurationList = A10000000000000000000002;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			knownRegions = (en, Base);
+			mainGroup = A10000000000000000000003;
+			productRefGroup = A10000000000000000000004;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (A10000000000000000000005);
+		};
+		A10000000000000000000002 = { isa = XCConfigurationList; buildConfigurations = (A10000000000000000000010, A10000000000000000000011); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A10000000000000000000003 = { isa = PBXGroup; children = (A10000000000000000000006, A10000000000000000000007, A10000000000000000000023, A10000000000000000000008, A10000000000000000000004); sourceTree = "<group>"; };
+		A10000000000000000000004 = { isa = PBXGroup; children = (A10000000000000000000009); name = Products; sourceTree = "<group>"; };
+		A10000000000000000000005 = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000012;
+			buildPhases = (A10000000000000000000013, A10000000000000000000014, A10000000000000000000015, A10000000000000000000016, A10000000000000000000017);
+			buildRules = ();
+			dependencies = ();
+			fileSystemSynchronizedGroups = (A10000000000000000000006, A10000000000000000000007, A10000000000000000000023);
+			name = GlassesSample;
+			productName = GlassesSample;
+			productReference = A10000000000000000000009;
+			productType = "com.apple.product-type.application";
+		};
+		A10000000000000000000006 = { isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A10000000000000000000018); path = iosApp; sourceTree = "<group>"; };
+		A10000000000000000000007 = { isa = PBXFileSystemSynchronizedRootGroup; path = "../build/ios-sdk/SaberaIOS"; sourceTree = "<group>"; };
+		A10000000000000000000008 = { isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = "../build/ios-sdk/OggOpus.xcframework"; sourceTree = "<group>"; };
+		A10000000000000000000009 = { isa = PBXFileReference; explicitFileType = wrapper.application; path = GlassesSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000010 = { isa = XCBuildConfiguration; name = Debug; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; ARCHS = arm64; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 18.2; SWIFT_VERSION = 5.0; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG SABERA_SAMPLE"; }; };
+		A10000000000000000000011 = { isa = XCBuildConfiguration; name = Release; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; ARCHS = arm64; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 18.2; SWIFT_VERSION = 5.0; SWIFT_COMPILATION_MODE = wholemodule; SWIFT_ACTIVE_COMPILATION_CONDITIONS = SABERA_SAMPLE; }; };
+		A10000000000000000000012 = { isa = XCConfigurationList; buildConfigurations = (A10000000000000000000019, A10000000000000000000020); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A10000000000000000000013 = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = ();
+			inputPaths = ();
+			outputPaths = ();
+			name = "Build Kotlin Framework";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\ncd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+		};
+		A10000000000000000000014 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000015 = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000021); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000016 = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000017 = { isa = PBXCopyFilesBuildPhase; buildActionMask = 2147483647; dstPath = ""; dstSubfolderSpec = 10; files = (A10000000000000000000022); name = "Embed Frameworks"; runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000018 = { isa = PBXFileSystemSynchronizedBuildFileExceptionSet; membershipExceptions = (Info.plist); target = A10000000000000000000005; };
+		A10000000000000000000019 = {
+			isa = XCBuildConfiguration; name = Debug;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = ("$(inherited)", "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)");
+				OTHER_LDFLAGS = ("$(inherited)", "-framework", SampleShared);
+				INFOPLIST_FILE = iosApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
+				PRODUCT_BUNDLE_IDENTIFIER = jp.jig.glasses.sample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+		};
+		A10000000000000000000020 = {
+			isa = XCBuildConfiguration; name = Release;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = ("$(inherited)", "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)");
+				OTHER_LDFLAGS = ("$(inherited)", "-framework", SampleShared);
+				INFOPLIST_FILE = iosApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
+				PRODUCT_BUNDLE_IDENTIFIER = jp.jig.glasses.sample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+		};
+		A10000000000000000000021 = { isa = PBXBuildFile; fileRef = A10000000000000000000008; };
+		A10000000000000000000022 = { isa = PBXBuildFile; fileRef = A10000000000000000000008; settings = { ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy); }; };
+		A10000000000000000000023 = { isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ../assets; sourceTree = "<group>"; };
+	};
+	rootObject = A10000000000000000000001;
+}

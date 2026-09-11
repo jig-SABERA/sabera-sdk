@@ -27,8 +27,12 @@ jobs:
           java-version: '17'
           cache: gradle
 
+      # 公開パッケージでも GitHub Packages の Maven は認証を求めるため、Actions のトークンを渡す
       - name: コード例をコンパイルする
         working-directory: samples/kmp
+        env:
+          ORG_GRADLE_PROJECT_GitHubPackagesUsername: ${{ github.actor }}
+          ORG_GRADLE_PROJECT_GitHubPackagesPassword: ${{ github.token }}
         run: ./gradlew --no-daemon :snippets:compileDebugKotlin :snippets:ktlintCheck
 
       - name: docs のコード例が最新か確かめる

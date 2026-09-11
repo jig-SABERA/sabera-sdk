@@ -50,4 +50,4 @@ machine maven.pkg.github.com
 | 対象 | ライセンス |
 |---|---|
 | このリポジトリのサンプル・ラッパーコード | Apache License 2.0 |
-| Sabera App SDK 本体（AAR / XCFramework） | SDK 利用規約 |
+| Sabera App SDK 本体（AAR / XCFramework） | [SDK 利用規約](https://github.com/jig-SABERA/sabera-sdk-packages/blob/main/TERMS.md) |

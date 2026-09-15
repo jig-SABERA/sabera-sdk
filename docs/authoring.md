@@ -14,6 +14,8 @@ nav_order: 9
 | `docs/_config.yml` | Jekyll の設定 |
 | `docs/Gemfile` | Jekyll とテーマ（just-the-docs）の固定 |
 | `docs/index.md` / `getting-started.md` | トップと入門 |
+| `docs/bluetooth-commands.md` | Bluetoothコマンド一覧と共通パケット形式 |
+| `docs/bluetooth-commands/**` | コマンドごとのbyte配置。SDKの生成・受信処理と照合して手で更新 |
 | `docs/pages/**` | グラスの画面ごとの使い方。手で書く |
 | `docs/api/**` | メソッドごとのページ。`scripts/gen-api-docs.py` が雛形を作る |
 | `docs/_sass/color_schemes/` | 配色。`sabera.scss` がライト、`sabera-dark.scss` がダーク |

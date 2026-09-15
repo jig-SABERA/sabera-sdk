@@ -36,4 +36,5 @@ suspend fun sendCommandList(command: List<ByteArray>)
 
 ## 関連
 
+- [Bluetooth コマンドリスト](../../bluetooth-commands.md)
 - [sendCommand](send-command.md)

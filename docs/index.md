@@ -32,6 +32,7 @@ SABERAグラスと通信するアプリを作るための SDK。Android / iOS �
 - [GitHub PAT の作り方](github-pat.md) — SDK 取得に必要なトークンの発行手順
 - [ページごとの使い方](pages/) — グラスに用意された画面ごとの呼び出しフロー
 - [API リファレンス](api/) — 公開 API の一覧
+- [Bluetooth コマンドリスト](bluetooth-commands.md) — コマンドID・パケット形式・対応API
 - [更新履歴](api-history.md) — リファレンスとSDKの更新履歴
 - [サードパーティ表記](third-party-notices.md) — SDKで利用しているサードパーティ
 

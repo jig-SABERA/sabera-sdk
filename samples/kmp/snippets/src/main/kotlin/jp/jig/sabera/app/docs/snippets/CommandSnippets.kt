@@ -317,7 +317,8 @@ internal object CommandSnippets {
 
     suspend fun rawCommand(client: GlassClient) {
         // #snippet GlassClient.sendCommand
-        client.sendCommand(byteArrayOf(0x4E, 0x00))
+        // ホーム画面を開く（画面ID 0x0032）
+        client.sendCommand(byteArrayOf(0x01, 0x05, 0x80.toByte(), 0x05, 0x00, 0x01, 0x02, 0x00, 0x32, 0x00))
         // #endsnippet
     }
 }

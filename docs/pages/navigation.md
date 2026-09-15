@@ -43,7 +43,7 @@ commandManager.sendNaviStatus(CommandManager.NaviStatus.ARRIVED)
 
 `sendNavi()` の地図は省略できる。渡すときは `bitmapWidth` と `bitmapHeight` も必須で、
 どちらも255まで。全体ルートのように大きい画像は `sendNaviLargeImage()` で送る。こちらは
-[キャンバス](canvas.html)の画像とグラス側のバッファを共有している。
+[キャンバス](canvas.md)の画像とグラス側のバッファを共有している。
 
 言語コードは `"JPN"` / `"ENG"` などの3文字。到着時刻ラベルの切り替えに使われ、画面遷移や
 表示状態には影響しない。

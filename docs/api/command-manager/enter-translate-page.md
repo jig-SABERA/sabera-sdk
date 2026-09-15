@@ -31,5 +31,5 @@ commandManager.sendTranslateContent("これは訳文です")
 
 ## 関連
 
-- [sendTranslateContent](send-translate-content.html)
-- [sendTranslateLanguage](send-translate-language.html)
+- [sendTranslateContent](send-translate-content.md)
+- [sendTranslateLanguage](send-translate-language.md)

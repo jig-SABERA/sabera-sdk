@@ -37,4 +37,4 @@ fun sendSetting(name: String, value: ByteArray)
 
 ## 関連
 
-- [requestSettingSync](request-setting-sync.html)
+- [requestSettingSync](request-setting-sync.md)

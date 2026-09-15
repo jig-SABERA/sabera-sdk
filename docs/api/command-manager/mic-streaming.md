@@ -27,4 +27,4 @@ val micStreaming: StateFlow<Boolean>
 
 ## 関連
 
-- [startMicStreaming](start-mic-streaming.html)
+- [startMicStreaming](start-mic-streaming.md)

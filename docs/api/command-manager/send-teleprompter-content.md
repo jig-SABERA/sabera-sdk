@@ -38,5 +38,5 @@ commandManager.sendTeleprompterContent("読み上げる原稿")
 
 ## 関連
 
-- [enterTeleprompterPage](enter-teleprompter-page.html)
-- [sendTeleprompterLine](send-teleprompter-line.html)
+- [enterTeleprompterPage](enter-teleprompter-page.md)
+- [sendTeleprompterLine](send-teleprompter-line.md)

@@ -38,5 +38,5 @@ manager.connect(client)
 
 ## 関連
 
-- [disconnect](disconnect.html)
-- [showAutomaticSelectionDialog](show-automatic-selection-dialog.html)
+- [disconnect](disconnect.md)
+- [showAutomaticSelectionDialog](show-automatic-selection-dialog.md)

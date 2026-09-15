@@ -39,4 +39,4 @@ fun sendAiChatSenderStatus(
 
 ## 関連
 
-- [sendAiChatText](send-ai-chat-text.html)
+- [sendAiChatText](send-ai-chat-text.md)

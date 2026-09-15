@@ -39,4 +39,4 @@ commandManager.sendImage(width = 196, height = 196, grayscale = grayscale)
 
 ## 関連
 
-- [enterImageDisplayPage](enter-image-display-page.html)
+- [enterImageDisplayPage](enter-image-display-page.md)

@@ -48,6 +48,6 @@ commandManager.startMicStreaming()
 
 ## 関連
 
-- [startMicStreaming](start-mic-streaming.html)
-- [stopMicStreaming](stop-mic-streaming.html)
-- [micStreaming](mic-streaming.html)
+- [startMicStreaming](start-mic-streaming.md)
+- [stopMicStreaming](stop-mic-streaming.md)
+- [micStreaming](mic-streaming.md)

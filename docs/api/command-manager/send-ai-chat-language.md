@@ -33,4 +33,4 @@ AI チャットの表示言語を通知する。グラス側の本文フォン�
 
 ## 関連
 
-- [enterAiChatPage](enter-ai-chat-page.html)
+- [enterAiChatPage](enter-ai-chat-page.md)

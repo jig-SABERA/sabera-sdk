@@ -36,5 +36,5 @@ commandManager.sendLayoutTexts(mapOf(1 to "書き換え"))
 
 ## 関連
 
-- [sendLayout](send-layout.html)
-- [closeLayout](close-layout.html)
+- [sendLayout](send-layout.md)
+- [closeLayout](close-layout.md)

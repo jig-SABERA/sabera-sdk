@@ -27,5 +27,5 @@ fun requestSettingSync()
 
 ## 関連
 
-- [sendSetting](send-setting.html)
-- [parseResponse](parse-response.html)
+- [sendSetting](send-setting.md)
+- [parseResponse](parse-response.md)

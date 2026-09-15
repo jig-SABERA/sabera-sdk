@@ -30,4 +30,4 @@ commandManager.enterImageDisplayPage()
 
 ## 関連
 
-- [sendImage](send-image.html)
+- [sendImage](send-image.md)

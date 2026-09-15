@@ -33,4 +33,4 @@ scope.launch {
 
 ## 関連
 
-- [startImuData](start-imu-data.html)
+- [startImuData](start-imu-data.md)

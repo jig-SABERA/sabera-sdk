@@ -32,5 +32,5 @@ fun startMicStreaming()
 
 ## 関連
 
-- [micAudio](mic-audio.html)
-- [stopMicStreaming](stop-mic-streaming.html)
+- [micAudio](mic-audio.md)
+- [stopMicStreaming](stop-mic-streaming.md)

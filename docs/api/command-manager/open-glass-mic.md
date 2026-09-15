@@ -31,4 +31,4 @@ commandManager.closeGlassMic()
 
 ## 関連
 
-- [closeGlassMic](close-glass-mic.html)
+- [closeGlassMic](close-glass-mic.md)

@@ -35,4 +35,4 @@ fun sendTeleprompterLine(text: String, percent: Int, scrollUp: Boolean = false)
 
 ## 関連
 
-- [sendTeleprompterContent](send-teleprompter-content.html)
+- [sendTeleprompterContent](send-teleprompter-content.md)

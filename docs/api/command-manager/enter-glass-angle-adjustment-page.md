@@ -27,4 +27,4 @@ fun enterGlassAngleAdjustmentPage()
 
 ## 関連
 
-- [sendWakeupTiltThreshold](send-wakeup-tilt-threshold.html)
+- [sendWakeupTiltThreshold](send-wakeup-tilt-threshold.md)

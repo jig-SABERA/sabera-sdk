@@ -24,8 +24,8 @@ commandManager.sendEmptyScreenContent("好きな文字列をそのまま出せ�
 
 `enterHomePage()` で閉じる。
 
-文字を置く位置まで決めたいなら [分割レイアウト](layout.html) か
-[自由配置キャンバス](canvas.html) を使う。
+文字を置く位置まで決めたいなら [分割レイアウト](layout.md) か
+[自由配置キャンバス](canvas.md) を使う。
 
 ## 関連 API
 

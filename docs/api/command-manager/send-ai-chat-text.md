@@ -36,5 +36,5 @@ commandManager.sendAiChatText("今日の天気は？")
 
 ## 関連
 
-- [enterAiChatPage](enter-ai-chat-page.html)
-- [sendAiChatSenderText](send-ai-chat-sender-text.html)
+- [enterAiChatPage](enter-ai-chat-page.md)
+- [sendAiChatSenderText](send-ai-chat-sender-text.md)

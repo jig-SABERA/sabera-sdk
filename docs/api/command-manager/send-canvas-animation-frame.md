@@ -35,5 +35,5 @@ fun sendCanvasAnimationFrame(width: Int, height: Int, grayscale: ByteArray)
 
 ## 関連
 
-- [startCanvasAnimation](start-canvas-animation.html)
-- [stopCanvasAnimation](stop-canvas-animation.html)
+- [startCanvasAnimation](start-canvas-animation.md)
+- [stopCanvasAnimation](stop-canvas-animation.md)

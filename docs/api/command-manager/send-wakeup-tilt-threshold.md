@@ -33,4 +33,4 @@ fun sendWakeupTiltThreshold(degrees: Int)
 
 ## 関連
 
-- [enterGlassAngleAdjustmentPage](enter-glass-angle-adjustment-page.html)
+- [enterGlassAngleAdjustmentPage](enter-glass-angle-adjustment-page.md)

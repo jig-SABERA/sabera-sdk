@@ -44,4 +44,4 @@ commandManager.syncNotificationCount(1)
 
 ## 関連
 
-- [syncNotificationCount](sync-notification-count.html)
+- [syncNotificationCount](sync-notification-count.md)

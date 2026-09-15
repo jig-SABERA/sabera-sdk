@@ -10,6 +10,7 @@ baseurl: ""
 plugins:
   - jekyll-seo-tag
   - jekyll-include-cache
+  - jekyll-relative-links
 
 # テーマの _config.yml は Jekyll に読まれないため、layout はここで既定値を与える
 defaults:

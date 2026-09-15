@@ -27,4 +27,4 @@ fun clearAiChatLegacy()
 
 ## 関連
 
-- [clearAiChat](clear-ai-chat.html)
+- [clearAiChat](clear-ai-chat.md)

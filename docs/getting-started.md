@@ -12,7 +12,7 @@ SDKはネイティブAPIとして提供している。
 
 SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。\
 取得には `read:packages` スコープを持つ Personal Access Token が必要。
-発行手順は [GitHub PAT の作り方](github-pat.html) を参照。
+発行手順は [GitHub PAT の作り方](github-pat.md) を参照。
 
 `~/.gradle/gradle.properties` に認証情報を書く。
 
@@ -118,14 +118,14 @@ class MainActivity : AppCompatActivity() {
 
 ノート:
 
-- [`SdkActivityHost.showBleDeviceSelectionDialog`](api/sdk-activity-host/show-ble-device-selection-dialog.html)
+- [`SdkActivityHost.showBleDeviceSelectionDialog`](api/sdk-activity-host/show-ble-device-selection-dialog.md)
   — プロセスに1つとする。`onDestroy()`で破棄すること。
-- [`showAutomaticSelectionDialog()`](api/glass-manager/show-automatic-selection-dialog.html)
+- [`showAutomaticSelectionDialog()`](api/glass-manager/show-automatic-selection-dialog.md)
   — 選択ダイアログ表示したあと、接続まで処理する。別途`connect()`
   を呼ぶ必要はない。
-- [`createCommandManager()`](api/glass-client/create-command-manager.html) —
+- [`createCommandManager()`](api/glass-client/create-command-manager.md) —
   コマンドは内部キューに積まれて順番に送信される。
-- [`enterHomePage()`](api/command-manager/enter-home-page.html) —
+- [`enterHomePage()`](api/command-manager/enter-home-page.md) —
   グラス側の画面を切り替える。コンテンツ送信は、対応するページを開いていないと表示されない
 
 ## 次のステップ
@@ -133,8 +133,8 @@ class MainActivity : AppCompatActivity() {
 | やりたいこと           | 参照先                                                            |
 | ---------------------- | ----------------------------------------------------------------- |
 | 既存のページを開く     | [ページごとの使い方](pages/)                                      |
-| 画像を表示する         | [画像表示](pages/image.html)                                      |
-| UIを自由に配置する     | [自由配置キャンバス](pages/canvas.html)                           |
-| ジェスチャーを受け取る | [gestureEvents](api/command-manager/gesture-events.html)          |
-| マイクを使う           | [startMicStreaming](api/command-manager/start-mic-streaming.html) |
-| IMUを使う              | [startImuData](api/command-manager/start-imu-data.html)           |
+| 画像を表示する         | [画像表示](pages/image.md)                                      |
+| UIを自由に配置する     | [自由配置キャンバス](pages/canvas.md)                           |
+| ジェスチャーを受け取る | [gestureEvents](api/command-manager/gesture-events.md)          |
+| マイクを使う           | [startMicStreaming](api/command-manager/start-mic-streaming.md) |
+| IMUを使う              | [startImuData](api/command-manager/start-imu-data.md)           |

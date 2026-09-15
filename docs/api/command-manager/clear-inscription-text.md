@@ -27,5 +27,5 @@ fun clearInscriptionText()
 
 ## 関連
 
-- [sendTeleprompterContent](send-teleprompter-content.html)
-- [sendTranslateContent](send-translate-content.html)
+- [sendTeleprompterContent](send-teleprompter-content.md)
+- [sendTranslateContent](send-translate-content.md)

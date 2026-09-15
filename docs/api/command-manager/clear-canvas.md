@@ -29,6 +29,6 @@ commandManager.clearCanvas()
 
 ## 関連
 
-- [sendCanvas](send-canvas.html)
-- [sendCanvasImage](send-canvas-image.html)
-- [closeCanvas](close-canvas.html)
+- [sendCanvas](send-canvas.md)
+- [sendCanvasImage](send-canvas-image.md)
+- [closeCanvas](close-canvas.md)

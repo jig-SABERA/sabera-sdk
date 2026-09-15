@@ -29,4 +29,4 @@ commandManager.closeCanvas()
 
 ## 関連
 
-- [sendCanvas](send-canvas.html)
+- [sendCanvas](send-canvas.md)

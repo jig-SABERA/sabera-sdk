@@ -723,7 +723,7 @@ def method_page(group, meth, nav_order):
     ]
     if meth["related"]:
         lines += ["## 関連", ""]
-        lines += [f"- [{r}]({slug(r)}.html)" for r in meth["related"]]
+        lines += [f"- [{r}]({slug(r)}.md)" for r in meth["related"]]
         lines += [""]
     return "\n".join(lines)
 
@@ -763,7 +763,7 @@ def type_index(group):
         "| メソッド | シグネチャ |",
         "|---|---|",
     ]
-    lines += [f"| [{x['name']}]({slug(x['name'])}.html) | {table_sig(x['sig'])} |"
+    lines += [f"| [{x['name']}]({slug(x['name'])}.md) | {table_sig(x['sig'])} |"
               for x in group["methods"]]
     lines += [""]
     return "\n".join(lines)
@@ -782,7 +782,7 @@ def api_index():
         "Sabera App SDK (Kotlin) の公開 API。バージョン 0.6.0 時点。",
         "",
         "メソッドごとに使えるようになったバージョンは"
-        "[メソッドの追加履歴](../api-history.html)にまとめてある。",
+        "[メソッドの追加履歴](../api-history.md)にまとめてある。",
         "",
         "| 型 | 説明 |",
         "|---|---|",

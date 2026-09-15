@@ -29,5 +29,5 @@ commandManager.stopMicStreaming()
 
 ## 関連
 
-- [micAudio](mic-audio.html)
-- [startMicStreaming](start-mic-streaming.html)
+- [micAudio](mic-audio.md)
+- [startMicStreaming](start-mic-streaming.md)

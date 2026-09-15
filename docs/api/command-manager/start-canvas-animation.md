@@ -37,6 +37,6 @@ fun startCanvasAnimation(x: Int, y: Int, width: Int, height: Int, intervalMs: In
 
 ## 関連
 
-- [sendCanvasAnimationFrame](send-canvas-animation-frame.html)
-- [stopCanvasAnimation](stop-canvas-animation.html)
-- [sendCanvasImage](send-canvas-image.html)
+- [sendCanvasAnimationFrame](send-canvas-animation-frame.md)
+- [stopCanvasAnimation](stop-canvas-animation.md)
+- [sendCanvasImage](send-canvas-image.md)

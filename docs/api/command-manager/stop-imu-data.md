@@ -29,5 +29,5 @@ commandManager.stopImuData()
 
 ## 関連
 
-- [imuData](imu-data.html)
-- [startImuData](start-imu-data.html)
+- [imuData](imu-data.md)
+- [startImuData](start-imu-data.md)

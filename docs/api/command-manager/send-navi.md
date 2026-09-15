@@ -49,6 +49,6 @@ fun sendNavi(
 
 ## 関連
 
-- [enterNavigationPage](enter-navigation-page.html)
-- [sendNaviStatus](send-navi-status.html)
-- [sendNaviLargeImage](send-navi-large-image.html)
+- [enterNavigationPage](enter-navigation-page.md)
+- [sendNaviStatus](send-navi-status.md)
+- [sendNaviLargeImage](send-navi-large-image.md)

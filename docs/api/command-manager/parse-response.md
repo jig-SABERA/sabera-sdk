@@ -33,5 +33,5 @@ fun parseResponse(value: ByteArray)
 
 ## 関連
 
-- [requestSystemStatus](request-system-status.html)
-- [requestSettingSync](request-setting-sync.html)
+- [requestSystemStatus](request-system-status.md)
+- [requestSettingSync](request-setting-sync.md)

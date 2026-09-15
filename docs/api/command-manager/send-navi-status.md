@@ -33,5 +33,5 @@ fun sendNaviStatus(status: CommandManager.NaviStatus)
 
 ## 関連
 
-- [enterNavigationPage](enter-navigation-page.html)
-- [sendNavi](send-navi.html)
+- [enterNavigationPage](enter-navigation-page.md)
+- [sendNavi](send-navi.md)

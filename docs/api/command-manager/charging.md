@@ -34,4 +34,4 @@ scope.launch {
 
 ## 関連
 
-- [requestSystemStatus](request-system-status.html)
+- [requestSystemStatus](request-system-status.md)

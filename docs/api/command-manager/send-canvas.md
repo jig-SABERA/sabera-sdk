@@ -41,6 +41,6 @@ commandManager.sendCanvas(
 
 ## 関連
 
-- [sendCanvasElements](send-canvas-elements.html)
-- [clearCanvas](clear-canvas.html)
-- [closeCanvas](close-canvas.html)
+- [sendCanvasElements](send-canvas-elements.md)
+- [clearCanvas](clear-canvas.md)
+- [closeCanvas](close-canvas.md)

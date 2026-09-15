@@ -27,5 +27,5 @@ fun startImuData()
 
 ## 関連
 
-- [imuData](imu-data.html)
-- [stopImuData](stop-imu-data.html)
+- [imuData](imu-data.md)
+- [stopImuData](stop-imu-data.md)

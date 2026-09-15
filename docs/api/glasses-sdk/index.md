@@ -11,6 +11,6 @@ SDK 全体の初期設定を行うシングルトン。`Application.onCreate()` 
 
 | メソッド | シグネチャ |
 |---|---|
-| [setLogger](set-logger.html) | `fun setLogger(sink: (tag: String, message: String) -> Unit)` |
-| [setProd](set-prod.html) | `fun setProd(isProd: Boolean)` |
-| [setDevicePersistence](set-device-persistence.html) | `fun setDevicePersistence(persistence: SdkDevicePersistence)` |
+| [setLogger](set-logger.md) | `fun setLogger(sink: (tag: String, message: String) -> Unit)` |
+| [setProd](set-prod.md) | `fun setProd(isProd: Boolean)` |
+| [setDevicePersistence](set-device-persistence.md) | `fun setDevicePersistence(persistence: SdkDevicePersistence)` |

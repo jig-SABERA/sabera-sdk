@@ -27,5 +27,5 @@ fun requestSystemStatus()
 
 ## 関連
 
-- [charging](charging.html)
-- [parseResponse](parse-response.html)
+- [charging](charging.md)
+- [parseResponse](parse-response.md)

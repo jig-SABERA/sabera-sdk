@@ -33,4 +33,4 @@ AI 応答の生成状態を送る。`COMPLETE` を送るまでグラスは生成
 
 ## 関連
 
-- [sendAiChatSenderStatus](send-ai-chat-sender-status.html)
+- [sendAiChatSenderStatus](send-ai-chat-sender-status.md)

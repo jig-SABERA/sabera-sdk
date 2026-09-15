@@ -44,4 +44,4 @@ if (selector.onActivityResult(requestCode, resultCode, data, scope)) {
 
 ## 関連
 
-- [BleDeviceSelector.showDialog](show-dialog.html)
+- [BleDeviceSelector.showDialog](show-dialog.md)

@@ -27,5 +27,5 @@ fun stopCanvasAnimation()
 
 ## 関連
 
-- [startCanvasAnimation](start-canvas-animation.html)
-- [sendCanvasImage](send-canvas-image.html)
+- [startCanvasAnimation](start-canvas-animation.md)
+- [sendCanvasImage](send-canvas-image.md)

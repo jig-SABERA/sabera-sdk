@@ -36,5 +36,5 @@ commandManager.removeCanvasImage(id = 1)
 
 ## 関連
 
-- [sendCanvasImage](send-canvas-image.html)
-- [clearCanvas](clear-canvas.html)
+- [sendCanvasImage](send-canvas-image.md)
+- [clearCanvas](clear-canvas.md)

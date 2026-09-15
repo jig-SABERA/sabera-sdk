@@ -27,4 +27,4 @@ AI チャットの表示を消して先頭に戻す。ファームウェア 1.1.
 
 ## 関連
 
-- [clearAiChatLegacy](clear-ai-chat-legacy.html)
+- [clearAiChatLegacy](clear-ai-chat-legacy.md)

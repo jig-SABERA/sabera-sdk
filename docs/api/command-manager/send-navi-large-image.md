@@ -35,4 +35,4 @@ fun sendNaviLargeImage(width: Int, height: Int, grayscale: ByteArray)
 
 ## 関連
 
-- [sendNavi](send-navi.html)
+- [sendNavi](send-navi.md)

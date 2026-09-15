@@ -33,4 +33,4 @@ fun sendNaviLanguage(languageCode: String)
 
 ## 関連
 
-- [enterNavigationPage](enter-navigation-page.html)
+- [enterNavigationPage](enter-navigation-page.md)

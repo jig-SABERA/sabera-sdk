@@ -39,5 +39,5 @@ val client = manager.showAutomaticSelectionDialog(activity)
 
 ## 関連
 
-- [connect](connect.html)
-- [createClientFromDeviceID](create-client-from-device-id.html)
+- [connect](connect.md)
+- [createClientFromDeviceID](create-client-from-device-id.md)

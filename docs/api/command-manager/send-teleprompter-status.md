@@ -37,4 +37,4 @@ fun sendTeleprompterStatus(
 
 ## 関連
 
-- [sendTeleprompterTime](send-teleprompter-time.html)
+- [sendTeleprompterTime](send-teleprompter-time.md)

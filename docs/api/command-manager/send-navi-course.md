@@ -33,4 +33,4 @@ fun sendNaviCourse(courseDegrees: Double)
 
 ## 関連
 
-- [sendNaviStatus](send-navi-status.html)
+- [sendNaviStatus](send-navi-status.md)

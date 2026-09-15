@@ -33,4 +33,4 @@ fun sendEmptyScreenContent(content: String)
 
 ## 関連
 
-- [enterEmptyScreenPage](enter-empty-screen-page.html)
+- [enterEmptyScreenPage](enter-empty-screen-page.md)

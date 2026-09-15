@@ -38,4 +38,4 @@ commandManager.sendTranslateContent("Hello")
 
 ## 関連
 
-- [sendTranslateContent](send-translate-content.html)
+- [sendTranslateContent](send-translate-content.md)

@@ -29,4 +29,4 @@ commandManager.closeLayout()
 
 ## 関連
 
-- [sendLayout](send-layout.html)
+- [sendLayout](send-layout.md)

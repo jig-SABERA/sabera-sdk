@@ -38,5 +38,5 @@ if (commandManager.connected.value) {
 
 ## 関連
 
-- [sendMessage](send-message.html)
-- [connected](connected.html)
+- [sendMessage](send-message.md)
+- [connected](connected.md)

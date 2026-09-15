@@ -28,9 +28,9 @@ nav_order: 6
 
 | メソッド | 補足 |
 |---|---|
-| [startCanvasAnimation](api/command-manager/start-canvas-animation.html) | キャンバスに動画を流す準備をして、寸法と再生間隔を宣言する |
-| [sendCanvasAnimationFrame](api/command-manager/send-canvas-animation-frame.html) | 流すコマを1枚送る |
-| [stopCanvasAnimation](api/command-manager/stop-canvas-animation.html) | 流すのをやめる |
+| [startCanvasAnimation](api/command-manager/start-canvas-animation.md) | キャンバスに動画を流す準備をして、寸法と再生間隔を宣言する |
+| [sendCanvasAnimationFrame](api/command-manager/send-canvas-animation-frame.md) | 流すコマを1枚送る |
+| [stopCanvasAnimation](api/command-manager/stop-canvas-animation.md) | 流すのをやめる |
 
 ファームウェア 1.2.0 以上が対象。コマは使い捨てなので、`sendCanvasImage`
 のようなバッファの容量に縛られず流し続けられる。ただしバッファを共有しているため、
@@ -52,13 +52,13 @@ nav_order: 6
 
 | メソッド | 補足 |
 |---|---|
-| [charging](api/command-manager/charging.html) | 充電中かどうかが流れる。接続すると SDK が状態を要求するので、購読するだけでよい |
+| [charging](api/command-manager/charging.md) | 充電中かどうかが流れる。接続すると SDK が状態を要求するので、購読するだけでよい |
 
 ## 0.6.0
 
 | メソッド | 補足 |
 |---|---|
-| [removeCanvasImage](api/command-manager/remove-canvas-image.html) | キャンバスの画像を id 指定で消す |
+| [removeCanvasImage](api/command-manager/remove-canvas-image.md) | キャンバスの画像を id 指定で消す |
 
 `sendCanvasImage` に `id` が増え、画像を8枚まで置けるようになった。ファーム側の
 フレームが変わっているため、0.5.0 までの SDK とは互換がない。あわせて分割送信を
@@ -75,7 +75,7 @@ nav_order: 6
 
 | メソッド | 補足 |
 |---|---|
-| [sendCanvasImage](api/command-manager/send-canvas-image.html) | キャンバスに画像を置く。ファームウェア 1.2.0 以上 |
+| [sendCanvasImage](api/command-manager/send-canvas-image.md) | キャンバスに画像を置く。ファームウェア 1.2.0 以上 |
 
 ## 0.3.1
 
@@ -85,10 +85,10 @@ nav_order: 6
 
 | メソッド | 補足 |
 |---|---|
-| [micAudio](api/command-manager/mic-audio.html) | デコード済みの PCM が流れる |
-| [micStreaming](api/command-manager/mic-streaming.html) | 受信中かどうか |
-| [startMicStreaming](api/command-manager/start-mic-streaming.html) | Opus のデコードまで SDK 内で行う |
-| [stopMicStreaming](api/command-manager/stop-mic-streaming.html) | |
+| [micAudio](api/command-manager/mic-audio.md) | デコード済みの PCM が流れる |
+| [micStreaming](api/command-manager/mic-streaming.md) | 受信中かどうか |
+| [startMicStreaming](api/command-manager/start-mic-streaming.md) | Opus のデコードまで SDK 内で行う |
+| [stopMicStreaming](api/command-manager/stop-mic-streaming.md) | |
 
 ## 0.2.1
 
@@ -98,27 +98,27 @@ API の追加はない。
 
 | メソッド | 補足 |
 |---|---|
-| [sendCanvas](api/command-manager/send-canvas.html) | 自由配置キャンバス。ファームウェア 1.2.0 以上 |
-| [sendCanvasElements](api/command-manager/send-canvas-elements.html) | |
-| [clearCanvas](api/command-manager/clear-canvas.html) | |
-| [closeCanvas](api/command-manager/close-canvas.html) | |
+| [sendCanvas](api/command-manager/send-canvas.md) | 自由配置キャンバス。ファームウェア 1.2.0 以上 |
+| [sendCanvasElements](api/command-manager/send-canvas-elements.md) | |
+| [clearCanvas](api/command-manager/clear-canvas.md) | |
+| [closeCanvas](api/command-manager/close-canvas.md) | |
 
 ## 0.1.1
 
 | メソッド | 補足 |
 |---|---|
-| [sendLayout](api/command-manager/send-layout.html) | 分割レイアウト。ファームウェア 1.2.0 以上 |
-| [sendLayoutTexts](api/command-manager/send-layout-texts.html) | |
-| [closeLayout](api/command-manager/close-layout.html) | |
+| [sendLayout](api/command-manager/send-layout.md) | 分割レイアウト。ファームウェア 1.2.0 以上 |
+| [sendLayoutTexts](api/command-manager/send-layout-texts.md) | |
+| [closeLayout](api/command-manager/close-layout.md) | |
 
 ## 0.1.0
 
 | メソッド | 補足 |
 |---|---|
-| [imuData](api/command-manager/imu-data.html) | 6DoF のサンプルが流れる |
-| [imuDataStarted](api/command-manager/imu-data-started.html) | |
-| [startImuData](api/command-manager/start-imu-data.html) | |
-| [stopImuData](api/command-manager/stop-imu-data.html) | |
+| [imuData](api/command-manager/imu-data.md) | 6DoF のサンプルが流れる |
+| [imuDataStarted](api/command-manager/imu-data-started.md) | |
+| [startImuData](api/command-manager/start-imu-data.md) | |
+| [stopImuData](api/command-manager/stop-imu-data.md) | |
 
 ## 0.0.14
 
@@ -129,22 +129,22 @@ API の追加はない。
 
 | メソッド | 補足 |
 |---|---|
-| [enterNavigationPage](api/command-manager/enter-navigation-page.html) | |
-| [sendNavi](api/command-manager/send-navi.html) | 地図画像も一緒に送れる |
-| [sendNaviStatus](api/command-manager/send-navi-status.html) | |
-| [sendNaviLanguage](api/command-manager/send-navi-language.html) | |
-| [sendNaviCourse](api/command-manager/send-navi-course.html) | |
-| [sendNaviLargeImage](api/command-manager/send-navi-large-image.html) | |
+| [enterNavigationPage](api/command-manager/enter-navigation-page.md) | |
+| [sendNavi](api/command-manager/send-navi.md) | 地図画像も一緒に送れる |
+| [sendNaviStatus](api/command-manager/send-navi-status.md) | |
+| [sendNaviLanguage](api/command-manager/send-navi-language.md) | |
+| [sendNaviCourse](api/command-manager/send-navi-course.md) | |
+| [sendNaviLargeImage](api/command-manager/send-navi-large-image.md) | |
 
 ## 0.0.12
 
 画像の3bit量子化と RLE 圧縮を SDK 内に取り込んだ。
-[sendImage](api/command-manager/send-image.html) に渡すのが圧縮済みデータから
+[sendImage](api/command-manager/send-image.md) に渡すのが圧縮済みデータから
 グレースケールに変わっている。
 
 ## 0.0.11
 
 | メソッド | 補足 |
 |---|---|
-| [enterImageDisplayPage](api/command-manager/enter-image-display-page.html) | |
-| [sendImage](api/command-manager/send-image.html) | |
+| [enterImageDisplayPage](api/command-manager/enter-image-display-page.md) | |
+| [sendImage](api/command-manager/send-image.md) | |

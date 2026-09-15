@@ -44,4 +44,4 @@ selector.showDialog(scope = scope, singleTarget = false) { deviceId ->
 
 ## 関連
 
-- [BleDeviceSelector.onActivityResult](on-activity-result.html)
+- [BleDeviceSelector.onActivityResult](on-activity-result.md)

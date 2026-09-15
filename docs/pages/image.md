@@ -31,8 +31,8 @@ commandManager.sendImage(width = 196, height = 196, grayscale = grayscale)
 | したいこと | 使うもの |
 |---|---|
 | 1枚を全画面で出す | このページ |
-| 複数枚を座標指定で並べる | [自由配置キャンバス](canvas.html) の `sendCanvasImage()` |
-| 地図を出す | [ナビ](navigation.html) の `sendNavi()` / `sendNaviLargeImage()` |
+| 複数枚を座標指定で並べる | [自由配置キャンバス](canvas.md) の `sendCanvasImage()` |
+| 地図を出す | [ナビ](navigation.md) の `sendNavi()` / `sendNaviLargeImage()` |
 
 ## 関連 API
 

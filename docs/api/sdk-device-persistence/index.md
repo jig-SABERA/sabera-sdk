@@ -11,4 +11,4 @@ has_children: true
 
 | メソッド | シグネチャ |
 |---|---|
-| [lastDeviceId](last-device-id.html) | `var lastDeviceId: String?` |
+| [lastDeviceId](last-device-id.md) | `var lastDeviceId: String?` |

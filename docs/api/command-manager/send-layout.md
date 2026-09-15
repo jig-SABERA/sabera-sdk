@@ -43,5 +43,5 @@ commandManager.sendLayout(
 
 ## 関連
 
-- [sendLayoutTexts](send-layout-texts.html)
-- [closeLayout](close-layout.html)
+- [sendLayoutTexts](send-layout-texts.md)
+- [closeLayout](close-layout.md)

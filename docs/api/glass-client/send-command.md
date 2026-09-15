@@ -38,4 +38,4 @@ client.sendCommand(byteArrayOf(0x4E, 0x00))
 
 ## 関連
 
-- [sendCommandList](send-command-list.html)
+- [sendCommandList](send-command-list.md)

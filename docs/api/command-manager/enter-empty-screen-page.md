@@ -27,5 +27,4 @@ fun enterEmptyScreenPage()
 
 ## 関連
 
-- [sendEmptyScreenContent](send-empty-screen-content.html)
-- [sendEmptyScreenStatus](send-empty-screen-status.html)
+- [sendEmptyScreenContent](send-empty-screen-content.md)

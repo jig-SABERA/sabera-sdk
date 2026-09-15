@@ -38,4 +38,4 @@ manager.disconnect(client)
 
 ## 関連
 
-- [disconnectAndClearBond](disconnect-and-clear-bond.html)
+- [disconnectAndClearBond](disconnect-and-clear-bond.md)

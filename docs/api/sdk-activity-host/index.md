@@ -11,4 +11,4 @@ Activity を必要とする処理を差し込むシングルトン（Android の
 
 | メソッド | シグネチャ |
 |---|---|
-| [showBleDeviceSelectionDialog](show-ble-device-selection-dialog.html) | `var showBleDeviceSelectionDialog: ((Context, (String?) -> Unit) -> Unit)?` |
+| [showBleDeviceSelectionDialog](show-ble-device-selection-dialog.md) | `var showBleDeviceSelectionDialog: ((Context, (String?) -> Unit) -> Unit)?` |

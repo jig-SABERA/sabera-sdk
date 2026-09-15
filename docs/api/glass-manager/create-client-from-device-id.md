@@ -41,4 +41,4 @@ if (client != null) {
 
 ## 関連
 
-- [connect](connect.html)
+- [connect](connect.md)

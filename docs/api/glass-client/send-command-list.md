@@ -36,4 +36,4 @@ suspend fun sendCommandList(command: List<ByteArray>)
 
 ## 関連
 
-- [sendCommand](send-command.html)
+- [sendCommand](send-command.md)

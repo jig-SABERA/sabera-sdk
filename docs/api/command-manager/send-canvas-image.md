@@ -49,6 +49,6 @@ commandManager.sendCanvasElements(
 
 ## 関連
 
-- [removeCanvasImage](remove-canvas-image.html)
-- [sendCanvas](send-canvas.html)
-- [clearCanvas](clear-canvas.html)
+- [removeCanvasImage](remove-canvas-image.md)
+- [sendCanvas](send-canvas.md)
+- [clearCanvas](clear-canvas.md)

@@ -30,5 +30,5 @@ commandManager.enterAiChatPage()
 
 ## 関連
 
-- [sendAiChatSenderText](send-ai-chat-sender-text.html)
-- [sendAiChatLanguage](send-ai-chat-language.html)
+- [sendAiChatSenderText](send-ai-chat-sender-text.md)
+- [sendAiChatLanguage](send-ai-chat-language.md)

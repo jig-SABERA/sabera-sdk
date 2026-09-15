@@ -27,5 +27,5 @@ fun enterNavigationPage()
 
 ## 関連
 
-- [sendNaviStatus](send-navi-status.html)
-- [sendNavi](send-navi.html)
+- [sendNaviStatus](send-navi-status.md)
+- [sendNavi](send-navi.md)

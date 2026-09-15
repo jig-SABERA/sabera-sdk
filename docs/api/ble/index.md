@@ -11,6 +11,6 @@ Companion Device Manager 周り。Android 固有。
 
 | メソッド | シグネチャ |
 |---|---|
-| [BleCompanionDeviceService.connectToLastDevice](connect-to-last-device.html) | `fun BleCompanionDeviceService.Companion.connectToLastDevice(context: Context)` |
-| [BleDeviceSelector.showDialog](show-dialog.html) | `fun showDialog(scope: CoroutineScope, singleTarget: Boolean, callback: (String?) -> Unit)` |
-| [BleDeviceSelector.onActivityResult](on-activity-result.html) | `fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?, scope: CoroutineScope): Boolean` |
+| [BleCompanionDeviceService.connectToLastDevice](connect-to-last-device.md) | `fun BleCompanionDeviceService.Companion.connectToLastDevice(context: Context)` |
+| [BleDeviceSelector.showDialog](show-dialog.md) | `fun showDialog(scope: CoroutineScope, singleTarget: Boolean, callback: (String?) -> Unit)` |
+| [BleDeviceSelector.onActivityResult](on-activity-result.md) | `fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?, scope: CoroutineScope): Boolean` |

@@ -1,5 +1,5 @@
 import Foundation
-import SampleShared
+import SaberaAppSDK
 
 final class NSUserDefaultsDevicePersistence: SdkDevicePersistence {
     private let key = "glasses_sdk_sample.last_device_id"

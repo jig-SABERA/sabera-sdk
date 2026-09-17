@@ -1,5 +1,5 @@
 import SwiftUI
-import SampleShared
+import SaberaAppSDK
 
 @main
 struct SampleApp: App {

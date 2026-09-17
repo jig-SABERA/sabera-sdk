@@ -1,4 +1,4 @@
-import SampleShared
+import SaberaAppSDK
 import SwiftUI
 
 struct SampleRootView: UIViewControllerRepresentable {

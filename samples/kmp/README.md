@@ -45,7 +45,8 @@ bash scripts/build-ios.sh -quiet
 ```
 
 スクリプトはSDKのSwiftブリッジとOggOpusを `build/ios-sdk` に準備してから、
-XcodeのビルドフェーズでCompose画面とSDKをまとめた `SampleShared` をビルドする。
+XcodeのビルドフェーズでCompose画面とSDKをまとめた `SaberaAppSDK` をビルドする。
+SDK標準のモジュール名に揃え、Swiftブリッジをサンプル専用の条件分岐なしで利用する。
 別の `SaberaAppSDK.framework` を同時にリンクしない。
 
 署名付きビルドでは自分のTeamを指定する。

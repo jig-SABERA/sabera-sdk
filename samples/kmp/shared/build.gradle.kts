@@ -11,7 +11,7 @@ kotlin {
     }
     listOf(iosArm64(), iosSimulatorArm64()).forEach { target ->
         target.binaries.framework {
-            baseName = "SampleShared"
+            baseName = "SaberaAppSDK"
             isStatic = true
             binaryOption("bundleId", "jp.jig.sabera.sample.shared")
             export("jp.jig.sabera.app.sdk:sabera-app-core:1.0.0")

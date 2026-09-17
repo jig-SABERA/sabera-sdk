@@ -1,4 +1,4 @@
-import SampleShared
+import SaberaAppSDK
 import PhotosUI
 import AVFoundation
 import UIKit

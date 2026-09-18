@@ -39,6 +39,45 @@ jobs:
       - name: docs のコード例が最新か確かめる
         run: python3 scripts/sync-snippets.py --check
 
+  published-sdk:
+    name: Published SDK / ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: Android
+            os: ubuntu-latest
+            tasks: ':shared:compileDebugKotlinAndroid'
+          - platform: iOS
+            os: macos-26
+            tasks: ':shared:linkDebugFrameworkIosArm64 :shared:linkDebugFrameworkIosSimulatorArm64'
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
+        with:
+          packages: 'platform-tools platforms;android-37.0'
+
+      # クリーンな checkout で公開版を検証する。ローカル SDK に差し替えると
+      # AAR / KLIB の欠落や公開 API の不整合を検出できない。
+      - name: 公開 SDK で shared をビルドする
+        working-directory: samples/kmp
+        env:
+          ORG_GRADLE_PROJECT_GitHubPackagesUsername: ${{ github.actor }}
+          ORG_GRADLE_PROJECT_GitHubPackagesPassword: ${{ secrets.SDK_PACKAGES_TOKEN }}
+        run: |
+          test -z "${SABERA_SDK_PATH:-}"
+          test ! -f local.properties
+          ./gradlew --no-daemon ${{ matrix.tasks }}
+
   # PR ではビルドが壊れていないことだけを見る。デプロイは main の deploy が担う。
   build:
     runs-on: ubuntu-latest

@@ -2,8 +2,8 @@
 import PackageDescription
 
 // BEGIN KMMBRIDGE VARIABLES BLOCK (do not edit)
-let remoteKotlinUrl = "https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-core-kmmbridge/0.0.10/sabera-app-core-kmmbridge-0.0.10.zip"
-let remoteKotlinChecksum = "cbc08c64ca54f362882e28e4105ba610ccce993563724d83454f6ecb4509bf02"
+let remoteKotlinUrl = "https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-core-kmmbridge/1.0.1/sabera-app-core-kmmbridge-1.0.1.zip"
+let remoteKotlinChecksum = "d513a52f7b92ea8a15c43f41f0cd84d21e2e648d8b568d4f7d6cc935c0eeda41"
 let packageName = "SaberaAppSDK"
 // END KMMBRIDGE BLOCK
 

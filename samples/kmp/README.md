@@ -31,7 +31,7 @@ export SABERA_SDK_PATH=/absolute/path/to/jig-glass
 ```
 
 Gradleには `local.properties` の `sabera.sdk.path` でも指定できる。
-指定しなければAndroidは従来どおりGitHub PackagesのSDK 1.0.0を使う。
+指定しなければAndroidは従来どおりGitHub PackagesのSDK 1.0.1を使う。
 KotlinとComposeのバージョンはローカルSDKのビルド環境に揃えている。
 
 ## iOS
@@ -76,6 +76,14 @@ iOSの初期化は `SampleApp.swift`、画面の入口は `SampleAppViewControll
 ```bash
 ./gradlew :shared:iosSimulatorArm64Test :shared:testDebugUnitTest
 ```
+
+## 公開 SDK の CI 検証
+
+CI はローカル SDK への差し替えを使わず、GitHub Packages の SDK 1.0.1 で
+Android の `:shared:compileDebugKotlinAndroid` と、iOS 実機・シミュレータ向けの
+`:shared:linkDebugFrameworkIosArm64` / `:shared:linkDebugFrameworkIosSimulatorArm64` を実行する。
+公開 AAR / KLIB を利用するコードのコンパイルと、iOS フレームワークのリンクを確認する。
+Swift ブリッジと OggOpus を含む iOS アプリ全体、およびルートの Swift Package の検証は含まない。
 
 ## ライセンス
 

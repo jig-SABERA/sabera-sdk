@@ -31,7 +31,8 @@ GitHubPackagesPassword=<read:packages を持つ PAT>
 詳細は [Getting Started](docs/getting-started.md) を参照。
 
 iOS は Swift Package Manager で取得する。Xcode の Add Package Dependencies に
-このリポジトリの URL を入れる。XCFramework の実体は GitHub Packages にあり、
+このリポジトリの URL を入れ、バージョン `1.0.1` 以降を指定する。
+XCFramework の実体は GitHub Packages にあり、
 **SPM は Authorization ヘッダを付けられない**ため `~/.netrc` に認証情報が要る。
 
 ```

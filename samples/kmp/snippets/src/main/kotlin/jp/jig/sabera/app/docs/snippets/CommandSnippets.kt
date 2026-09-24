@@ -257,7 +257,8 @@ internal object CommandSnippets {
         commandManager.sendMessage(
             name = "Slack",
             title = "山田",
-            time = System.currentTimeMillis(),
+            // グラスは epoch 秒を読む。ミリ秒のまま渡すと時刻表示が壊れる
+            time = System.currentTimeMillis() / 1000,
             text = "会議室を移動しました",
         )
         commandManager.syncNotificationCount(1)

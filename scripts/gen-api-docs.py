@@ -310,7 +310,7 @@ SPEC = [
             m("sendMessage", "fun sendMessage(name: String, title: String, time: Long, text: String)",
               [("name", "String", "通知を出したアプリの名前"),
                ("title", "String", "送信者名など、通知の見出し"),
-               ("time", "Long", "通知が届いた時刻。エポックミリ秒"),
+               ("time", "Long", "通知が届いた時刻。epoch 秒（ミリ秒ではない）"),
                ("text", "String", "本文")],
               summary="スマホに届いた通知をグラスに転送する。件数の表示は syncNotificationCount が別にある。",
               related=["syncNotificationCount"]),

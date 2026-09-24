@@ -1,0 +1,15 @@
+{
+  "originHash" : "48bd9d236367aa6d19439999c6e50e1976d6e3615f4f15124367f4b0839e19f0",
+  "pins" : [
+    {
+      "identity" : "sabera-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jig-SABERA/sabera-sdk.git",
+      "state" : {
+        "revision" : "9c74365dd3bd6574ac96aa39b7f778bf3278c201",
+        "version" : "1.1.0"
+      }
+    }
+  ],
+  "version" : 3
+}

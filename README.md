@@ -31,9 +31,19 @@ GitHubPackagesPassword=<read:packages を持つ PAT>
 詳細は [Getting Started](docs/getting-started.md) を参照。
 
 iOS は Swift Package Manager で取得する。Xcode の Add Package Dependencies に
-このリポジトリの URL を入れ、バージョン `1.0.1` 以降を指定する。
-XCFramework の実体は GitHub Packages にあり、
-**SPM は Authorization ヘッダを付けられない**ため `~/.netrc` に認証情報が要る。
+このリポジトリの URL を入れ、バージョン `1.1.0` を指定する。
+通常の KMP SDK を使う場合は `SaberaAppSDK` product を、BLE と Opus を含む完全版を使う場合は
+`SaberaIOS` product を選択する。完全版の最低対応 iOS バージョンは 18.2。
+
+完全版を利用するアプリでは、Swift Package の依存関係に `SaberaIOS` を追加し、以下のように import する。
+
+```swift
+import SaberaAppSDK
+import SaberaIOSBridge
+```
+
+XCFramework の実体は GitHub Packages にあり、**SPM は Authorization ヘッダを付けられない**ため
+`~/.netrc` に認証情報が要る。
 
 ```
 machine maven.pkg.github.com

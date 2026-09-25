@@ -1,5 +1,7 @@
 import SwiftUI
+import UIKit
 import SaberaAppSDK
+import SaberaIOSBridge
 
 @main
 struct SampleApp: App {

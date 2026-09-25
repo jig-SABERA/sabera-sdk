@@ -12,13 +12,14 @@
 			developmentRegion = en;
 			knownRegions = (en, Base);
 			mainGroup = A10000000000000000000003;
+			packageReferences = (A10000000000000000000024);
 			productRefGroup = A10000000000000000000004;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (A10000000000000000000005);
 		};
 		A10000000000000000000002 = { isa = XCConfigurationList; buildConfigurations = (A10000000000000000000010, A10000000000000000000011); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		A10000000000000000000003 = { isa = PBXGroup; children = (A10000000000000000000006, A10000000000000000000007, A10000000000000000000023, A10000000000000000000008, A10000000000000000000004); sourceTree = "<group>"; };
+		A10000000000000000000003 = { isa = PBXGroup; children = (A10000000000000000000006, A10000000000000000000023, A10000000000000000000004); sourceTree = "<group>"; };
 		A10000000000000000000004 = { isa = PBXGroup; children = (A10000000000000000000009); name = Products; sourceTree = "<group>"; };
 		A10000000000000000000005 = {
 			isa = PBXNativeTarget;
@@ -26,15 +27,14 @@
 			buildPhases = (A10000000000000000000013, A10000000000000000000014, A10000000000000000000015, A10000000000000000000016, A10000000000000000000017);
 			buildRules = ();
 			dependencies = ();
-			fileSystemSynchronizedGroups = (A10000000000000000000006, A10000000000000000000007, A10000000000000000000023);
+			fileSystemSynchronizedGroups = (A10000000000000000000006, A10000000000000000000023);
 			name = GlassesSample;
+			packageProductDependencies = (A10000000000000000000025, A10000000000000000000026);
 			productName = GlassesSample;
 			productReference = A10000000000000000000009;
 			productType = "com.apple.product-type.application";
 		};
 		A10000000000000000000006 = { isa = PBXFileSystemSynchronizedRootGroup; exceptions = (A10000000000000000000018); path = iosApp; sourceTree = "<group>"; };
-		A10000000000000000000007 = { isa = PBXFileSystemSynchronizedRootGroup; path = "../build/ios-sdk/SaberaIOS"; sourceTree = "<group>"; };
-		A10000000000000000000008 = { isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = "../build/ios-sdk/OggOpus.xcframework"; sourceTree = "<group>"; };
 		A10000000000000000000009 = { isa = PBXFileReference; explicitFileType = wrapper.application; path = GlassesSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A10000000000000000000010 = { isa = XCBuildConfiguration; name = Debug; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; ARCHS = arm64; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 18.2; SWIFT_VERSION = 5.0; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG; }; };
 		A10000000000000000000011 = { isa = XCBuildConfiguration; name = Release; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; ARCHS = arm64; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 18.2; SWIFT_VERSION = 5.0; SWIFT_COMPILATION_MODE = wholemodule; }; };
@@ -52,9 +52,9 @@
 			shellScript = "set -e\ncd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
 		};
 		A10000000000000000000014 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		A10000000000000000000015 = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000021); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000015 = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000027, A10000000000000000000028); runOnlyForDeploymentPostprocessing = 0; };
 		A10000000000000000000016 = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		A10000000000000000000017 = { isa = PBXCopyFilesBuildPhase; buildActionMask = 2147483647; dstPath = ""; dstSubfolderSpec = 10; files = (A10000000000000000000022); name = "Embed Frameworks"; runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000017 = { isa = PBXCopyFilesBuildPhase; buildActionMask = 2147483647; dstPath = ""; dstSubfolderSpec = 10; files = (); name = "Embed Frameworks"; runOnlyForDeploymentPostprocessing = 0; };
 		A10000000000000000000018 = { isa = PBXFileSystemSynchronizedBuildFileExceptionSet; membershipExceptions = (Info.plist); target = A10000000000000000000005; };
 		A10000000000000000000019 = {
 			isa = XCBuildConfiguration; name = Debug;
@@ -67,7 +67,7 @@
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
 				PRODUCT_BUNDLE_IDENTIFIER = jp.jig.glasses.sample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 		};
@@ -82,13 +82,16 @@
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
 				PRODUCT_BUNDLE_IDENTIFIER = jp.jig.glasses.sample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 		};
-		A10000000000000000000021 = { isa = PBXBuildFile; fileRef = A10000000000000000000008; };
-		A10000000000000000000022 = { isa = PBXBuildFile; fileRef = A10000000000000000000008; settings = { ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy); }; };
 		A10000000000000000000023 = { isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ../assets; sourceTree = "<group>"; };
+		A10000000000000000000024 = { isa = XCLocalSwiftPackageReference; relativePath = ../SwiftPM; };
+		A10000000000000000000025 = { isa = XCSwiftPackageProductDependency; package = A10000000000000000000024; productName = SaberaIOSBridge; };
+		A10000000000000000000026 = { isa = XCSwiftPackageProductDependency; package = A10000000000000000000024; productName = OggOpus; };
+		A10000000000000000000027 = { isa = PBXBuildFile; productRef = A10000000000000000000025; };
+		A10000000000000000000028 = { isa = PBXBuildFile; productRef = A10000000000000000000026; };
 	};
 	rootObject = A10000000000000000000001;
 }

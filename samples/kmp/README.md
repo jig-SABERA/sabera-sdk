@@ -36,33 +36,48 @@ KotlinとComposeのバージョンはローカルSDKのビルド環境に揃え�
 
 ## iOS
 
-Xcode 26系、JDK 17以上、iOS 18.2以上の実機が必要。
-現在のiOSサンプルはローカルSDK指定が必須。
+Xcode 26系、JDK 17以上、iOS 18.2以上が必要です。Android／common の KMP は公開 SDK 1.0.1、iOS の `SaberaAppSDK` は SDK 1.1.0 から生成します。Swift ブリッジと OggOpus も `SwiftPM/Package.swift` の公開 SDK 1.1.0 バイナリを使います。ローカル SDK ソースや `scripts/build-ios.sh` は必要ありません。
 
-```bash
-export SABERA_SDK_PATH=/absolute/path/to/jig-glass
-bash scripts/build-ios.sh -quiet
+公開 SDK でビルドするときは `SABERA_SDK_PATH` を設定せず、`local.properties` に `sabera.sdk.path` を記載しないでください。設定されていると Gradle がローカル SDK に差し替えます。
+
+GitHub Packages の Gradle 認証に加えて、SwiftPM の XCFramework 取得用に `~/.netrc` を設定します。
+
+```text
+machine maven.pkg.github.com
+  login <GitHubのユーザー名>
+  password <read:packages を持つ PAT>
 ```
 
-スクリプトはSDKのSwiftブリッジとOggOpusを `build/ios-sdk` に準備してから、
-XcodeのビルドフェーズでCompose画面とSDKをまとめた `SaberaAppSDK` をビルドする。
-SDK標準のモジュール名に揃え、Swiftブリッジをサンプル専用の条件分岐なしで利用する。
-別の `SaberaAppSDK.framework` を同時にリンクしない。
-
-署名付きビルドでは自分のTeamを指定する。
+シミュレータ向けの署名なしビルド:
 
 ```bash
-bash scripts/build-ios.sh CODE_SIGNING_ALLOWED=YES DEVELOPMENT_TEAM=<TEAM_ID> -allowProvisioningUpdates
+cd samples/kmp
+xcodebuild -project iosApp/GlassesSample.xcodeproj \
+  -scheme GlassesSample \
+  -sdk iphonesimulator \
+  -destination 'generic/platform=iOS Simulator' \
+  -derivedDataPath build/ios \
+  -packageAuthorizationProvider netrc \
+  CODE_SIGNING_ALLOWED=NO build
 ```
 
-Xcodeから開く場合も最初に上記スクリプトを一度実行し、
-`local.properties` に `sabera.sdk.path=/absolute/path/to/jig-glass` を設定する。
-`iosApp/GlassesSample.xcodeproj` を開き、Teamと実機を指定してRunする。
-SDKのSwift実装を変更した場合はスクリプトで取り込み直す。
+実機で署名する場合は、Xcode で Team を設定してから次のように実行します。
+
+```bash
+xcodebuild -project iosApp/GlassesSample.xcodeproj \
+  -scheme GlassesSample \
+  -sdk iphoneos \
+  -destination 'generic/platform=iOS' \
+  -derivedDataPath build/ios \
+  -packageAuthorizationProvider netrc \
+  DEVELOPMENT_TEAM=<TEAM_ID> build
+```
+
+Xcodeから開く場合は `iosApp/GlassesSample.xcodeproj` を開き、Teamと実機またはシミュレータを指定してRunします。
 
 iOSの初期化は `SampleApp.swift`、画面の入口は `SampleAppViewController.kt`。
 フォトピッカーはiOSのPHPicker、動画のASCII変換はAVFoundationを使う。
-付属のOggOpusバイナリが実機専用なので、アプリ全体のシミュレータ実行は未対応。
+SwiftPM の OggOpus バイナリは iOS アプリの実機・シミュレータビルドに含まれる。
 
 ## 動画デモデータ
 
@@ -79,11 +94,10 @@ iOSの初期化は `SampleApp.swift`、画面の入口は `SampleAppViewControll
 
 ## 公開 SDK の CI 検証
 
-CI はローカル SDK への差し替えを使わず、GitHub Packages の SDK 1.0.1 で
-Android の `:shared:compileDebugKotlinAndroid` と、iOS 実機・シミュレータ向けの
+CI は Android／common の KMP では GitHub Packages の SDK 1.0.1、iOS の KMP `SaberaAppSDK` と Swift ブリッジ／OggOpus では 1.1.0 を使って
+`:shared:compileDebugKotlinAndroid` と、iOS 実機・シミュレータ向けの
 `:shared:linkDebugFrameworkIosArm64` / `:shared:linkDebugFrameworkIosSimulatorArm64` を実行する。
-公開 AAR / KLIB を利用するコードのコンパイルと、iOS フレームワークのリンクを確認する。
-Swift ブリッジと OggOpus を含む iOS アプリ全体、およびルートの Swift Package の検証は含まない。
+このバージョン構成は、上記の `xcodebuild` によるアプリ全体のビルドが成功した場合に検証できる。
 
 ## ライセンス
 

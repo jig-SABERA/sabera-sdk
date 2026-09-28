@@ -6,7 +6,7 @@ Sabera App SDK の使い方を示すサンプルアプリ集。
 
 | サンプル | プラットフォーム | 説明 |
 |---------|--------------|------|
-| [Flutter](samples/flutter/) | Android | MethodChannel / EventChannel 経由で KMP SDK を Dart から操作 |
+| [Flutter](samples/flutter/) | Android / iOS | MethodChannel / EventChannel 経由で KMP SDK を Dart から操作 |
 | [KMP](samples/kmp/) | Android / iOS | Kotlin Multiplatform から直接 SDK を利用 |
 
 ## ドキュメント

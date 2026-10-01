@@ -5,6 +5,10 @@ import XCTest
 @testable import Runner
 
 final class RunnerTests: XCTestCase {
+  func testScanContextCanBeConstructed() {
+    XCTAssertNotNil(FlutterPlatformContext())
+  }
+
   func testCommandsFailWhenDisconnected() {
     let plugin = GlassesSdkPlugin()
     for method in [

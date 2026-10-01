@@ -1,6 +1,8 @@
 import Flutter
 import SaberaAppSDK
 
+final class FlutterPlatformContext: PlatformContext {}
+
 final class GlassesSdkPlugin: NSObject, FlutterPlugin {
   private let manager = GlassManager.companion.shared
   private var currentClient: GlassClient?
@@ -91,7 +93,7 @@ final class GlassesSdkPlugin: NSObject, FlutterPlugin {
       GlassesSDK.shared.setProd(isProd: arguments["isProd"] as? Bool ?? true)
       result(nil)
     case "showSelectionDialog":
-      manager.showAutomaticSelectionDialog(context: PlatformContext()) { client, error in
+      manager.showAutomaticSelectionDialog(context: FlutterPlatformContext()) { client, error in
         DispatchQueue.main.async {
           if let error {
             result(

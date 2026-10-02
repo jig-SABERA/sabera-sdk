@@ -1,30 +1,103 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:sabera_app_sdk_flutter_sample/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  const methods = MethodChannel('jp.jig.glasses.sdk/glasses');
+  const connectionChannel = 'jp.jig.glasses.sdk/connectionState';
+  const gestureChannel = 'jp.jig.glasses.sdk/gestureEvents';
+  const codec = StandardMethodCodec();
+  final binding = TestWidgetsFlutterBinding.ensureInitialized();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  setUp(() {
+    for (final channel in [connectionChannel, gestureChannel]) {
+      binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        MethodChannel(channel),
+        (_) async => null,
+      );
+    }
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  tearDown(() {
+    for (final channel in [methods.name, connectionChannel, gestureChannel]) {
+      binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        MethodChannel(channel),
+        null,
+      );
+    }
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  void emit(String channel, Object value) {
+    binding.channelBuffers.push(
+      channel,
+      codec.encodeSuccessEnvelope(value),
+      (_) {},
+    );
+  }
+
+  testWidgets('接続状態の通知で操作画面とスキャン画面を切り替える', (tester) async {
+    await tester.pumpWidget(const GlassesSdkSampleApp());
+    await tester.pumpAndSettle();
+    expect(find.text('スキャン開始'), findsOneWidget);
+
+    emit(connectionChannel, {
+      'connected': true,
+      'deviceId': 'test-device',
+      'deviceName': 'SABERA',
+    });
+    await tester.pumpAndSettle();
+    expect(find.text('接続中: SABERA'), findsOneWidget);
+    expect(find.text('Home に戻す'), findsOneWidget);
+
+    emit(connectionChannel, {
+      'connected': false,
+      'deviceId': null,
+      'deviceName': null,
+    });
+    await tester.pumpAndSettle();
+    expect(find.text('スキャン開始'), findsOneWidget);
+  });
+
+  testWidgets('デバイスを選択しても接続通知まではスキャン画面を保つ', (tester) async {
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(methods, (
+      call,
+    ) async {
+      expect(call.method, 'showSelectionDialog');
+      return {'deviceId': 'test-device', 'deviceName': 'SABERA'};
+    });
+    await tester.pumpWidget(const GlassesSdkSampleApp());
+    await tester.tap(find.text('スキャン開始'));
+    await tester.pumpAndSettle();
+    expect(find.text('スキャン開始'), findsOneWidget);
+    expect(find.text('接続中: SABERA'), findsNothing);
+  });
+
+  testWidgets('選択をキャンセルしたら再びスキャンできる', (tester) async {
+    var selections = 0;
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(methods, (
+      call,
+    ) async {
+      expect(call.method, 'showSelectionDialog');
+      selections++;
+      return null;
+    });
+    await tester.pumpWidget(const GlassesSdkSampleApp());
+    for (var i = 0; i < 2; i++) {
+      await tester.tap(find.text('スキャン開始'));
+      await tester.pumpAndSettle();
+    }
+    expect(selections, 2);
+    expect(find.textContaining('Connection error:'), findsNothing);
+  });
+
+  testWidgets('ネイティブ側のスキャンエラーを表示する', (tester) async {
+    binding.defaultBinaryMessenger.setMockMethodCallHandler(methods, (_) async {
+      throw PlatformException(code: 'SCAN_ERROR', message: 'Bluetooth is off');
+    });
+    await tester.pumpWidget(const GlassesSdkSampleApp());
+    await tester.tap(find.text('スキャン開始'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Bluetooth is off'), findsOneWidget);
+    expect(find.text('スキャン開始'), findsOneWidget);
   });
 }

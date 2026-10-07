@@ -5,7 +5,8 @@ nav_order: 3
 
 # GitHub PAT の作り方
 
-SDK は private な GitHub Packages で配布しているため、取得には Personal Access Token
+SDK は GitHub Packages で配布している。GitHub Packages の Maven レジストリは
+public パッケージであっても認証が必須のため、取得には Personal Access Token
 (PAT) が必要になる。ここではその発行手順をまとめる。
 
 ## 1. トークンを発行する

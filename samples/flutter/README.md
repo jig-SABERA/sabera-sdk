@@ -22,7 +22,7 @@ flutter run -d <AndroidのデバイスID>
 ## iOS
 
 Xcode 26 系、iOS 18.2 以上が必要。シミュレータは Apple Silicon Mac のみ対応する。
-ルートの `Package.swift` を相対参照し、公開 SDK 1.1.0 の `SaberaIOS` product
+ルートの `Package.swift` を相対参照し、公開 SDK 1.1.1 の `SaberaIOS` product
 （SaberaAppSDK・SaberaIOSBridge・OggOpus）を取得する。KMP サンプルのビルドやローカル SDK ソースは不要。
 
 SwiftPM が XCFramework を取得できるよう、`~/.netrc` に認証情報を設定する。
@@ -69,7 +69,7 @@ xcodebuild -workspace ios/Runner.xcworkspace \
 
 選択ダイアログでデバイスを選んでも、接続完了まではスキャン画面を表示する。
 接続状態の通知を受けて操作画面へ切り替える。前回のデバイスIDは UserDefaults に保存し、復帰時の再接続は SDK に任せる。
-Dart の `sendAIContent` は、iOS SDK 1.1.0 の `sendAiChatText` に対応する。
+Dart の `sendAIContent` は、SDK 1.1.1 の `sendAiChatText` に対応する。
 
 ## テスト
 

@@ -29,6 +29,7 @@ GitHubPackagesUsername=<GitHubのユーザー名>
 GitHubPackagesPassword=<read:packages を持つ PAT>
 ```
 
+SDK 1.1.1を使うAndroidアプリは `compileSdk` 37以上が必要。
 詳細は [Getting Started](docs/getting-started.md) を参照。
 
 iOS は Swift Package Manager で取得する。Xcode の Add Package Dependencies に

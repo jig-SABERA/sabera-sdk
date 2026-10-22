@@ -9,6 +9,12 @@ nav_order: 6
 
 1.0.1 から Android / iOS を同じバージョンで配布している。iOS でも以下の API を利用できる。
 
+## 1.1.1
+
+| メソッド | 補足 |
+|---|---|
+| [batteryLevel](api/command-manager/battery-level.md) | バッテリー残量（0〜100%）を購読できる。未取得・切断時は null。接続時に自動取得し、`requestSystemStatus()` でも再取得できる |
+
 ## 1.0.1
 
 Android の公開 AAR で `PlatformContext` の typealias メタデータが削除され、KMP サンプルがコンパイルできない問題を修正。iOS の KLIB / XCFramework も同じバージョンで配布する。

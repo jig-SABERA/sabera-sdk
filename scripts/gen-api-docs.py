@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 0.7.0 の公開 API に合わせたもの。
+シグネチャは SDK 1.1.1 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -606,8 +606,15 @@ SPEC = [
               summary="天気情報をグラスに同期する。気温とアイコンは別々に送る。"),
             m("requestSystemStatus", "fun requestSystemStatus()",
               summary="バッテリー残量・装着状態・充電状態の通知をグラスに要求する。"
-                      "充電状態は charging に反映される。残量と装着状態は parseResponse で受ける。",
-              related=["charging", "parseResponse"]),
+                      "残量は batteryLevel、充電状態は charging に反映される。装着状態は parseResponse で受ける。",
+              related=["batteryLevel", "charging", "parseResponse"]),
+            m("batteryLevel", "val batteryLevel: StateFlow<Int?>",
+              returns="StateFlow<Int?>",
+              summary="グラスのバッテリー残量を 0〜100 のパーセントで通知する。"
+                      "未取得・切断時や範囲外の値を受信した場合は null。"
+                      "接続すると SDK が一度状態を要求するので、購読するだけでよい。"
+                      "再取得する場合は requestSystemStatus を呼ぶ。",
+              related=["requestSystemStatus", "charging"]),
         ],
     },
     {

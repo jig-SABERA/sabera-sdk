@@ -52,6 +52,22 @@ internal object CommandSnippets {
         // #endsnippet
     }
 
+    fun observeBatteryLevel(commandManager: CommandManager, scope: CoroutineScope) {
+        // #snippet CommandManager.batteryLevel
+        scope.launch {
+            commandManager.batteryLevel.collect { level ->
+                Log.d("sample", level?.let { "$it%" } ?: "未取得")
+            }
+        }
+        // #endsnippet
+    }
+
+    fun requestSystemStatus(commandManager: CommandManager) {
+        // #snippet CommandManager.requestSystemStatus
+        commandManager.requestSystemStatus()
+        // #endsnippet
+    }
+
     fun teleprompterPage(commandManager: CommandManager) {
         // #snippet CommandManager.enterTeleprompterPage
         // 開いてからでないと原稿は表示されない

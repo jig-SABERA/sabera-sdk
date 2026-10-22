@@ -61,6 +61,7 @@ fun CommandScreen(
     val scope = rememberCoroutineScope()
     val commandManager = remember(client) { client.createCommandManager() }
 
+    val batteryLevel by commandManager.batteryLevel.collectAsState()
     val charging by commandManager.charging.collectAsState()
 
     var error by remember { mutableStateOf<String?>(null) }
@@ -126,6 +127,7 @@ fun CommandScreen(
             HorizontalDivider(Modifier.padding(vertical = 16.dp))
 
             SectionTitle("デバイス状態")
+            Text("バッテリー残量: ${batteryLevel?.let { "$it%" } ?: "未取得"}")
             Text(
                 when (charging) {
                     true -> "充電中"
@@ -133,6 +135,9 @@ fun CommandScreen(
                     null -> "未取得"
                 },
             )
+            CommandButton("状態を再取得") {
+                safeRun("requestSystemStatus") { commandManager.requestSystemStatus() }
+            }
             Spacer(Modifier.height(16.dp))
 
             if (gestures.isNotEmpty()) {

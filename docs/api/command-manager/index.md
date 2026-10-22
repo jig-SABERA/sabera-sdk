@@ -78,3 +78,4 @@ has_children: true
 | [syncTime](sync-time.md) | `fun syncTime()` |
 | [syncWeather](sync-weather.md) | `fun syncWeather(type: CommandManager.WeatherType, value: Int)` |
 | [requestSystemStatus](request-system-status.md) | `fun requestSystemStatus()` |
+| [batteryLevel](battery-level.md) | `val batteryLevel: StateFlow<Int?>` |

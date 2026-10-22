@@ -29,10 +29,11 @@ GitHubPackagesUsername=<GitHubのユーザー名>
 GitHubPackagesPassword=<read:packages を持つ PAT>
 ```
 
+SDK 1.1.1を使うAndroidアプリは `compileSdk` 37以上が必要。
 詳細は [Getting Started](docs/getting-started.md) を参照。
 
 iOS は Swift Package Manager で取得する。Xcode の Add Package Dependencies に
-このリポジトリの URL を入れ、バージョン `1.1.0` を指定する。
+このリポジトリの URL を入れ、バージョン `1.1.1` を指定する。
 通常の KMP SDK を使う場合は `SaberaAppSDK` product を、BLE と Opus を含む完全版を使う場合は
 `SaberaIOS` product を選択する。完全版の最低対応 iOS バージョンは 18.2。
 

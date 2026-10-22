@@ -21,6 +21,9 @@ cd samples/kmp
 
 ## ローカルSDK
 
+このブランチのバッテリー残量表示には、`CommandManager.batteryLevel` を追加したローカルSDKが必要。
+公開版の1.0.1 / 1.1.0にはこのAPIがないため、以下の方法で差し替えてビルドする。
+
 `SABERA_SDK_PATH` にSDK本体のソースがあるローカルリポジトリのルートを指定する。
 Gradleのcomposite buildで配布座標を `app/glasses-sdk/sabera-app-core` に差し替えるため、
 ローカルSDKのpublishやGitHub Packagesの認証は不要。
@@ -33,6 +36,9 @@ export SABERA_SDK_PATH=/absolute/path/to/jig-glass
 Gradleには `local.properties` の `sabera.sdk.path` でも指定できる。
 指定しなければAndroidは従来どおりGitHub PackagesのSDK 1.0.1を使う。
 KotlinとComposeのバージョンはローカルSDKのビルド環境に揃えている。
+
+接続後、画面下部の「デバイス状態」にバッテリー残量を表示する。未取得は「未取得」、
+取得できた値はパーセント表示になる。「状態を再取得」でグラスへ状態を要求し直せる。
 
 ## iOS
 

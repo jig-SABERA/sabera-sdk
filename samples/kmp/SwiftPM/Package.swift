@@ -11,13 +11,13 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "SaberaIOSBridge",
-            url: "https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-bridge/1.1.0/sabera-app-bridge-1.1.0.zip",
-            checksum: "16ac565ffa92a6b8dd09fb60acc6f8d2de032b6d8c35f549f49705fe9f9f28c6"
+            url: "https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-bridge/1.1.1/sabera-app-bridge-1.1.1.zip",
+            checksum: "c3dafeffacd117ef100b3e45a6be89413400443eebea2df823feda3403f55ca4"
         ),
         .binaryTarget(
             name: "OggOpus",
-            url: "https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-opus/1.1.0/sabera-app-opus-1.1.0.zip",
-            checksum: "399a5c44e39ee7cfb7c741b934b2f29f1f250aff15ba60bf3981045be1e60399"
+            url: "https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-opus/1.1.1/sabera-app-opus-1.1.1.zip",
+            checksum: "c8d349d31943f87d1a2212bc0a83327260ff46bea21b3cf15882566b07799d75"
         ),
     ]
 )

@@ -19,10 +19,10 @@ cd samples/kmp
 ./gradlew :app:installDebug
 ```
 
-## ローカルSDK
+接続後、画面下部の「デバイス状態」にバッテリー残量を表示する。未取得は「未取得」、
+取得できた値はパーセント表示になる。「状態を再取得」でグラスへ状態を要求し直せる。
 
-このブランチのバッテリー残量表示には、`CommandManager.batteryLevel` を追加したローカルSDKが必要。
-公開版の1.0.1 / 1.1.0にはこのAPIがないため、以下の方法で差し替えてビルドする。
+## ローカルSDK
 
 `SABERA_SDK_PATH` にSDK本体のソースがあるローカルリポジトリのルートを指定する。
 Gradleのcomposite buildで配布座標を `app/glasses-sdk/sabera-app-core` に差し替えるため、
@@ -34,15 +34,12 @@ export SABERA_SDK_PATH=/absolute/path/to/jig-glass
 ```
 
 Gradleには `local.properties` の `sabera.sdk.path` でも指定できる。
-指定しなければAndroidは従来どおりGitHub PackagesのSDK 1.0.1を使う。
+指定しなければAndroid / iOSともGitHub PackagesのSDK 1.1.1を使う。
 KotlinとComposeのバージョンはローカルSDKのビルド環境に揃えている。
-
-接続後、画面下部の「デバイス状態」にバッテリー残量を表示する。未取得は「未取得」、
-取得できた値はパーセント表示になる。「状態を再取得」でグラスへ状態を要求し直せる。
 
 ## iOS
 
-Xcode 26系、JDK 17以上、iOS 18.2以上が必要です。Android／common の KMP は公開 SDK 1.0.1、iOS の `SaberaAppSDK` は SDK 1.1.0 から生成します。Swift ブリッジと OggOpus も `SwiftPM/Package.swift` の公開 SDK 1.1.0 バイナリを使います。ローカル SDK ソースや `scripts/build-ios.sh` は必要ありません。
+Xcode 26系、JDK 17以上、iOS 18.2以上が必要です。KMP の `SaberaAppSDK`、Swift ブリッジ、OggOpus はすべて公開 SDK 1.1.1 を使います。ローカル SDK ソースや `scripts/build-ios.sh` は必要ありません。
 
 公開 SDK でビルドするときは `SABERA_SDK_PATH` を設定せず、`local.properties` に `sabera.sdk.path` を記載しないでください。設定されていると Gradle がローカル SDK に差し替えます。
 
@@ -100,7 +97,7 @@ SwiftPM の OggOpus バイナリは iOS アプリの実機・シミュレータ�
 
 ## 公開 SDK の CI 検証
 
-CI は Android／common の KMP では GitHub Packages の SDK 1.0.1、iOS の KMP `SaberaAppSDK` と Swift ブリッジ／OggOpus では 1.1.0 を使って
+CI は Android / iOS とも GitHub Packages の SDK 1.1.1 を使って
 `:shared:compileDebugKotlinAndroid` と、iOS 実機・シミュレータ向けの
 `:shared:linkDebugFrameworkIosArm64` / `:shared:linkDebugFrameworkIosSimulatorArm64` を実行する。
 このバージョン構成は、上記の `xcodebuild` によるアプリ全体のビルドが成功した場合に検証できる。

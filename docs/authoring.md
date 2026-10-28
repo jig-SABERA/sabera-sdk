@@ -25,7 +25,7 @@ nav_order: 9
 | `scripts/sync-snippets.py` | コード例を Kotlin から `docs/api/**` と `docs/pages/**` へ写す |
 | `samples/kmp/snippets/` | コード例の出処。コンパイルと ktlint を通る |
 
-公開は GitHub Pages。`main` への push で Actions がビルドしてデプロイする（[デプロイ](#デプロイ)）。
+PR と `main` への push で Actions がドキュメントのビルドを検証する。
 
 ## 本文を書く
 
@@ -39,7 +39,7 @@ nav_order: 9
 
 ## ページへのリンク
 
-Markdown のリンク先は `github-pat.md` のように `.md` で書く。GitHub 上でそのまま
+Markdown のリンク先は `getting-started.md` のように `.md` で書く。GitHub 上でそのまま
 開け、公開サイトでは `jekyll-relative-links` が `.html` の URL に変換する。
 
 ## API へのリンク
@@ -78,9 +78,9 @@ python3 scripts/gen-api-docs.py
 シグネチャは AAR を読んで確定させる。
 
 ```console
-# 0.0.12 の AAR を GitHub Packages から取る
-curl -sL -u "<user>:<PAT>" -o core.aar \
-  https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-core-android/0.0.12/sabera-app-core-android-0.0.12.aar
+# 1.1.3 の AAR を認証なしで取得する
+curl -fsSL -o core.aar \
+  https://sdk.sabera.glass/maven/jp/jig/sabera/app/sdk/sabera-app-core-android/1.1.3/sabera-app-core-android-1.1.3.aar
 unzip -o core.aar -d aar && unzip -o aar/classes.jar -d cls
 javap -public cls/app/jigglass/glass/CommandManager.class
 ```
@@ -146,30 +146,11 @@ bundle exec jekyll serve
 SCSS の deprecation 警告（`@import` と `darken()`）が大量に出る。テーマ側の書き方が dart-sass の
 新しい記法に追いついていないためで、ビルドは通る。
 
-## デプロイ
-
-`main` への push で Actions（`.github/workflows/docs.yml` の `deploy`）がビルドして
-GitHub Pages へ出す。ブランチを公開ソースにする方式は使っていないので、`_site` をコミットする
-必要はない。
-
-`baseurl` は `actions/configure-pages` が返す値をビルド時に渡している。リポジトリを引っ越しても
-名前から決まるため、設定を直す必要はない。
-
-デプロイの様子は Actions の `deploy` ジョブと、リポジトリの Environments（`github-pages`）で見られる。
-
-### 初回だけ必要な設定
-
-Settings → Pages の **Source** を `GitHub Actions` にする。`Deploy from a branch` のままだと
-このワークフローの成果物は公開されない。
-
-private リポジトリで Pages を公開するには GitHub Team 以上のプランが必要。
-
 ## コード例を自分で確かめる
 
 ```console
 cd samples/kmp
-GITHUB_ACTOR=<user> GITHUB_TOKEN=<PAT> \
-  ./gradlew :snippets:compileDebugKotlin :snippets:ktlintCheck
+./gradlew :snippets:compileDebugKotlin :snippets:ktlintCheck
 cd - && python3 scripts/sync-snippets.py --check
 ```
 

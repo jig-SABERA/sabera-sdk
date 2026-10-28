@@ -29,7 +29,6 @@ SABERAグラスと通信するアプリを作るための SDK。Android / iOS �
 ## ドキュメント
 
 - [Getting Started](getting-started.md) — セットアップと基本的な使い方
-- [GitHub PAT の作り方](github-pat.md) — SDK 取得に必要なトークンの発行手順
 - [ページごとの使い方](pages/) — グラスに用意された画面ごとの呼び出しフロー
 - [API リファレンス](api/) — 公開 API の一覧
 - [Bluetooth コマンドリスト](bluetooth-commands.md) — コマンドID・パケット形式・対応API
@@ -40,5 +39,5 @@ SABERAグラスと通信するアプリを作るための SDK。Android / iOS �
 
 | サンプル | プラットフォーム |
 | --- | --- |
-| [Flutter](https://github.com/jig-SABERA/sabera-sdk/tree/main/samples/flutter) | Android |
+| [Flutter](https://github.com/jig-SABERA/sabera-sdk/tree/main/samples/flutter) | Android / iOS |
 | [KMP](https://github.com/jig-SABERA/sabera-sdk/tree/main/samples/kmp) | Android / iOS |

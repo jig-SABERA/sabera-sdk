@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """docs/api 配下の API リファレンス雛形を生成する。
 
-シグネチャは SDK 1.1.1 の公開 API に合わせたもの。
+シグネチャは SDK 1.1.3 の公開 API に合わせたもの。
 SDK のバージョンを上げてメソッドが増減したら SPEC を更新して再実行する。
 
 既存ファイルは上書きしない（人間が書いた本文を守るため）。--force で上書き。
@@ -97,13 +97,19 @@ SPEC = [
             ),
             m(
                 "showAutomaticSelectionDialog",
-                "suspend fun showAutomaticSelectionDialog(context: Context): GlassClient?",
-                [("context", "Context", "ダイアログを出す Activity のコンテキスト")],
+                "suspend fun showAutomaticSelectionDialog(context: Context): GlassClient?\n"
+                "suspend fun showAutomaticSelectionDialog(\n"
+                "    context: Context,\n"
+                "    beforeConnect: suspend () -> Boolean,\n"
+                "): GlassClient?",
+                [("context", "Context", "Android は Activity、iOS は Unit"),
+                 ("beforeConnect", "suspend () -> Boolean", "iOS の接続開始前に呼ばれる。false を返すと接続せず null を返す。Android では呼ばれない")],
                 "GlassClient?",
                 ["connect", "createClientFromDeviceID"],
                 summary="OS のデバイス選択UIを出して、ユーザーが選んだグラスを返す。"
-                        "選ばれなかった・キャンセルされたときは null。返ってきた GlassClient は"
-                        "まだつながっていないので、続けて connect を呼ぶ。",
+                        "選ばれなかった・キャンセルされたときは null。Android は返された相手に connect を呼ぶ。"
+                        "iOS は内部で接続を開始するため、connectedDevice で接続完了を受け取る。"
+                        "1.1.2 で追加した beforeConnect は iOS 専用で、接続前に確認処理を挟める。",
             ),
             m("connect", "suspend fun connect(glassClient: GlassClient)",
               [("glassClient", "GlassClient", "showAutomaticSelectionDialog や lastConnectedDevice で得た相手")],
@@ -149,6 +155,11 @@ SPEC = [
               summary="iOS 専用。OS のリネームシートを出す。名前が確定されれば true。"
                       "Android では常に false。付けられた名前は externalDisplayNameChanged に流れる。",
               related=["externalDisplayNameChanged"]),
+            m("isConnecting", "val isConnecting: StateFlow<Boolean>", returns="StateFlow<Boolean>",
+              summary="接続を試している間 true、試行が終わると false。接続済みかどうかは connectedDevice で確認する。"
+                      "Android では接続処理と有限回の再接続ループを含み、ループ終了後の端末検出待ちは含まない。"
+                      "iOS では接続処理とリンク切断後の OS による再接続待ちを含む。",
+              related=["connectedDevice"], note="SDK 1.1.2 以降。"),
         ],
     },
     {
@@ -786,10 +797,9 @@ def api_index():
         "",
         f"# {API_TITLE}",
         "",
-        "Sabera App SDK (Kotlin) の公開 API。バージョン 0.6.0 時点。",
+        "Sabera App SDK (Kotlin) の公開 API。Android / iOS に対応。",
         "",
-        "メソッドごとに使えるようになったバージョンは"
-        "[メソッドの追加履歴](../api-history.md)にまとめてある。",
+        "SDK の変更点は[更新履歴](../api-history.md)にまとめてある。",
         "",
         "| 型 | 説明 |",
         "|---|---|",

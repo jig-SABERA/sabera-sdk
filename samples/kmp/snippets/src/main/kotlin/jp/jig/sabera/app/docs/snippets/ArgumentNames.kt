@@ -33,6 +33,7 @@ internal object ArgumentNames {
         manager.disconnect(glassClient = client)
         manager.disconnectAndClearBond(glassClient = client)
         manager.showAutomaticSelectionDialog(context = context)
+        manager.showAutomaticSelectionDialog(context = context, beforeConnect = { true })
         manager.createClientFromDeviceID(deviceId = "00:11:22:33:44:55")
         manager.onDeviceDisappear(address = "00:11:22:33:44:55")
         manager.registerDeviceFromIntent(data = intent)

@@ -17,7 +17,7 @@ has_children: true
 | [hasLastConnectedDevice](has-last-connected-device.md) | `val hasLastConnectedDevice: Boolean` |
 | [selectionDialogPresented](selection-dialog-presented.md) | `val selectionDialogPresented: SharedFlow<Unit>` |
 | [externalDisplayNameChanged](external-display-name-changed.md) | `val externalDisplayNameChanged: SharedFlow<String?>` |
-| [showAutomaticSelectionDialog](show-automatic-selection-dialog.md) | `suspend fun showAutomaticSelectionDialog(context: Context): GlassClient?` |
+| [showAutomaticSelectionDialog](show-automatic-selection-dialog.md) | `suspend fun showAutomaticSelectionDialog(context: Context): GlassClient? suspend fun showAutomaticSelectionDialog(context: Context, beforeConnect: suspend () -> Boolean): GlassClient?` |
 | [connect](connect.md) | `suspend fun connect(glassClient: GlassClient)` |
 | [disconnect](disconnect.md) | `suspend fun disconnect(glassClient: GlassClient)` |
 | [disconnectAndClearBond](disconnect-and-clear-bond.md) | `suspend fun disconnectAndClearBond(glassClient: GlassClient)` |
@@ -26,3 +26,4 @@ has_children: true
 | [registerDeviceFromIntent](register-device-from-intent.md) | `fun registerDeviceFromIntent(data: Intent)` |
 | [showDisconnectSheetIOS](show-disconnect-sheet-ios.md) | `suspend fun showDisconnectSheetIOS(): Boolean` |
 | [showRenameAccessorySheetIOS](show-rename-accessory-sheet-ios.md) | `suspend fun showRenameAccessorySheetIOS(): Boolean` |
+| [isConnecting](is-connecting.md) | `val isConnecting: StateFlow<Boolean>` |

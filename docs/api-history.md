@@ -1,159 +1,29 @@
 ---
-title: メソッドの追加履歴
+title: 更新履歴
 nav_order: 6
 ---
 
-# メソッドの追加履歴
+# 更新履歴
 
-どのメソッドがどのバージョンから使えるかの一覧。表にないメソッドは 0.0.10 以前からある。
+Android / iOS 向け SDK の更新内容。
 
-1.0.1 から Android / iOS を同じバージョンで配布している。iOS でも以下の API を利用できる。
+## 1.1.3
 
-## 1.1.1
+Android / iOS の成果物を同じバージョンで公開する。公開 API は 1.1.2 と同じ。
+iOS は Swift Package のバージョンを `1.1.3` に上げる。
+設定例は [Getting Started](getting-started.md) を参照。
 
-| メソッド | 補足 |
+## 1.1.2
+
+配布先を [sdk.sabera.glass/maven](https://sdk.sabera.glass/maven) に変更。
+Android の成果物を認証なしで取得できる。iOS の成果物は新しい配布先では 1.1.3 から公開する。
+Android は Maven リポジトリの URL と依存バージョンを変更する。
+設定例は [Getting Started](getting-started.md) を参照。
+
+| API | 補足 |
 |---|---|
-| [batteryLevel](api/command-manager/battery-level.md) | バッテリー残量（0〜100%）を購読できる。未取得・切断時は null。接続時に自動取得し、`requestSystemStatus()` でも再取得できる |
+| [isConnecting](api/glass-manager/is-connecting.md) | 接続試行中かどうかを `StateFlow<Boolean>` で購読できる |
+| [showAutomaticSelectionDialog](api/glass-manager/show-automatic-selection-dialog.md) | iOS の接続開始前に確認処理を挟む `beforeConnect` 引数付きの呼び出しを追加。従来の引数1つの呼び出しも使える |
 
-## 1.0.1
-
-Android の公開 AAR で `PlatformContext` の typealias メタデータが削除され、KMP サンプルがコンパイルできない問題を修正。iOS の KLIB / XCFramework も同じバージョンで配布する。
-
-## 1.0.0
-
-メソッドの追加は無い。0.8.3 からバージョン番号を上げただけで、API は同じ。
-
-**0.x 系はここでサポートを終了する。** 0.8.3 以前の SDK は更新も不具合の修正も行わないので、
-1.0.0 に上げること。ファームウェアバージョンの表記も 1.x に揃えた。
-
-## 0.8.3
-
-メソッドの追加は無い。ビルド上の変更のみ。
-
-- 成果物が pre-release 扱いにならなくなった。0.8.1 以前で必要だった `-Xskip-prerelease-check` は不要
-- `GlassConnection` インターフェースと `PickerUnavailableException` が aar に残るようになり、接続管理を `GlassManager` 具象型ではなく `GlassConnection` で受けられる
-
-## 0.8.1
-
-| メソッド | 補足 |
-|---|---|
-| [startCanvasAnimation](api/command-manager/start-canvas-animation.md) | キャンバスに動画を流す準備をして、寸法と再生間隔を宣言する |
-| [sendCanvasAnimationFrame](api/command-manager/send-canvas-animation-frame.md) | 流すコマを1枚送る |
-| [stopCanvasAnimation](api/command-manager/stop-canvas-animation.md) | 流すのをやめる |
-
-ファームウェア 1.2.0 以上が対象。コマは使い捨てなので、`sendCanvasImage`
-のようなバッファの容量に縛られず流し続けられる。ただしバッファを共有しているため、
-静的な画像とは同時に置けない。
-
-## 0.8.0
-
-**充電状態の取得（`charging` / `requestSystemStatus`）が入っていないので使わないこと。**
-0.8.1 と同じキャンバスのアニメーションが入っているが、0.7.0 で追加した充電状態が
-欠けているため、0.7.x から上げると後退する。0.8.1 で取り込み直した。
-
-## 0.7.3
-
-メソッドの追加はない。0.7.0 の aar に Opus のネイティブライブラリが入っておらず、
-`startMicStreaming` を呼ぶと `UnsatisfiedLinkError` でアプリごと落ちていたのを直した。
-0.7.0 でマイクを使う場合は 0.7.3 に上げること。
-
-## 0.7.0
-
-| メソッド | 補足 |
-|---|---|
-| [charging](api/command-manager/charging.md) | 充電中かどうかが流れる。接続すると SDK が状態を要求するので、購読するだけでよい |
-
-## 0.6.0
-
-| メソッド | 補足 |
-|---|---|
-| [removeCanvasImage](api/command-manager/remove-canvas-image.md) | キャンバスの画像を id 指定で消す |
-
-`sendCanvasImage` に `id` が増え、画像を8枚まで置けるようになった。ファーム側の
-フレームが変わっているため、0.5.0 までの SDK とは互換がない。あわせて分割送信を
-直列化し、続けて送ったときにチャンクが混ざらないようにした。
-
-## 0.5.0
-
-アプリ本体に実装がないメソッドを公開 API から外した。撤去したのは
-`sendMeeting` / `sendAIContent` / `sendAiChatSender` / `sendEmptyScreenStatus` /
-`sendTeleprompterGenerating` / `requestLog` / `requestNotificationCountSync` と、
-電源・リモコンのイベントリスナー4つ。
-
-## 0.4.0
-
-| メソッド | 補足 |
-|---|---|
-| [sendCanvasImage](api/command-manager/send-canvas-image.md) | キャンバスに画像を置く。ファームウェア 1.2.0 以上 |
-
-## 0.3.1
-
-マイクの PCM を SDK 内で3倍に増幅するようにした。API の追加はない。
-
-## 0.3.0
-
-| メソッド | 補足 |
-|---|---|
-| [micAudio](api/command-manager/mic-audio.md) | デコード済みの PCM が流れる |
-| [micStreaming](api/command-manager/mic-streaming.md) | 受信中かどうか |
-| [startMicStreaming](api/command-manager/start-mic-streaming.md) | Opus のデコードまで SDK 内で行う |
-| [stopMicStreaming](api/command-manager/stop-mic-streaming.md) | |
-
-## 0.2.1
-
-API の追加はない。
-
-## 0.2.0
-
-| メソッド | 補足 |
-|---|---|
-| [sendCanvas](api/command-manager/send-canvas.md) | 自由配置キャンバス。ファームウェア 1.2.0 以上 |
-| [sendCanvasElements](api/command-manager/send-canvas-elements.md) | |
-| [clearCanvas](api/command-manager/clear-canvas.md) | |
-| [closeCanvas](api/command-manager/close-canvas.md) | |
-
-## 0.1.1
-
-| メソッド | 補足 |
-|---|---|
-| [sendLayout](api/command-manager/send-layout.md) | 分割レイアウト。ファームウェア 1.2.0 以上 |
-| [sendLayoutTexts](api/command-manager/send-layout-texts.md) | |
-| [closeLayout](api/command-manager/close-layout.md) | |
-
-## 0.1.0
-
-| メソッド | 補足 |
-|---|---|
-| [imuData](api/command-manager/imu-data.md) | 6DoF のサンプルが流れる |
-| [imuDataStarted](api/command-manager/imu-data-started.md) | |
-| [startImuData](api/command-manager/start-imu-data.md) | |
-| [stopImuData](api/command-manager/stop-imu-data.md) | |
-
-## 0.0.14
-
-ファームが対応していないページ遷移（`enterAiPage` / `enterMeetingPage` /
-`enterNotificationPage`）を公開 API から外した。
-
-## 0.0.13
-
-| メソッド | 補足 |
-|---|---|
-| [enterNavigationPage](api/command-manager/enter-navigation-page.md) | |
-| [sendNavi](api/command-manager/send-navi.md) | 地図画像も一緒に送れる |
-| [sendNaviStatus](api/command-manager/send-navi-status.md) | |
-| [sendNaviLanguage](api/command-manager/send-navi-language.md) | |
-| [sendNaviCourse](api/command-manager/send-navi-course.md) | |
-| [sendNaviLargeImage](api/command-manager/send-navi-large-image.md) | |
-
-## 0.0.12
-
-画像の3bit量子化と RLE 圧縮を SDK 内に取り込んだ。
-[sendImage](api/command-manager/send-image.md) に渡すのが圧縮済みデータから
-グレースケールに変わっている。
-
-## 0.0.11
-
-| メソッド | 補足 |
-|---|---|
-| [enterImageDisplayPage](api/command-manager/enter-image-display-page.md) | |
-| [sendImage](api/command-manager/send-image.md) | |
+- iOS のアクセサリ選択中にアプリが前面へ戻っても、接続前の確認を飛ばして接続しないよう修正。
+- iOS で再接続した直後に、古い接続監視の終了通知によって接続試行中の表示が消える問題を修正。

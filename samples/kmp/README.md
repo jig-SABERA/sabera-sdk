@@ -10,7 +10,7 @@ Android / iOSで同じ `shared/src/commonMain` の画面を使う。
 
 - Android Studio
 - Android 実機 (BLE 必須、エミュレータ不可)
-- GitHub Packages から SDK を取得するための認証設定（[ルート README](../../README.md) 参照）
+- SDK は `https://sdk.sabera.glass/maven` から認証なしで取得する
 
 ## ビルド・実行
 
@@ -26,7 +26,7 @@ cd samples/kmp
 
 `SABERA_SDK_PATH` にSDK本体のソースがあるローカルリポジトリのルートを指定する。
 Gradleのcomposite buildで配布座標を `app/glasses-sdk/sabera-app-core` に差し替えるため、
-ローカルSDKのpublishやGitHub Packagesの認証は不要。
+ローカルSDKのpublishは不要。
 
 ```bash
 export SABERA_SDK_PATH=/absolute/path/to/jig-glass
@@ -34,22 +34,16 @@ export SABERA_SDK_PATH=/absolute/path/to/jig-glass
 ```
 
 Gradleには `local.properties` の `sabera.sdk.path` でも指定できる。
-指定しなければAndroid / iOSともGitHub PackagesのSDK 1.1.1を使う。
+指定しなければAndroid / iOSとも`https://sdk.sabera.glass/maven` の SDK 1.1.2を使う。
 KotlinとComposeのバージョンはローカルSDKのビルド環境に揃えている。
 
 ## iOS
 
-Xcode 26系、JDK 17以上、iOS 18.2以上が必要です。KMP の `SaberaAppSDK`、Swift ブリッジ、OggOpus はすべて公開 SDK 1.1.1 を使います。ローカル SDK ソースや `scripts/build-ios.sh` は必要ありません。
+Xcode 26系、JDK 17以上、iOS 18.2以上が必要です。KMP の `SaberaAppSDK`、Swift ブリッジ、OggOpus はすべて公開 SDK 1.1.2 を使います。ローカル SDK ソースや `scripts/build-ios.sh` は必要ありません。
 
 公開 SDK でビルドするときは `SABERA_SDK_PATH` を設定せず、`local.properties` に `sabera.sdk.path` を記載しないでください。設定されていると Gradle がローカル SDK に差し替えます。
 
-GitHub Packages の Gradle 認証に加えて、SwiftPM の XCFramework 取得用に `~/.netrc` を設定します。
-
-```text
-machine maven.pkg.github.com
-  login <GitHubのユーザー名>
-  password <read:packages を持つ PAT>
-```
+SwiftPM の XCFramework も認証なしで取得できる。
 
 シミュレータ向けの署名なしビルド:
 
@@ -60,7 +54,6 @@ xcodebuild -project iosApp/GlassesSample.xcodeproj \
   -sdk iphonesimulator \
   -destination 'generic/platform=iOS Simulator' \
   -derivedDataPath build/ios \
-  -packageAuthorizationProvider netrc \
   CODE_SIGNING_ALLOWED=NO build
 ```
 
@@ -72,7 +65,6 @@ xcodebuild -project iosApp/GlassesSample.xcodeproj \
   -sdk iphoneos \
   -destination 'generic/platform=iOS' \
   -derivedDataPath build/ios \
-  -packageAuthorizationProvider netrc \
   DEVELOPMENT_TEAM=<TEAM_ID> build
 ```
 
@@ -97,7 +89,7 @@ SwiftPM の OggOpus バイナリは iOS アプリの実機・シミュレータ�
 
 ## 公開 SDK の CI 検証
 
-CI は Android / iOS とも GitHub Packages の SDK 1.1.1 を使って
+CI は Android / iOS とも `https://sdk.sabera.glass/maven` の SDK 1.1.2 を使って
 `:shared:compileDebugKotlinAndroid` と、iOS 実機・シミュレータ向けの
 `:shared:linkDebugFrameworkIosArm64` / `:shared:linkDebugFrameworkIosSimulatorArm64` を実行する。
 このバージョン構成は、上記の `xcodebuild` によるアプリ全体のビルドが成功した場合に検証できる。

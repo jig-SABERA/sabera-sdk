@@ -18,7 +18,7 @@ fun startMicStreaming()
 止めるまでグラスのマイクは開いたままになる。使い終わったら stopMicStreaming を呼ぶ。
 
 {: .warning }
-> iOS はデコーダの差し込みが要る。差し込まれていない状態で呼ぶと例外になる。
+> iOS は `SaberaIOS` product をリンクし、起動時に `SaberaIOS.initialize(productImage:)` を呼ぶ。音声デコーダもこの初期化で設定される。
 
 ## 戻り値
 

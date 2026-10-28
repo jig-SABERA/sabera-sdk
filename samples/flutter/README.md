@@ -7,11 +7,11 @@ MethodChannel / EventChannel を使い、同じ Dart の画面から接続・切
 
 - Flutter SDK 3.29.2 以上
 - Bluetooth 通信には Android / iPhone 実機とグラスが必要
-- GitHub Packages の認証設定（[ルート README](../../README.md) 参照）
+- SDK は `https://sdk.sabera.glass/maven` から認証なしで取得する
 
 ## Android
 
-Gradle の GitHub Packages 認証を設定してから実行する。
+SDK の取得に認証設定は不要。
 
 ```bash
 cd samples/flutter
@@ -22,16 +22,10 @@ flutter run -d <AndroidのデバイスID>
 ## iOS
 
 Xcode 26 系、iOS 18.2 以上が必要。シミュレータは Apple Silicon Mac のみ対応する。
-ルートの `Package.swift` を相対参照し、公開 SDK 1.1.1 の `SaberaIOS` product
+ルートの `Package.swift` を相対参照し、公開 SDK 1.1.2 の `SaberaIOS` product
 （SaberaAppSDK・SaberaIOSBridge・OggOpus）を取得する。KMP サンプルのビルドやローカル SDK ソースは不要。
 
-SwiftPM が XCFramework を取得できるよう、`~/.netrc` に認証情報を設定する。
-
-```text
-machine maven.pkg.github.com
-  login <GitHubのユーザー名>
-  password <read:packages を持つ PAT>
-```
+SwiftPM の XCFramework も認証なしで取得できる。
 
 初回は Flutter の iOS ツールとビルド設定を準備する。
 
@@ -53,7 +47,6 @@ xcodebuild -workspace ios/Runner.xcworkspace \
   -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
   -derivedDataPath build/ios-simulator \
   -clonedSourcePackagesDirPath build/SourcePackages \
-  -packageAuthorizationProvider netrc \
   CODE_SIGNING_ALLOWED=NO build
 ```
 
@@ -69,7 +62,7 @@ xcodebuild -workspace ios/Runner.xcworkspace \
 
 選択ダイアログでデバイスを選んでも、接続完了まではスキャン画面を表示する。
 接続状態の通知を受けて操作画面へ切り替える。前回のデバイスIDは UserDefaults に保存し、復帰時の再接続は SDK に任せる。
-Dart の `sendAIContent` は、SDK 1.1.1 の `sendAiChatText` に対応する。
+Dart の `sendAIContent` は、SDK 1.1.2 の `sendAiChatText` に対応する。
 
 ## テスト
 

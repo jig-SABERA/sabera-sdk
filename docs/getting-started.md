@@ -10,16 +10,22 @@ SDKはネイティブAPIとして提供している。
 
 ## SDK の取得設定
 
-SDK は GitHub Packages (`jig-SABERA/sabera-sdk-packages`) で配布している。\
-取得には `read:packages` スコープを持つ Personal Access Token が必要。
-発行手順は [GitHub PAT の作り方](github-pat.md) を参照。
+SDK 1.1.2 以降は [sdk.sabera.glass/maven](https://sdk.sabera.glass/maven) から認証なしで取得できる。
+`settings.gradle.kts` の `dependencyResolutionManagement.repositories` に次を追加する。
 
-`~/.gradle/gradle.properties` に認証情報を書く。
-
-```properties
-GitHubPackagesUsername=<GitHubのユーザー名>
-GitHubPackagesPassword=<read:packages を持つ PAT>
+```kotlin
+maven("https://sdk.sabera.glass/maven")
 ```
+
+アプリの `build.gradle.kts` に依存を追加する。Android は `compileSdk` 37 以上が必要。
+
+```kotlin
+implementation("jp.jig.sabera.app.sdk:sabera-app-core:1.1.2")
+```
+
+SDK 利用規約の Gradle プラグインを使う場合は、`pluginManagement.repositories` にも同じ Maven リポジトリを追加する。
+iOS は Xcode の Add Package Dependencies に `https://github.com/jig-SABERA/sabera-sdk` を入れ、
+バージョン `1.1.2` と `SaberaIOS` product を選ぶ。XCFramework の取得にも認証は不要。
 
 ## 全体の流れ
 

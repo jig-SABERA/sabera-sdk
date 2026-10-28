@@ -13,7 +13,7 @@ SDK の配布物に含まれる第三者のソフトウェアと、アプリ側�
 |---|---|
 | バージョン | 1.4 |
 | ライセンス | BSD 3-Clause |
-| 含まれるバージョン | SDK 0.6.0 以降の Android 版（`sabera-app-core-android` の aar） |
+| 配布物 | Android 版（`sabera-app-core-android` の aar） |
 | 実体 | aar 内の `jni/{arm64-v8a,armeabi-v7a}/libopus.so` と、JNI ラッパーの `libopusdecoder.so` |
 
 グラスのマイク音声は Opus で流れてくるため、`startMicStreaming()` で受け取る PCM への
@@ -30,7 +30,7 @@ SDK を組み込んだアプリを配布するときは、下の全文をアプ�
 バイナリなので、**AboutLibraries のような依存から一覧を作るツールでは拾われない**。
 手で足す必要がある。
 
-SDK 0.6.1 以降は aar の `META-INF/third-party-notices/opus-LICENSE.txt` にも同じ全文が入って
+aar の `META-INF/third-party-notices/opus-LICENSE.txt` にも同じ全文が入って
 いるので、そこから読み出してもよい。
 
 特許はロイヤリティフリーで許諾されている（[opus-codec.org/license](https://opus-codec.org/license/)）。

@@ -42,6 +42,16 @@ internal object ConnectionSnippets {
         // #endsnippet
     }
 
+    fun observeConnecting(manager: GlassManager, scope: CoroutineScope) {
+        // #snippet GlassManager.isConnecting
+        scope.launch {
+            manager.isConnecting.collect { connecting ->
+                Log.d("sample", "connecting: $connecting")
+            }
+        }
+        // #endsnippet
+    }
+
     fun canReconnect(manager: GlassManager): Boolean {
         // #snippet GlassManager.hasLastConnectedDevice
         val canReconnect = manager.hasLastConnectedDevice

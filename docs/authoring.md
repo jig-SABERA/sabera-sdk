@@ -39,7 +39,7 @@ nav_order: 9
 
 ## ページへのリンク
 
-Markdown のリンク先は `github-pat.md` のように `.md` で書く。GitHub 上でそのまま
+Markdown のリンク先は `getting-started.md` のように `.md` で書く。GitHub 上でそのまま
 開け、公開サイトでは `jekyll-relative-links` が `.html` の URL に変換する。
 
 ## API へのリンク
@@ -78,9 +78,9 @@ python3 scripts/gen-api-docs.py
 シグネチャは AAR を読んで確定させる。
 
 ```console
-# 0.0.12 の AAR を GitHub Packages から取る
-curl -sL -u "<user>:<PAT>" -o core.aar \
-  https://maven.pkg.github.com/jig-SABERA/sabera-sdk-packages/jp/jig/sabera/app/sdk/sabera-app-core-android/0.0.12/sabera-app-core-android-0.0.12.aar
+# 1.1.2 の AAR を認証なしで取得する
+curl -fsSL -o core.aar \
+  https://sdk.sabera.glass/maven/jp/jig/sabera/app/sdk/sabera-app-core-android/1.1.2/sabera-app-core-android-1.1.2.aar
 unzip -o core.aar -d aar && unzip -o aar/classes.jar -d cls
 javap -public cls/app/jigglass/glass/CommandManager.class
 ```
@@ -168,8 +168,7 @@ private リポジトリで Pages を公開するには GitHub Team 以上のプ�
 
 ```console
 cd samples/kmp
-GITHUB_ACTOR=<user> GITHUB_TOKEN=<PAT> \
-  ./gradlew :snippets:compileDebugKotlin :snippets:ktlintCheck
+./gradlew :snippets:compileDebugKotlin :snippets:ktlintCheck
 cd - && python3 scripts/sync-snippets.py --check
 ```
 

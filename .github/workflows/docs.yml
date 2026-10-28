@@ -83,3 +83,40 @@ jobs:
       - name: サイトがビルドできることを確かめる
         working-directory: docs
         run: bundle exec jekyll build --trace
+
+  # sdk.sabera.glass のドキュメントは S3 に置いて CloudFront で配る
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [snippets, published-sdk, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: docs-deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          working-directory: docs
+          bundler-cache: true
+
+      - name: サイトをビルドする
+        working-directory: docs
+        env:
+          JEKYLL_ENV: production
+        run: bundle exec jekyll build
+
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.DOCS_DEPLOY_ROLE_ARN }}
+          aws-region: ap-northeast-1
+
+      - name: S3 に反映する
+        run: aws s3 sync docs/_site "s3://${{ vars.DOCS_BUCKET }}/docs/" --delete
+
+      - name: CloudFront のキャッシュを消す
+        run: aws cloudfront create-invalidation --distribution-id "${{ vars.DOCS_DISTRIBUTION_ID }}" --paths '/*'

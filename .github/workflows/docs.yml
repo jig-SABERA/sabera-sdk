@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: read
-  packages: read
 
 concurrency:
   group: docs-${{ github.workflow }}-${{ github.head_ref || github.ref }}
@@ -27,13 +26,8 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      # SDK は jig-SABERA/sabera-sdk-packages にある。GITHUB_TOKEN は自リポジトリの
-      # パッケージしか読めないため、read:packages を持つ PAT を Secrets から渡す
       - name: コード例をコンパイルする
         working-directory: samples/kmp
-        env:
-          ORG_GRADLE_PROJECT_GitHubPackagesUsername: ${{ github.actor }}
-          ORG_GRADLE_PROJECT_GitHubPackagesPassword: ${{ secrets.SDK_PACKAGES_TOKEN }}
         run: ./gradlew --no-daemon :snippets:compileDebugKotlin :snippets:ktlintCheck
 
       - name: docs のコード例が最新か確かめる
@@ -70,9 +64,6 @@ jobs:
       # AAR / KLIB の欠落や公開 API の不整合を検出できない。
       - name: 公開 SDK で shared をビルドする
         working-directory: samples/kmp
-        env:
-          ORG_GRADLE_PROJECT_GitHubPackagesUsername: ${{ github.actor }}
-          ORG_GRADLE_PROJECT_GitHubPackagesPassword: ${{ secrets.SDK_PACKAGES_TOKEN }}
         run: |
           test -z "${SABERA_SDK_PATH:-}"
           test ! -f local.properties

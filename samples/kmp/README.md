@@ -34,12 +34,12 @@ export SABERA_SDK_PATH=/absolute/path/to/jig-glass
 ```
 
 Gradleには `local.properties` の `sabera.sdk.path` でも指定できる。
-指定しなければAndroid / iOSとも`https://sdk.sabera.glass/maven` の SDK 1.1.2を使う。
+指定しなければAndroid / iOSとも`https://sdk.sabera.glass/maven` の SDK 1.1.3を使う。
 KotlinとComposeのバージョンはローカルSDKのビルド環境に揃えている。
 
 ## iOS
 
-Xcode 26系、JDK 17以上、iOS 18.2以上が必要です。KMP の `SaberaAppSDK`、Swift ブリッジ、OggOpus はすべて公開 SDK 1.1.2 を使います。ローカル SDK ソースや `scripts/build-ios.sh` は必要ありません。
+Xcode 26系、JDK 17以上、iOS 18.2以上が必要です。KMP の `SaberaAppSDK`、Swift ブリッジ、OggOpus はすべて公開 SDK 1.1.3 を使います。ローカル SDK ソースや `scripts/build-ios.sh` は必要ありません。
 
 公開 SDK でビルドするときは `SABERA_SDK_PATH` を設定せず、`local.properties` に `sabera.sdk.path` を記載しないでください。設定されていると Gradle がローカル SDK に差し替えます。
 
@@ -89,7 +89,7 @@ SwiftPM の OggOpus バイナリは iOS アプリの実機・シミュレータ�
 
 ## 公開 SDK の CI 検証
 
-CI は Android / iOS とも `https://sdk.sabera.glass/maven` の SDK 1.1.2 を使って
+CI は Android / iOS とも `https://sdk.sabera.glass/maven` の SDK 1.1.3 を使って
 `:shared:compileDebugKotlinAndroid` と、iOS 実機・シミュレータ向けの
 `:shared:linkDebugFrameworkIosArm64` / `:shared:linkDebugFrameworkIosSimulatorArm64` を実行する。
 このバージョン構成は、上記の `xcodebuild` によるアプリ全体のビルドが成功した場合に検証できる。

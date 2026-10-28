@@ -78,9 +78,9 @@ python3 scripts/gen-api-docs.py
 シグネチャは AAR を読んで確定させる。
 
 ```console
-# 1.1.2 の AAR を認証なしで取得する
+# 1.1.3 の AAR を認証なしで取得する
 curl -fsSL -o core.aar \
-  https://sdk.sabera.glass/maven/jp/jig/sabera/app/sdk/sabera-app-core-android/1.1.2/sabera-app-core-android-1.1.2.aar
+  https://sdk.sabera.glass/maven/jp/jig/sabera/app/sdk/sabera-app-core-android/1.1.3/sabera-app-core-android-1.1.3.aar
 unzip -o core.aar -d aar && unzip -o aar/classes.jar -d cls
 javap -public cls/app/jigglass/glass/CommandManager.class
 ```

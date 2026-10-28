@@ -21,14 +21,14 @@ Sabera App SDK の使い方を示すサンプルアプリ集。
 
 ## 前提条件
 
-SDK 1.1.2 以降は [sdk.sabera.glass/maven](https://sdk.sabera.glass/maven) から認証なしで取得できる。
+SDK 1.1.3 以降は [sdk.sabera.glass/maven](https://sdk.sabera.glass/maven) から認証なしで取得できる。
 サンプルにはリポジトリ設定済み。自分のアプリへの設定は [Getting Started](docs/getting-started.md) を参照。
 
-SDK 1.1.2を使うAndroidアプリは `compileSdk` 37以上が必要。
+SDK 1.1.3を使うAndroidアプリは `compileSdk` 37以上が必要。
 詳細は [Getting Started](docs/getting-started.md) を参照。
 
 iOS は Swift Package Manager で取得する。Xcode の Add Package Dependencies に
-このリポジトリの URL を入れ、バージョン `1.1.2` を指定する。
+このリポジトリの URL を入れ、バージョン `1.1.3` を指定する。
 通常の KMP SDK を使う場合は `SaberaAppSDK` product を、BLE と Opus を含む完全版を使う場合は
 `SaberaIOS` product を選択する。完全版の最低対応 iOS バージョンは 18.2。
 

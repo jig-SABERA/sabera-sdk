@@ -7,12 +7,17 @@ nav_order: 6
 
 Android / iOS 向け SDK の更新内容。
 
+## 1.1.3
+
+Android / iOS の成果物を同じバージョンで公開する。公開 API は 1.1.2 と同じ。
+iOS は Swift Package のバージョンを `1.1.3` に上げる。
+設定例は [Getting Started](getting-started.md) を参照。
+
 ## 1.1.2
 
 配布先を [sdk.sabera.glass/maven](https://sdk.sabera.glass/maven) に変更。
-Android / iOS とも認証なしで取得できる。
+Android の成果物を認証なしで取得できる。iOS の成果物は新しい配布先では 1.1.3 から公開する。
 Android は Maven リポジトリの URL と依存バージョンを変更する。
-iOS は Swift Package のリポジトリ URL を変えず、バージョンを `1.1.2` に上げる。
 設定例は [Getting Started](getting-started.md) を参照。
 
 | API | 補足 |

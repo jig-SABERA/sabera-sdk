@@ -2,8 +2,6 @@ title: Sabera App SDK
 description: Sabera App SDK のドキュメント
 theme: just-the-docs
 
-# baseurl は空にしておき、GitHub Pages では configure-pages が渡す値でビルドする。
-# ローカルはルート配信で見られる。
 url: ""
 baseurl: ""
 

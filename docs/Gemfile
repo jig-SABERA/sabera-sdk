@@ -1,4 +1,3 @@
-# GitHub Pages のビルドを使わないため、テーマもプラグインも gem で固定する。
 source "https://rubygems.org"
 
 gem "jekyll", "~> 4.3"

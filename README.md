@@ -17,7 +17,7 @@ Sabera App SDK の使い方を示すサンプルアプリ集。
 - [API リファレンス](docs/api/) — 公開 API の一覧（内容は執筆中）
 - [Bluetooth コマンドリスト](docs/bluetooth-commands.md) — コマンドID・パケット形式・対応API
 - [サードパーティ表記](docs/third-party-notices.md) — SDK に含まれる OSS と、アプリ側に必要な表示
-- [ドキュメントの作り方](docs/authoring.md) — サイトの構成、コード例の検証、デプロイ
+- [ドキュメントの作り方](docs/authoring.md) — サイトの構成、コード例の検証
 
 ## 前提条件
 

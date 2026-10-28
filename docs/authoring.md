@@ -25,7 +25,7 @@ nav_order: 9
 | `scripts/sync-snippets.py` | コード例を Kotlin から `docs/api/**` と `docs/pages/**` へ写す |
 | `samples/kmp/snippets/` | コード例の出処。コンパイルと ktlint を通る |
 
-公開は GitHub Pages。`main` への push で Actions がビルドしてデプロイする（[デプロイ](#デプロイ)）。
+PR と `main` への push で Actions がドキュメントのビルドを検証する。
 
 ## 本文を書く
 
@@ -145,24 +145,6 @@ bundle exec jekyll serve
 
 SCSS の deprecation 警告（`@import` と `darken()`）が大量に出る。テーマ側の書き方が dart-sass の
 新しい記法に追いついていないためで、ビルドは通る。
-
-## デプロイ
-
-`main` への push で Actions（`.github/workflows/docs.yml` の `deploy`）がビルドして
-GitHub Pages へ出す。ブランチを公開ソースにする方式は使っていないので、`_site` をコミットする
-必要はない。
-
-`baseurl` は `actions/configure-pages` が返す値をビルド時に渡している。リポジトリを引っ越しても
-名前から決まるため、設定を直す必要はない。
-
-デプロイの様子は Actions の `deploy` ジョブと、リポジトリの Environments（`github-pages`）で見られる。
-
-### 初回だけ必要な設定
-
-Settings → Pages の **Source** を `GitHub Actions` にする。`Deploy from a branch` のままだと
-このワークフローの成果物は公開されない。
-
-private リポジトリで Pages を公開するには GitHub Team 以上のプランが必要。
 
 ## コード例を自分で確かめる
 

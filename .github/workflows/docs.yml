@@ -69,10 +69,8 @@ jobs:
           test ! -f local.properties
           ./gradlew --no-daemon ${{ matrix.tasks }}
 
-  # PR ではビルドが壊れていないことだけを見る。デプロイは main の deploy が担う。
   build:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v7
 
@@ -85,42 +83,3 @@ jobs:
       - name: サイトがビルドできることを確かめる
         working-directory: docs
         run: bundle exec jekyll build --trace
-
-  deploy:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    needs: snippets
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    # 走っているデプロイは止めない。途中で切ると公開されている内容が中途半端になる
-    concurrency:
-      group: pages
-      cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.4'
-          working-directory: docs
-          bundler-cache: true
-
-      # リポジトリ名から baseurl を決める。引っ越しても追従する
-      - id: pages
-        uses: actions/configure-pages@v6
-
-      - name: サイトをビルドする
-        working-directory: docs
-        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
-
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: docs/_site
-
-      - id: deployment
-        uses: actions/deploy-pages@v5

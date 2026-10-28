@@ -14,12 +14,12 @@ kotlin {
             baseName = "SaberaAppSDK"
             isStatic = true
             binaryOption("bundleId", "jp.jig.sabera.sample.shared")
-            export("jp.jig.sabera.app.sdk:sabera-app-core:1.1.2")
+            export("jp.jig.sabera.app.sdk:sabera-app-core:1.1.3")
         }
     }
     sourceSets {
         commonMain.dependencies {
-            api("jp.jig.sabera.app.sdk:sabera-app-core:1.1.2")
+            api("jp.jig.sabera.app.sdk:sabera-app-core:1.1.3")
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -30,7 +30,7 @@ kotlin {
             implementation("androidx.activity:activity-compose:1.10.0")
         }
         iosMain.dependencies {
-            api("jp.jig.sabera.app.sdk:sabera-app-core:1.1.2")
+            api("jp.jig.sabera.app.sdk:sabera-app-core:1.1.3")
         }
         commonTest.dependencies { implementation(kotlin("test")) }
     }

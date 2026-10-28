@@ -96,3 +96,112 @@ html {
     animation: none !important;
   }
 }
+
+// 404 ページ（404.md）。グラスのレンズに、字幕のように「404」が浮かぶ
+.not-found {
+  max-width: 36rem;
+  margin: $sp-8 auto;
+  text-align: center;
+}
+
+.not-found-glasses {
+  width: min(100%, 22rem);
+  height: auto;
+  margin-top: $sp-6;
+  margin-bottom: $sp-6;
+  overflow: visible;
+}
+
+.not-found-frame {
+  fill: $body-text-color;
+}
+
+.not-found-lens {
+  fill: $link-color;
+  fill-opacity: 0.08;
+}
+
+.not-found-hud {
+  fill: $link-color;
+  font-family: $mono-font-family;
+  animation: not-found-hud-in 1.2s ease-out both;
+}
+
+.not-found-hud-code {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.not-found-hud-caption {
+  font-size: 3.2px;
+  letter-spacing: 0.2em;
+  opacity: 0.8;
+}
+
+.not-found-title {
+  margin-top: 0;
+  font-size: 1.5rem !important;
+}
+
+.not-found-lead {
+  color: $body-text-color;
+}
+
+.not-found-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $sp-3;
+  margin: $sp-6 0 $sp-4;
+  padding: 0;
+
+  li {
+    list-style: none;
+    margin: 0;
+
+    &::before {
+      content: none !important;
+    }
+  }
+
+  a {
+    display: inline-block;
+    padding: $sp-2 $sp-4;
+    border: 1px solid $border-color;
+    border-radius: 999px;
+    background-image: none;
+
+    &:hover {
+      border-color: $link-color;
+    }
+  }
+}
+
+.not-found-hint {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+// 表示が点いてから字幕が流れてくるように見せる
+@keyframes not-found-hud-in {
+  0% {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+
+  40% {
+    opacity: 0.35;
+  }
+
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found-hud {
+    animation: none;
+  }
+}

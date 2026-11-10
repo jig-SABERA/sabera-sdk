@@ -20,12 +20,12 @@ maven("https://sdk.sabera.glass/maven")
 アプリの `build.gradle.kts` に依存を追加する。Android は `compileSdk` 37 以上が必要。
 
 ```kotlin
-implementation("jp.jig.sabera.app.sdk:sabera-app-core:1.1.3")
+implementation("jp.jig.sabera.app.sdk:sabera-app-core:1.1.4")
 ```
 
 SDK 利用規約の Gradle プラグインを使う場合は、`pluginManagement.repositories` にも同じ Maven リポジトリを追加する。
 iOS は Xcode の Add Package Dependencies に `https://github.com/jig-SABERA/sabera-sdk` を入れ、
-バージョン `1.1.3` と `SaberaIOS` product を選ぶ。XCFramework の取得にも認証は不要。
+バージョン `1.1.4` と `SaberaIOS` product を選ぶ。XCFramework の取得にも認証は不要。
 
 ## 全体の流れ
 

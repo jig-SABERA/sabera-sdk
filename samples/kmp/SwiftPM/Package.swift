@@ -11,12 +11,12 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "SaberaIOSBridge",
-            url: "https://sdk.sabera.glass/maven/jp/jig/sabera/app/sdk/sabera-app-bridge/1.1.3/sabera-app-bridge-1.1.3.zip",
-            checksum: "9a5cde166f2b0982a903bb9d6d767484eb336a0e4c0a27474f73f670d71d9d4e"
+            url: "https://sdk.sabera.glass/maven/jp/jig/sabera/app/sdk/sabera-app-bridge/1.1.4/sabera-app-bridge-1.1.4.zip",
+            checksum: "c83e193d263ad07441b9392bf7aa747a9a2b967048c85d316a1d3abc43bd56fd"
         ),
         .binaryTarget(
             name: "OggOpus",
-            url: "https://sdk.sabera.glass/maven/jp/jig/sabera/app/sdk/sabera-app-opus/1.1.3/sabera-app-opus-1.1.3.zip",
+            url: "https://sdk.sabera.glass/maven/jp/jig/sabera/app/sdk/sabera-app-opus/1.1.4/sabera-app-opus-1.1.4.zip",
             checksum: "c8d349d31943f87d1a2212bc0a83327260ff46bea21b3cf15882566b07799d75"
         ),
     ]
